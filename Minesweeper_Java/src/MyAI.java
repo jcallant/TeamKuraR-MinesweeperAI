@@ -167,15 +167,18 @@ public class MyAI extends AI {
 			for(int i=colMin; i<colMax+1; i++) {
 				if (j==currY && i==currX) continue;
 				String k = key(i, j);
-				System.out.println(k);
+				System.out.print(k);
 				if (!records.containsKey(k)) {
+					System.out.println(" added to safe");
 					records.put(k, 0);
 					guaranteedSafe.add(new Action(ACTION.UNCOVER, i, j));
 				}
 				else if(records.get(k)==-1) {
+					System.out.println(" added to safe");
 					records.put(k, 0);
 					guaranteedSafe.add(new Action(ACTION.UNCOVER, i, j));
 				}
+				System.out.println();
 			}
 		}
 	}
@@ -232,8 +235,8 @@ public class MyAI extends AI {
 	}
 
 	private Action flagAndUpdate(ArrayList<Action> flags, int x, int y){
-		System.out.println("flagAndUpdate: " + key(x,y));
 		for (Action f : flags) {
+			System.out.println("flag: " + key(f.x,f.y));
 			guaranteedMine.add(f);
 
 			int rowMin = f.y - 1;
@@ -251,7 +254,7 @@ public class MyAI extends AI {
 				for (int i = colMin; i < colMax + 1; i++) {
 					String k = key(i, j);
 					if (records.containsKey(k) && records.get(k) > 0 && !updated.contains(k)) {
-						System.out.println(k + "updated");
+						System.out.println("update: " + k);
 						int labelValue = records.get(k);
 						labelValue--;
 						records.put(k, labelValue);
