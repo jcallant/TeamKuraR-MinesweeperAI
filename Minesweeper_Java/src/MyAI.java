@@ -63,8 +63,6 @@ public class MyAI extends AI {
 	private int flagsLeft;
 	private int currX;
 	private int currY;
-	private int lastX;
-	private int lastY;
 	private HashMap<String,Integer> records;
 	private ArrayList<Action> safeTiles;
 	private ArrayList<Action> coveredFrontier;
@@ -78,8 +76,6 @@ public class MyAI extends AI {
 		this.TOTAL_MINES = this.flagsLeft = totalMines;
 		this.currX = startX;
 		this.currY = startY;
-		this.lastX = startX;
-		this.lastY = startY;
 		this.records = new HashMap<>();
 		this.safeTiles = new ArrayList<>();
 		this.coveredFrontier = new ArrayList<>();
@@ -98,7 +94,7 @@ public class MyAI extends AI {
 			addNeighborsToSafeTiles(currX,currY);
 		else {
 			addNeighborsToCoveredFrontier(currX, currY);
-			addSelfToUncoveredFrontier(currX,currY);
+			addSelfToUncoveredFrontier(currX, currY);
 		}
 		System.out.println("\n" + records);
 		System.out.println("\n" + safeTiles);
@@ -116,20 +112,21 @@ public class MyAI extends AI {
 		if(!uncoveredFrontier.isEmpty()){
 			Action a = uncoveredFrontier.remove(0);
 			ArrayList<String> keys = countCoveredNeighbors(a.x,a.y);
+			System.out.println("ucn: " + keys.size());
 			if(keys.size() == records.get(key(a.x,a.y)))
 				return flagAndUpdate(a.x, a.y, keys);
 		}
 
 		// while covered frontier has tiles
-		if(!coveredFrontier.isEmpty()){
-			Action a = coveredFrontier.remove(0);
-			while(records.get(key(a.x,a.y))==0)
-				a = coveredFrontier.remove(0);
-			currX = a.x;
-			currY = a.y;
-			a = findBestAction(currX, currY);
-			return a;
-		}
+//		if(!coveredFrontier.isEmpty()){
+//			Action a = coveredFrontier.remove(0);
+//			while(records.get(key(a.x,a.y))==0)
+//				a = coveredFrontier.remove(0);
+//			currX = a.x;
+//			currY = a.y;
+//			a = findBestAction(currX, currY);
+//			return a;
+//		}
 
 
 
