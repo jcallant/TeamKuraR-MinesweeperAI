@@ -123,8 +123,8 @@ public class MyAI extends AI {
 		if(colMin<1) colMin = 1;
 		if(colMax>COL_DIMENSIONS) colMax = COL_DIMENSIONS;
 
-		for(int i=colMin; i<colMax+1; i++){
-			for(int j=rowMin; j<rowMax+1; j++){
+		for(int j=rowMax; j>rowMin-1; j--){
+			for(int i=colMax; i<colMin-1; i--){
 				System.out.println(key(i,j));
 				frontier.add(new Action(ACTION.UNCOVER, i, j));
 			}
