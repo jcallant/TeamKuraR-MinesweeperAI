@@ -109,6 +109,8 @@ public class MyAI extends AI {
 		// while frontier has tiles
 		if(!frontier.isEmpty()){
 			Action a = frontier.remove(0);
+			while(records.get(key(a.x,a.y))==0)
+				a = frontier.remove(0);
 			currX = a.x;
 			currY = a.y;
 			a = findBestAction(currX, currY);
@@ -144,6 +146,9 @@ public class MyAI extends AI {
 					records.put(k, -1);
 					safeTiles.add(new Action(ACTION.UNCOVER, i, j));
 				}
+				else if(records.get(k)==-2) {
+					safeTiles.add(new Action(ACTION.UNCOVER, i, j));
+				}
 			}
 		}
 	}
@@ -165,7 +170,7 @@ public class MyAI extends AI {
 				String k = key(i, j);
 				System.out.println(k);
 				if (!records.containsKey(k)) {
-					records.put(k, -1);
+					records.put(k, -2);
 					frontier.add(new Action(ACTION.FLAG, i, j));
 				}
 			}
