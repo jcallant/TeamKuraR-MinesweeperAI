@@ -78,16 +78,19 @@ public class MyAI extends AI {
 	
 	// ################## Implement getAction(), (required) #####################
 	public Action getAction(int number) {
-		int[] last = coords.getLast();
-		visited.add(last);
-		coords.removeLast();
-		if (number == 0) {
-			int tLocation = determineBorder(last[0], last[1]);
-			addNeighborsZero(tLocation, last[0], last[1]);
-			return new Action(ACTION.UNCOVER, last[0], last[1]);
+		if (!coords.isEmpty()) {
+			int[] last = coords.getLast();
+			visited.add(last);
+			coords.removeLast();
+			if (number == 0) {
+				int tLocation = determineBorder(last[0], last[1]);
+				addNeighborsZero(tLocation, last[0], last[1]);
+				return new Action(ACTION.UNCOVER, last[0], last[1]);
+			}
 		}
-
-
+		else {
+			return new Action(ACTION.LEAVE);
+		}
 		return new Action(ACTION.LEAVE);
 	}
 
