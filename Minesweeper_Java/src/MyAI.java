@@ -92,17 +92,20 @@ public class MyAI extends AI {
 	// ################## Implement getAction(), (required) #####################
 	public Action getAction(int number) {
 		// store value in records
-		String s = key(currX,currY);
-		records.put(s, number);
-		System.out.println(s + ": " + number);
+		if(number >= 0) {
+			String s = key(currX, currY);
+			records.put(s, number);
+			System.out.println(s + ": " + number);
 
-		// add neighbors to frontier
-		if(number == 0)
-			addNeighborsToSafeTiles(currX,currY);
-		else {
-			addNeighborsToCoveredFrontier(currX, currY);
-			addSelfToUncoveredFrontier(currX, currY);
+			// add neighbors to frontier
+			if (number == 0)
+				addNeighborsToSafeTiles(currX, currY);
+			else {
+				addNeighborsToCoveredFrontier(currX, currY);
+				addSelfToUncoveredFrontier(currX, currY);
+			}
 		}
+
 		System.out.println("\n" + records);
 		System.out.println("\n" + guaranteedSafe);
 		System.out.println("\n" + uncoveredFrontier);
@@ -138,9 +141,10 @@ public class MyAI extends AI {
 			ArrayList<Action> possible = countCoveredNeighbors(a.x,a.y);
 			System.out.println(key(a.x,a.y) + " ucn: " + possible.size());
 			if(possible.size() == records.get(key(a.x,a.y))){
-
+				currX = a.x;
+				currY = a.y;
 				// flag each tile as a mine and update labels of adjacent tiles for each mine
-				return flagAndUpdate(possible, a.x, a.y);
+				return flagAndUpdate(possible, currX, currY);
 			}
 		}
 
@@ -268,7 +272,6 @@ public class MyAI extends AI {
 						if(labelValue==0) {
 							System.out.println(" neighbors added");
 							addNeighborsToSafeTiles(i, j);
-							i-=1;
 						}
 						updated.add(k);
 					}
