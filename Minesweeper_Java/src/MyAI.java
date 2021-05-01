@@ -251,11 +251,14 @@ public class MyAI extends AI {
 				for (int i = colMin; i < colMax + 1; i++) {
 					String k = key(i, j);
 					if (records.containsKey(k) && records.get(k) > 0 && !updated.contains(k)) {
+						System.out.println(k + "updated");
 						int labelValue = records.get(k);
 						labelValue--;
 						records.put(k, labelValue);
-						if(labelValue==0)
-							addNeighborsToSafeTiles(i,j);
+						if(labelValue==0) {
+							System.out.println(" neighbors added");
+							addNeighborsToSafeTiles(i, j);
+						}
 						updated.add(k);
 					}
 				}
