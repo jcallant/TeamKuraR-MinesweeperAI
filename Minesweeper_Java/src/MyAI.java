@@ -65,25 +65,35 @@ public class MyAI extends AI {
 	private int flagsLeft;
 	private LinkedList<int[]> coords;
 	private ArrayList<String> visited;
-
+	private int actions;
+	private int startX;
+	private int startY;
 	
 	// ################### Implement Constructor (required) ####################	
 	public MyAI(int rowDimension, int colDimension, int totalMines, int startX, int startY) {
 		this.ROW_DIMENSIONS = rowDimension;
 		this.COL_DIMENSIONS = colDimension;
 		this.TOTAL_MINES = this.flagsLeft = totalMines;
+		this.startX = startX;
+		this.startY = startY;
 		coords = new LinkedList<>();
 		visited = new ArrayList<>();
 		coords.add(new int[]{startX, startY});
+		actions = 0;
 	}
 	
 	// ################## Implement getAction(), (required) #####################
 	public Action getAction(int number) {
-		if (!coords.isEmpty()) {
+		if (actions == 0) {
+			actions++;
+			return new Action(ACTION.UNCOVER, startX, startY);
+		}
+		else if (!coords.isEmpty()) {
 			System.out.println("current" + number);
 			int[] last = coords.getLast();
 			System.out.print("currently " + last[0]+ "," + last[1]);
 			visited.add(last[0]+ "," + last[1]);
+
 			coords.removeLast();
 			for (int[] a : coords) {
 				System.out.println(a[0] + "," + a[1]);
@@ -93,8 +103,8 @@ public class MyAI extends AI {
 				System.out.println("added neighbors");
 				addNeighborsZero(tLocation, last[0], last[1]);
 			}
+			actions++;
 			return new Action(ACTION.UNCOVER, last[0], last[1]);
-
 		}
 		else {
 			return new Action(ACTION.LEAVE);
