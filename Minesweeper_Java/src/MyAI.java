@@ -91,6 +91,7 @@ public class MyAI extends AI {
 
 	// ################## Implement getAction(), (required) #####################
 	public Action getAction(int number) {
+
 		// store valid value in records
 		if(number >= 0) {
 			String s = key(currX, currY);
@@ -110,17 +111,17 @@ public class MyAI extends AI {
 		System.out.println("\n" + guaranteedSafe);
 		System.out.println("\n" + uncoveredFrontier);
 
-		// while safe neighbors to uncover...
-		if(!guaranteedSafe.isEmpty()){
-			Action a = guaranteedSafe.remove(0);
+		// while mines to flag...
+		if(!guaranteedMine.isEmpty()){
+			Action a = guaranteedMine.remove(0);
 			currX = a.x;
 			currY = a.y;
 			return a;
 		}
 
-		// while mines to flag...
-		if(!guaranteedMine.isEmpty()){
-			Action a = guaranteedMine.remove(0);
+		// while safe neighbors to uncover...
+		if(!guaranteedSafe.isEmpty()){
+			Action a = guaranteedSafe.remove(0);
 			currX = a.x;
 			currY = a.y;
 			return a;
@@ -210,7 +211,7 @@ public class MyAI extends AI {
 				if (j==currY && i==currX) continue;
 				String k = key(i, j);
 				if (!records.containsKey(k)) {
-					System.out.println(k + "added to covered frontier");
+					System.out.println(k + " added to covered frontier");
 					records.put(k, -1);
 					coveredFrontier.add(new Action(ACTION.FLAG, i, j));
 				}
@@ -219,7 +220,7 @@ public class MyAI extends AI {
 	}
 
 	private void addSelfToUncoveredFrontier(int x, int y){
-		System.out.println(key(x,y) + "added to uncovered frontier");
+		System.out.println(key(x,y) + " added to uncovered frontier");
 		uncoveredFrontier.add(new Action(ACTION.FLAG, x, y));
 	}
 
@@ -281,7 +282,7 @@ public class MyAI extends AI {
 							// if new label == 0, uncover any remaining covered neighbors
 							if (labelValue == 0) {
 								//System.out.println(" neighbors added");
-								//addNeighborsToSafeTiles(i, j); // FIX THIS PATH; UPDATE LABEL AFTER UNCOVER
+								addNeighborsToSafeTiles(i, j); // FIX THIS PATH; UPDATE LABEL AFTER UNCOVER
 							}
 							updated.add(k);
 						}
