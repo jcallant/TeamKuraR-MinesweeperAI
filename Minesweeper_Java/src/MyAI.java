@@ -39,8 +39,16 @@ public class MyAI extends AI {
 	@SuppressWarnings("unchecked")
 
 
+	private final int ROW_DIMENSIONS;
+	private final int COL_DIMENSIONS;
+	private final int TOLAL_MINES;
+	private int flagsLeft;
+	
+	// ################### Implement Constructor (required) ####################	
 	public MyAI(int rowDimension, int colDimension, int totalMines, int startX, int startY) {
-		// ################### Implement Constructor (required) ####################	
+		this.ROW_DIMENSIONS = rowDimensions;
+		this.COL_DIMENSINOS = colDimensions;
+		this.TOTAL_MINES = this.flagsLeft = totalMines;
 	}
 	
 	// ################## Implement getAction(), (required) #####################
