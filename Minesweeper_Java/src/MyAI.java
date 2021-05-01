@@ -70,6 +70,7 @@ public class MyAI extends AI {
 	private ArrayList<Action> guaranteedMine;
 	private ArrayList<Action> coveredFrontier;
 	private ArrayList<Action> uncoveredFrontier;
+	private double elapsedTime = 0.0;
 
 
 	// ################### Implement Constructor (required) ####################	
@@ -123,8 +124,11 @@ public class MyAI extends AI {
 		// while uncovered frontier has tiles
 		while(!uncoveredFrontier.isEmpty()){
 			Action a = uncoveredFrontier.remove(0);
-			while(records.get(key(a.x,a.y)) == 0)
+			int label = records.get(key(a.x,a.y));
+			while(label == 0 || label == -3) {
 				a = uncoveredFrontier.remove(0);
+				label = records.get(key(a.x,a.y));
+			}
 			ArrayList<Action> possible = countCoveredNeighbors(a.x,a.y);
 			System.out.println(key(a.x,a.y) + " ucn: " + possible.size());
 			if(possible.size() == records.get(key(a.x,a.y))){
