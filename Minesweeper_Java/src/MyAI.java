@@ -91,7 +91,7 @@ public class MyAI extends AI {
 
 	// ################## Implement getAction(), (required) #####################
 	public Action getAction(int number) {
-		// store value in records
+		// store valid value in records
 		if(number >= 0) {
 			String s = key(currX, currY);
 			records.put(s, number);
@@ -141,6 +141,7 @@ public class MyAI extends AI {
 			ArrayList<Action> possible = countCoveredNeighbors(a.x,a.y);
 			System.out.println(key(a.x,a.y) + " ucn: " + possible.size());
 			if(possible.size() == records.get(key(a.x,a.y))){
+				System.out.println("--match");
 				currX = a.x;
 				currY = a.y;
 				// flag each tile as a mine and update labels of adjacent tiles for each mine
@@ -288,8 +289,8 @@ public class MyAI extends AI {
 				}
 			}
 		}
-
-		return guaranteedMine.remove(0);
+		if(guaranteedMine.isEmpty()) return new Action(ACTION.LEAVE);
+		else return guaranteedMine.remove(0);
 	}
 
 
