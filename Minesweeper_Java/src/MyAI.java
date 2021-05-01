@@ -74,6 +74,7 @@ public class MyAI extends AI {
 	// ################## Implement getAction(), (required) #####################
 	public Action getAction(int number) {
 		int[] last = coords.getLast();
+		coords.removeLast();
 		if (number == 0) {
 			int tLocation = determineBorder(last[0], last[1]);
 			addNeighborsZero(tLocation, last[0], last[1]);
