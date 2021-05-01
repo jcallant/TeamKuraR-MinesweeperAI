@@ -19,6 +19,10 @@ NOTES:       - If you are having trouble understanding how the shell
 package src;
 import src.Action.ACTION;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Queue;
+
 public class MyAI extends AI {
 	// ########################## INSTRUCTIONS ##########################
 	// 1) The Minesweeper Shell will pass in the board size, number of mines
@@ -58,22 +62,72 @@ public class MyAI extends AI {
 	private final int COL_DIMENSIONS;
 	private final int TOTAL_MINES;
 	private int flagsLeft;
-	
+	private int currX;
+	private int currY;
+	private int lastX;
+	private int lastY;
+	private HashMap<String,Integer> records;
+	private ArrayList<Action> frontier;
+
+
 	// ################### Implement Constructor (required) ####################	
 	public MyAI(int rowDimension, int colDimension, int totalMines, int startX, int startY) {
 		this.ROW_DIMENSIONS = rowDimension;
 		this.COL_DIMENSIONS = colDimension;
 		this.TOTAL_MINES = this.flagsLeft = totalMines;
+		this.currX = startX;
+		this.currY = startY;
+		this.lastX = startX;
+		this.lastY = startY;
+		this.records = new HashMap<>();
+		this.frontier = new ArrayList<>();
 	}
-	
+
 	// ################## Implement getAction(), (required) #####################
+	String s = key(currX, currY);
 	public Action getAction(int number) {
+		String r = String.format("(%d,%d): %d", currX, currY, number);
+		System.out.println(r);
 
+		// store value in records
+		records.put(s, number);
 
+		// while neighbors to uncover...
+		if(!frontier.isEmpty());
+
+		// add neighbors to frontier
+		addNeighbors(currX,currY);
+
+		//if label is zero, start uncovering neighbors
+		if(number == 0){
+			if(1<currX) currX--;
+			if(1<currY) currY--;
+			return new Action(ACTION.UNCOVER, currX, currY);
+		}
 
 		return new Action(ACTION.LEAVE);
 	}
 
 	// ################### Helper Functions Go Here (optional) ##################
-	// ...
+	private String key(int x, int y){
+		return "(" + x + "," + y + ")";
+	}
+	private void addNeighbors(int x, int y){
+		int rowMin = y-1;
+		int colMin = x-1;
+		if(1<rowMin) rowMin = 1;
+		if(1<colMin) colMin = 1;
+
+		int rowMax = y+1;
+		int colMax = x+1;
+		if(rowMax>ROW_DIMENSIONS) rowMax = ROW_DIMENSIONS;
+		if(colMax>COL_DIMENSIONS) colMax = COL_DIMENSIONS;
+
+		for(int i=rowMin; i<rowMax+1; i++){
+			for(int j=colMin; j<colMin+1; j++){
+				System.out.println(key(i,j));
+				frontier.add(new Action(ACTION.UNCOVER, i, j));
+			}
+		}
+	}
 }
