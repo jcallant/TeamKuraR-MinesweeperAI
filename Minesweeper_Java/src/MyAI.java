@@ -91,7 +91,7 @@ public class MyAI extends AI {
 		else if (!coords.isEmpty()) {
 			System.out.println("current" + number);
 			int[] last = coords.getLast();
-			System.out.print("currently " + last[0]+ "," + last[1]);
+			System.out.println("currently " + last[0]+ "," + last[1]);
 			visited.add(last[0]+ "," + last[1]);
 
 			coords.removeLast();
