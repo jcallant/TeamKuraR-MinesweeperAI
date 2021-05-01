@@ -67,11 +67,11 @@ public class MyAI extends AI {
 	private int currY;
 	private HashMap<String,Integer> records;
 	private ArrayList<Action> guaranteedSafe;
+	private Set<String> guaranteedSafeByFlag;
 	private ArrayList<Action> guaranteedMine;
 	private ArrayList<Action> coveredFrontier;
 	private ArrayList<Action> uncoveredFrontier;
 	private double elapsedTime;
-	private boolean updatingFlag;
 
 
 	// ################### Implement Constructor (required) ####################	
@@ -83,10 +83,10 @@ public class MyAI extends AI {
 		this.currY = startY;
 		this.records = new HashMap<>();
 		this.guaranteedSafe = new ArrayList<>();
+		this.guaranteedSafeByFlag = new HashSet<>();
 		this.guaranteedMine = new ArrayList<>();
 		this.coveredFrontier = new ArrayList<>();
 		this.uncoveredFrontier = new ArrayList<>();
-		this.updatingFlag = false;
 	}
 
 	// ################## Implement getAction(), (required) #####################
@@ -94,13 +94,17 @@ public class MyAI extends AI {
 
 		// store valid value in records
 		if(number >= 0) {
-			String s = key(currX, currY);
-			records.put(s, number);
-			System.out.println(s + ": " + number);
+			String k = key(currX, currY);
+			if(guaranteedSafeByFlag.contains(k)){
+				number--;
+				guaranteedSafeByFlag.remove(k);
+			}
+			records.put(k, number);
+			System.out.println(k + ": " + number);
 
 			// add neighbors to frontier
 			if (number == 0)
-				addNeighborsToSafeTiles(currX, currY);
+				addNeighborsToSafeTiles(currX, currY, false);
 			else {
 				addNeighborsToCoveredFrontier(currX, currY);
 				addSelfToUncoveredFrontier(currX, currY);
@@ -171,7 +175,7 @@ public class MyAI extends AI {
 		return "(" + x + "," + y + ")";
 	}
 
-	private void addNeighborsToSafeTiles(int x, int y){
+	private void addNeighborsToSafeTiles(int x, int y, boolean decrementFlag){
 		int rowMin = y-1;
 		int rowMax = y+1;
 		if(rowMin<1) rowMin = 1;
@@ -190,6 +194,7 @@ public class MyAI extends AI {
 					System.out.println(k + " added to safe");
 					records.put(k, 0);
 					guaranteedSafe.add(new Action(ACTION.UNCOVER, i, j));
+					if(decrementFlag) guaranteedSafeByFlag.add(k);
 				}
 			}
 		}
@@ -283,7 +288,7 @@ public class MyAI extends AI {
 							// if new label == 0, uncover any remaining covered neighbors
 							if (labelValue == 0) {
 								//System.out.println(" neighbors added");
-								addNeighborsToSafeTiles(i, j); // FIX THIS PATH; UPDATE LABEL AFTER UNCOVER
+								addNeighborsToSafeTiles(i, j, true); // FIX THIS PATH; UPDATE LABEL AFTER UNCOVER
 							}
 //							updated.add(k);
 						}
@@ -291,7 +296,8 @@ public class MyAI extends AI {
 				}
 			}
 		}
-		if(guaranteedMine.isEmpty()) return new Action(ACTION.LEAVE);
+		if(!guaranteedSafe.isEmpty()) return guaranteedSafe.remove(0);
+//		if(guaranteedMine.isEmpty()) return new Action(ACTION.LEAVE);
 		else return guaranteedMine.remove(0);
 	}
 
