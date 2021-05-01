@@ -82,9 +82,11 @@ public class MyAI extends AI {
 			int[] last = coords.getLast();
 			visited.add(last[0]+ "," + last[1]);
 			coords.removeLast();
+			for (int[] a : coords) {
+				System.out.println(a[0] + "," + a[1]);
+			}
 			if (number == 0) {
 				int tLocation = determineBorder(last[0], last[1]);
-				System.out.println("adding neighbors");
 				addNeighborsZero(tLocation, last[0], last[1]);
 			}
 			return new Action(ACTION.UNCOVER, last[0], last[1]);
