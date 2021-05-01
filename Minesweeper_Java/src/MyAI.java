@@ -70,7 +70,8 @@ public class MyAI extends AI {
 	private ArrayList<Action> guaranteedMine;
 	private ArrayList<Action> coveredFrontier;
 	private ArrayList<Action> uncoveredFrontier;
-	private double elapsedTime = 0.0;
+	private double elapsedTime;
+	private boolean updatingFlag;
 
 
 	// ################### Implement Constructor (required) ####################	
@@ -85,12 +86,14 @@ public class MyAI extends AI {
 		this.guaranteedMine = new ArrayList<>();
 		this.coveredFrontier = new ArrayList<>();
 		this.uncoveredFrontier = new ArrayList<>();
+		this.updatingFlag = false;
 	}
 
 	// ################## Implement getAction(), (required) #####################
 	public Action getAction(int number) {
 		// store value in records
 		String s = key(currX,currY);
+		if(updatingFlag) number-=1;
 		records.put(s, number);
 		System.out.println(s + ": " + number);
 
@@ -125,16 +128,24 @@ public class MyAI extends AI {
 		while(!uncoveredFrontier.isEmpty()){
 			Action a = uncoveredFrontier.remove(0);
 			int label = records.get(key(a.x,a.y));
+
+			// if no adjacent mines or is mine itself, pick another
 			while(label == 0 || label == -3) {
 				a = uncoveredFrontier.remove(0);
 				label = records.get(key(a.x,a.y));
 			}
+
+			// if label matches the number of adjacent covered tiles
 			ArrayList<Action> possible = countCoveredNeighbors(a.x,a.y);
 			System.out.println(key(a.x,a.y) + " ucn: " + possible.size());
 			if(possible.size() == records.get(key(a.x,a.y))){
+				updatingFlag = true;
+
+				// flag each tile as a mine and update labels of adjacent tiles for each mine
 				return flagAndUpdate(possible, a.x, a.y);
 			}
 		}
+		updatingFlag = false;
 
 		// while covered frontier has tiles
 //		if(!coveredFrontier.isEmpty()){
