@@ -19,6 +19,7 @@ NOTES:       - If you are having trouble understanding how the shell
 package src;
 import src.Action.ACTION;
 
+import javax.sound.midi.SysexMessage;
 import java.lang.reflect.Array;
 import java.util.LinkedList;
 import java.util.ArrayList;
@@ -79,6 +80,7 @@ public class MyAI extends AI {
 	// ################## Implement getAction(), (required) #####################
 	public Action getAction(int number) {
 		if (!coords.isEmpty()) {
+			System.out.println("current" + number);
 			int[] last = coords.getLast();
 			visited.add(last[0]+ "," + last[1]);
 			coords.removeLast();
