@@ -86,7 +86,7 @@ public class MyAI extends AI {
 	// ################## Implement getAction(), (required) #####################
 	String s = key(currX, currY);
 	public Action getAction(int number) {
-		String r = String.format("(%d,%d): %d", currX, currY, number);
+		String r = String.format("(%d,%d): %d", lastX, lastY, number);
 		System.out.println(r);
 
 		// store value in records
@@ -100,8 +100,8 @@ public class MyAI extends AI {
 
 		//if label is zero, start uncovering neighbors
 		if(number == 0){
-			if(1<currX) currX--;
-			if(1<currY) currY--;
+			if(currX<COL_DIMENSIONS) currX++;
+			if(currY<ROW_DIMENSIONS) currY++;
 			return new Action(ACTION.UNCOVER, currX, currY);
 		}
 
@@ -115,8 +115,8 @@ public class MyAI extends AI {
 	private void addNeighbors(int x, int y){
 		int rowMin = y-1;
 		int colMin = x-1;
-		if(1<rowMin) rowMin = 1;
-		if(1<colMin) colMin = 1;
+		if(rowMin<1) rowMin = 1;
+		if(colMin<1) colMin = 1;
 
 		int rowMax = y+1;
 		int colMax = x+1;
