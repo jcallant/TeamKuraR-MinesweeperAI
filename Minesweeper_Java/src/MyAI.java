@@ -64,7 +64,8 @@ public class MyAI extends AI {
 	private int currX;
 	private int currY;
 	private HashMap<String,Integer> records;
-	private ArrayList<Action> safeTiles;
+	private ArrayList<Action> guaranteedSafe;
+	private ArrayList<Action> guaranteedMine;
 	private ArrayList<Action> coveredFrontier;
 	private ArrayList<Action> uncoveredFrontier;
 
@@ -77,7 +78,8 @@ public class MyAI extends AI {
 		this.currX = startX;
 		this.currY = startY;
 		this.records = new HashMap<>();
-		this.safeTiles = new ArrayList<>();
+		this.guaranteedSafe = new ArrayList<>();
+		this.guaranteedMine = new ArrayList<>();
 		this.coveredFrontier = new ArrayList<>();
 		this.uncoveredFrontier = new ArrayList<>();
 	}
@@ -97,12 +99,20 @@ public class MyAI extends AI {
 			addSelfToUncoveredFrontier(currX, currY);
 		}
 		System.out.println("\n" + records);
-		System.out.println("\n" + safeTiles);
+		System.out.println("\n" + guaranteedSafe);
 		System.out.println("\n" + uncoveredFrontier);
 
 		// while safe neighbors to uncover...
-		if(!safeTiles.isEmpty()){
-			Action a = safeTiles.remove(0);
+		if(!guaranteedSafe.isEmpty()){
+			Action a = guaranteedSafe.remove(0);
+			currX = a.x;
+			currY = a.y;
+			return a;
+		}
+
+		// while mines to flag...
+		if(!guaranteedMine.isEmpty()){
+			Action a = guaranteedSafe.remove(0);
 			currX = a.x;
 			currY = a.y;
 			return a;
@@ -111,10 +121,11 @@ public class MyAI extends AI {
 		// while uncovered frontier has tiles
 		if(!uncoveredFrontier.isEmpty()){
 			Action a = uncoveredFrontier.remove(0);
-			ArrayList<String> keys = countCoveredNeighbors(a.x,a.y);
-			System.out.println("ucn: " + keys.size());
-			if(keys.size() == records.get(key(a.x,a.y)))
-				return flagAndUpdate(a.x, a.y, keys);
+			ArrayList<Action> possible = countCoveredNeighbors(a.x,a.y);
+			System.out.println("ucn: " + possible.size());
+			if(possible.size() == records.get(key(a.x,a.y))){
+				return flagAndUpdate(possible, a.x, a.y);
+			}
 		}
 
 		// while covered frontier has tiles
@@ -155,11 +166,11 @@ public class MyAI extends AI {
 				System.out.println(k);
 				if (!records.containsKey(k)) {
 					records.put(k, 0);
-					safeTiles.add(new Action(ACTION.UNCOVER, i, j));
+					guaranteedSafe.add(new Action(ACTION.UNCOVER, i, j));
 				}
 				else if(records.get(k)==-1) {
 					records.put(k, 0);
-					safeTiles.add(new Action(ACTION.UNCOVER, i, j));
+					guaranteedSafe.add(new Action(ACTION.UNCOVER, i, j));
 				}
 			}
 		}
@@ -193,7 +204,7 @@ public class MyAI extends AI {
 		uncoveredFrontier.add(new Action(ACTION.FLAG, x, y));
 	}
 
-	private ArrayList<String> countCoveredNeighbors(int x, int y){
+	private ArrayList<Action> countCoveredNeighbors(int x, int y){
 		int rowMin = y-1;
 		int rowMax = y+1;
 		if(rowMin<1) rowMin = 1;
@@ -204,26 +215,28 @@ public class MyAI extends AI {
 		if(colMin<1) colMin = 1;
 		if(colMax>COL_DIMENSIONS) colMax = COL_DIMENSIONS;
 
-		ArrayList<String> keys = new ArrayList<>();
+		ArrayList<Action> possible = new ArrayList<>();
 		for(int j=rowMax; j>rowMin-1; j--){
 			for(int i=colMin; i<colMax+1; i++) {
 				if (j==currY && i==currX) continue;
 				String k = key(i, j);
 				if (records.get(k)==-1)
-					keys.add(key(i,j));
+					possible.add(new Action(ACTION.FLAG, i, j));
 			}
 		}
-		return keys;
+		return possible;
 	}
 
-	private Action flagAndUpdate(int x, int y, ArrayList<String> keys){
-		for (String k : keys){
-			int labelValue = records.get(k);
-			labelValue--;
-			records.put(k, labelValue);
+	private Action flagAndUpdate(ArrayList<Action> flags, int x, int y){
+		int labelValue = records.get(key(x,y));
+		labelValue--;
+		records.put(key(x,y), labelValue);
+
+		for (Action f : flags){
+			records.put(key(f.x,f.y), -3);
+			guaranteedMine.add(f);
 		}
-		records.put(key(x,y), -3);
-		return new Action(ACTION.FLAG, x, y);
+		return guaranteedMine.remove(0);
 	}
 
 
