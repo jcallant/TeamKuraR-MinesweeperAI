@@ -237,6 +237,7 @@ public class MyAI extends AI {
 	private Action flagAndUpdate(ArrayList<Action> flags, int x, int y){
 		for (Action f : flags) {
 			System.out.println("flag: " + key(f.x,f.y));
+			records.put(key(f.x,f.y),-3);
 			guaranteedMine.add(f);
 
 			int rowMin = f.y - 1;
@@ -260,7 +261,7 @@ public class MyAI extends AI {
 						records.put(k, labelValue);
 						if(labelValue==0) {
 							System.out.println(" neighbors added");
-							addNeighborsToSafeTiles(i, j);
+							addNeighborsToSafeTiles(j, i);
 						}
 						updated.add(k);
 					}
