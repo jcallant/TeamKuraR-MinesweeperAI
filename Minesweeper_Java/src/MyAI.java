@@ -123,10 +123,13 @@ public class MyAI extends AI {
 		if(colMax>COL_DIMENSIONS) colMax = COL_DIMENSIONS;
 
 		for(int j=rowMax; j>rowMin-1; j--){
-			for(int i=colMin; i<colMax+1; i++){
-				if(j==i) continue;
-				System.out.println(key(i,j));
-				frontier.add(new Action(ACTION.UNCOVER, i, j));
+			for(int i=colMin; i<colMax+1; i++) {
+				if (j == i) continue;
+				String k = key(i, j);
+				if (!records.containsKey(k)) {
+					System.out.println(key(i, j));
+					frontier.add(new Action(ACTION.UNCOVER, i, j));
+				}
 			}
 		}
 	}
