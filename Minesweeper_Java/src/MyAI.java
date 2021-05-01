@@ -83,6 +83,7 @@ public class MyAI extends AI {
 		this.records = new HashMap<>();
 		this.safeTiles = new ArrayList<>();
 		this.coveredFrontier = new ArrayList<>();
+		this.uncoveredFrontier = new ArrayList<>();
 	}
 
 	// ################## Implement getAction(), (required) #####################
