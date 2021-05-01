@@ -68,7 +68,7 @@ public class MyAI extends AI {
 	
 	// ################## Implement getAction(), (required) #####################
 	public Action getAction(int number) {
-
+		System.out.println(number);
 
 
 		return new Action(ACTION.LEAVE);
