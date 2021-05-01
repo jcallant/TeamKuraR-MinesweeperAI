@@ -179,12 +179,7 @@ public class MyAI extends AI {
 			for(int i=colMin; i<colMax+1; i++) {
 				if (j==currY && i==currX) continue;
 				String k = key(i, j);
-				if (!records.containsKey(k)) {
-					System.out.println(k + " added to safe");
-					records.put(k, 0);
-					guaranteedSafe.add(new Action(ACTION.UNCOVER, i, j));
-				}
-				else if(records.get(k)==-1) {
+				if (!records.containsKey(k) || records.get(k)==-1) {
 					System.out.println(k + " added to safe");
 					records.put(k, 0);
 					guaranteedSafe.add(new Action(ACTION.UNCOVER, i, j));
@@ -273,6 +268,7 @@ public class MyAI extends AI {
 						if(labelValue==0) {
 							System.out.println(" neighbors added");
 							addNeighborsToSafeTiles(i, j);
+							i-=1;
 						}
 						updated.add(k);
 					}
