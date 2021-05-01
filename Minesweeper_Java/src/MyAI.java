@@ -53,7 +53,7 @@ public class MyAI extends AI {
 	
 	// ################## Implement getAction(), (required) #####################
 	public Action getAction(int number) {
-
+		/* testing local repo -> ics repo */
 		return new Action(ACTION.LEAVE);
 	}
 
