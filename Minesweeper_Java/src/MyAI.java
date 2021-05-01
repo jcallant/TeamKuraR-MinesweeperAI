@@ -128,6 +128,7 @@ public class MyAI extends AI {
 				String k = key(i, j);
 				System.out.println(k);
 				if (!records.containsKey(k)) {
+					records.put(k, -1);
 					frontier.add(new Action(ACTION.UNCOVER, i, j));
 				}
 			}
