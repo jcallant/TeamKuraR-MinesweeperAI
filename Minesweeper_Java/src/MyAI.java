@@ -64,7 +64,9 @@ public class MyAI extends AI {
 	private final int TOTAL_MINES;
 	private int flagsLeft;
 	private LinkedList<int[]> coords;
+	private LinkedList<int[]> coordsGreater;
 	private ArrayList<String> visited;
+	private ArrayList<String> mines;
 	private int startX;
 	private int startY;
 	private int prevX;
@@ -80,7 +82,9 @@ public class MyAI extends AI {
 		this.prevX = -1;
 		this.prevY = -1;
 		coords = new LinkedList<>();
+		coordsGreater = new LinkedList<>();
 		visited = new ArrayList<>();
+		mines = new ArrayList<>();
 		coords.add(new int[]{startX, startY});
 	}
 	
@@ -94,10 +98,10 @@ public class MyAI extends AI {
 			prevY = startY;
 			return new Action(ACTION.UNCOVER, startX, startY);
 		}
-		else if (!coords.isEmpty()) {
-			System.out.println("current" + number);
+		System.out.println("mines " + number);
+		System.out.println("currently " + prevX + "," + prevY);
+		if (!coords.isEmpty()) {
 			int[] last = coords.getLast();
-			System.out.println("currently " + prevX + "," + prevY);
 			visited.add(prevX+ "," + prevY);
 			coords.removeLast();
 			if (number == 0) {
@@ -105,9 +109,25 @@ public class MyAI extends AI {
 				System.out.println("added neighbors");
 				addNeighborsZero(tLocation, prevX, prevY);
 			}
+			else if (number > 0) {
+				coordsGreater.add(new int[]{prevX, prevY});
+			}
 			prevX = last[0];
 			prevY = last[1];
 			return new Action(ACTION.UNCOVER, last[0], last[1]);
+		}
+		// TODO: method for tiles with label > 0, logic is currently wrong
+		else if (!coordsGreater.isEmpty()) {
+			System.out.println();
+			int[] firstGreater = coordsGreater.getFirst();
+			coordsGreater.removeFirst(); // probably wrong here
+			int tLocation = determineBorder(firstGreater[0], firstGreater[1]);
+			ArrayList<int[]> adjacents = getAdjacents(tLocation, firstGreater[0], firstGreater[1]);
+			if (adjacents.size() == number) {
+				for (int[] tile : adjacents) {
+					mines.add(tile[0]+","+tile[1]);
+				}
+			}
 		}
 		else {
 			return new Action(ACTION.LEAVE);
@@ -206,5 +226,81 @@ public class MyAI extends AI {
 			default:
 				break;
 		}
+	}
+
+	private ArrayList<int[]> getAdjacents(int tLocation, int x, int y) {
+		ArrayList<int[]> adjacents = new ArrayList<>();
+		String leftX = Integer.toString(x-1);
+		String X = Integer.toString(x);
+		String rightX = Integer.toString(x+1);
+		String downY = Integer.toString(y-1);
+		String Y = Integer.toString(y);
+		String upY = Integer.toString(y+1);
+		int[] topLeft = {x-1,y+1}; int[] top = {x,y+1}; int[] topRight = {x+1,y+1};
+		int[] left = {x-1,y}; 							int[] right = {x+1,y};
+		int[] botLeft = {x-1,y-1}; int[] bot = {x,y-1}; int[] botRight = {x+1,y-1};
+		switch (tLocation) {
+			case 0:
+				if (!visited.contains(rightX+ ","+Y)) { adjacents.add(right); }
+				if (!visited.contains(X+","+downY)) { adjacents.add(bot); }
+				if (!visited.contains(rightX+","+downY)) { adjacents.add(botRight); }
+				break;
+			case 1:
+				if (!visited.contains(leftX+","+Y)) { adjacents.add(left); }
+				if (!visited.contains(rightX+","+Y)) { adjacents.add(right); }
+				if (!visited.contains(leftX+","+downY)) { adjacents.add(botLeft); }
+				if (!visited.contains(X+","+downY)) { adjacents.add(bot); }
+				if (!visited.contains(rightX+","+downY)) { adjacents.add(botRight); }
+				break;
+			case 2:
+				if (!visited.contains(leftX+","+Y)) { adjacents.add(left); }
+				if (!visited.contains(X+","+downY)) { adjacents.add(bot); }
+				if (!visited.contains(leftX+","+downY)) { adjacents.add(botLeft); }
+				break;
+			case 3:
+				if (!visited.contains(X+","+upY)) { adjacents.add(top); }
+				if (!visited.contains(rightX+","+upY)) { adjacents.add(topRight); }
+				if (!visited.contains(rightX+","+Y)) { adjacents.add(right); }
+				if (!visited.contains(X+","+downY)) { adjacents.add(bot); }
+				if (!visited.contains(rightX+","+downY)) { adjacents.add(botRight); }
+				break;
+			case 4:
+				if (!visited.contains(leftX+","+upY)) { adjacents.add(topLeft); }
+				if (!visited.contains(X+","+upY)) { adjacents.add(top); }
+				if (!visited.contains(rightX+","+upY)) { adjacents.add(topRight); }
+				if (!visited.contains(leftX+","+Y)) { adjacents.add(left); }
+				if (!visited.contains(rightX+","+Y)) { adjacents.add(right); }
+				if (!visited.contains(leftX+","+downY)) { adjacents.add(botLeft); }
+				if (!visited.contains(X+","+downY)) { adjacents.add(bot); }
+				if (!visited.contains(rightX+","+downY)) { adjacents.add(botRight); }
+				break;
+			case 5:
+				if (!visited.contains(leftX+","+upY)) { adjacents.add(topLeft); }
+				if (!visited.contains(X+","+upY)) { adjacents.add(top); }
+				if (!visited.contains(leftX+","+Y)) { adjacents.add(left); }
+				if (!visited.contains(leftX+","+downY)) { adjacents.add(botLeft); }
+				if (!visited.contains(X+","+downY)) { adjacents.add(bot); }
+				break;
+			case 6:
+				if (!visited.contains(X+","+upY)) { adjacents.add(top); }
+				if (!visited.contains(rightX+","+upY)) { adjacents.add(topRight); }
+				if (!visited.contains(rightX+","+Y)) { adjacents.add(right); }
+				break;
+			case 7:
+				if (!visited.contains(leftX+","+upY)) { adjacents.add(topLeft); }
+				if (!visited.contains(X+","+upY)) { adjacents.add(top); }
+				if (!visited.contains(rightX+","+upY)) { adjacents.add(topRight); }
+				if (!visited.contains(leftX+","+Y)) { adjacents.add(left); }
+				if (!visited.contains(rightX+","+Y)) { adjacents.add(right); }
+				break;
+			case 8:
+				if (!visited.contains(leftX+","+upY)) { adjacents.add(topLeft); }
+				if (!visited.contains(X+","+upY)) { adjacents.add(top); }
+				if (!visited.contains(leftX+","+Y)) { adjacents.add(left); }
+				break;
+			default:
+				break;
+		}
+		return adjacents;
 	}
 }
