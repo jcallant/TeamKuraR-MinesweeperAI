@@ -177,7 +177,6 @@ public class MyAI extends AI {
 					records.put(k, 0);
 					guaranteedSafe.add(new Action(ACTION.UNCOVER, i, j));
 				}
-				System.out.println();
 			}
 		}
 	}
