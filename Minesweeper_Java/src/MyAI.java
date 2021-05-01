@@ -167,14 +167,13 @@ public class MyAI extends AI {
 			for(int i=colMin; i<colMax+1; i++) {
 				if (j==currY && i==currX) continue;
 				String k = key(i, j);
-				System.out.print(k);
 				if (!records.containsKey(k)) {
-					System.out.println(" added to safe");
+					System.out.println(k + " added to safe");
 					records.put(k, 0);
 					guaranteedSafe.add(new Action(ACTION.UNCOVER, i, j));
 				}
 				else if(records.get(k)==-1) {
-					System.out.println(" added to safe");
+					System.out.println(k + " added to safe");
 					records.put(k, 0);
 					guaranteedSafe.add(new Action(ACTION.UNCOVER, i, j));
 				}
