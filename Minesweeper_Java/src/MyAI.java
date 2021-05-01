@@ -68,6 +68,8 @@ public class MyAI extends AI {
 	private int actions;
 	private int startX;
 	private int startY;
+	private int prevX;
+	private int prevY;
 	
 	// ################### Implement Constructor (required) ####################	
 	public MyAI(int rowDimension, int colDimension, int totalMines, int startX, int startY) {
@@ -86,24 +88,27 @@ public class MyAI extends AI {
 	public Action getAction(int number) {
 		if (actions == 0) {
 			actions++;
+			prevX = startX;
+			prevY = startY;
 			return new Action(ACTION.UNCOVER, startX, startY);
 		}
 		else if (!coords.isEmpty()) {
 			System.out.println("current" + number);
 			int[] last = coords.getLast();
-			System.out.println("currently " + last[0]+ "," + last[1]);
-			visited.add(last[0]+ "," + last[1]);
-
+			System.out.println("currently " + prevX + "," + prevY);
+			visited.add(prevX+ "," + prevY);
 			coords.removeLast();
 			for (int[] a : coords) {
 				System.out.println(a[0] + "," + a[1]);
 			}
 			if (number == 0) {
-				int tLocation = determineBorder(last[0], last[1]);
+				int tLocation = determineBorder(prevX, prevY);
 				System.out.println("added neighbors");
-				addNeighborsZero(tLocation, last[0], last[1]);
+				addNeighborsZero(tLocation, prevX, prevY);
 			}
 			actions++;
+			prevX = last[0];
+			prevY = last[1];
 			return new Action(ACTION.UNCOVER, last[0], last[1]);
 		}
 		else {
