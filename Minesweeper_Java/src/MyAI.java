@@ -168,6 +168,7 @@ public class MyAI extends AI {
 	private String key(int x, int y){
 		return "(" + x + "," + y + ")";
 	}
+
 	private void addNeighborsToSafeTiles(int x, int y){
 		int rowMin = y-1;
 		int rowMax = y+1;
@@ -247,11 +248,15 @@ public class MyAI extends AI {
 	private Action flagAndUpdate(ArrayList<Action> flags, int x, int y){
 		Set<String> updated = new HashSet<>();
 
+		// for each guaranteed mine
 		for (Action f : flags) {
+
+			// flag the mine
 			System.out.println("flag: " + key(f.x,f.y));
 			records.put(key(f.x,f.y),-3);
 			guaranteedMine.add(f);
 
+			// update labels for neighboring tiles
 			int rowMin = f.y - 1;
 			int rowMax = f.y + 1;
 			if (rowMin < 1) rowMin = 1;
@@ -271,6 +276,8 @@ public class MyAI extends AI {
 							labelValue--;
 							records.put(k, labelValue);
 							System.out.println("update: " + k + " = " + records.get(k)+1 + " -> " + records.get(k));
+
+							// if new label == 0, uncover any remaining covered neighbors
 							if (labelValue == 0) {
 								//System.out.println(" neighbors added");
 								//addNeighborsToSafeTiles(i, j); // FIX THIS PATH; UPDATE LABEL AFTER UNCOVER
