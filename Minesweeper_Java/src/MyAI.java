@@ -21,7 +21,6 @@ import src.Action.ACTION;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Queue;
 
 public class MyAI extends AI {
 	// ########################## INSTRUCTIONS ##########################
@@ -68,7 +67,8 @@ public class MyAI extends AI {
 	private int lastY;
 	private HashMap<String,Integer> records;
 	private ArrayList<Action> safeTiles;
-	private ArrayList<Action> frontier;
+	private ArrayList<Action> coveredFrontier;
+	private ArrayList<Action> uncoveredFrontier;
 
 
 	// ################### Implement Constructor (required) ####################	
@@ -82,7 +82,7 @@ public class MyAI extends AI {
 		this.lastY = startY;
 		this.records = new HashMap<>();
 		this.safeTiles = new ArrayList<>();
-		this.frontier = new ArrayList<>();
+		this.coveredFrontier = new ArrayList<>();
 	}
 
 	// ################## Implement getAction(), (required) #####################
@@ -95,10 +95,13 @@ public class MyAI extends AI {
 		// add neighbors to frontier
 		if(number == 0)
 			addNeighborsToSafeTiles(currX,currY);
-		else
-			addNeighborsToFrontier(currX,currY);
-		System.out.println("\n" + records);
+		else {
+			addNeighborsToCoveredFrontier(currX, currY);
+			addSelfToUncoveredFrontier(currX,currY);
+		}
+//		System.out.println("\n" + records);
 		System.out.println("\n" + safeTiles);
+		System.out.println("\n" + uncoveredFrontier);
 
 		// while safe neighbors to uncover...
 		if(!safeTiles.isEmpty()){
@@ -109,10 +112,10 @@ public class MyAI extends AI {
 		}
 
 		// while frontier has tiles
-		if(!frontier.isEmpty()){
-			Action a = frontier.remove(0);
+		if(!coveredFrontier.isEmpty()){
+			Action a = coveredFrontier.remove(0);
 			while(records.get(key(a.x,a.y))==0)
-				a = frontier.remove(0);
+				a = coveredFrontier.remove(0);
 			currX = a.x;
 			currY = a.y;
 			a = findBestAction(currX, currY);
@@ -156,7 +159,7 @@ public class MyAI extends AI {
 		}
 	}
 
-	private void addNeighborsToFrontier(int x, int y){
+	private void addNeighborsToCoveredFrontier(int x, int y){
 		int rowMin = y-1;
 		int rowMax = y+1;
 		if(rowMin<1) rowMin = 1;
@@ -174,10 +177,14 @@ public class MyAI extends AI {
 				System.out.println(k);
 				if (!records.containsKey(k)) {
 					records.put(k, -2);
-					frontier.add(new Action(ACTION.FLAG, i, j));
+					coveredFrontier.add(new Action(ACTION.FLAG, i, j));
 				}
 			}
 		}
+	}
+
+	private void addSelfToUncoveredFrontier(int x, int y){
+		coveredFrontier.add(new Action(ACTION.FLAG, x, y));
 	}
 
 	private Action findBestAction(int x, int y){
