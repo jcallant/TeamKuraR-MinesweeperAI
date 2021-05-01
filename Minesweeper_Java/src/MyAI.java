@@ -149,6 +149,7 @@ public class MyAI extends AI {
 					safeTiles.add(new Action(ACTION.UNCOVER, i, j));
 				}
 				else if(records.get(k)==-2) {
+					records.put(k, -1);
 					safeTiles.add(new Action(ACTION.UNCOVER, i, j));
 				}
 			}
