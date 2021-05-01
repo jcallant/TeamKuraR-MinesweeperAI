@@ -122,7 +122,7 @@ public class MyAI extends AI {
 		if(!uncoveredFrontier.isEmpty()){
 			Action a = uncoveredFrontier.remove(0);
 			ArrayList<Action> possible = countCoveredNeighbors(a.x,a.y);
-			System.out.println("ucn: " + possible.size());
+			System.out.println(key(a.x,a.y) + " ucn: " + possible.size());
 			if(possible.size() == records.get(key(a.x,a.y))){
 				return flagAndUpdate(possible, a.x, a.y);
 			}
