@@ -254,6 +254,8 @@ public class MyAI extends AI {
 						int labelValue = records.get(k);
 						labelValue--;
 						records.put(k, labelValue);
+						if(labelValue==0)
+							addNeighborsToSafeTiles(i,j);
 						updated.add(k);
 					}
 				}
