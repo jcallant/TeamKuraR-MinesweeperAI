@@ -260,7 +260,7 @@ public class MyAI extends AI {
 						records.put(k, labelValue);
 						if(labelValue==0) {
 							System.out.println(" neighbors added");
-							addNeighborsToSafeTiles(j, i);
+							addNeighborsToSafeTiles(i, j);
 						}
 						updated.add(k);
 					}
