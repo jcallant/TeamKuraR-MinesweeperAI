@@ -265,16 +265,18 @@ public class MyAI extends AI {
 			for (int j = rowMax; j > rowMin - 1; j--) {
 				for (int i = colMin; i < colMax + 1; i++) {
 					String k = key(i, j);
-					if (records.containsKey(k) && records.get(k) > 0 && !updated.contains(k)) {
-						System.out.println("update: " + k);
-						int labelValue = records.get(k);
-						labelValue--;
-						records.put(k, labelValue);
-						if(labelValue==0) {
-							System.out.println(" neighbors added");
-							addNeighborsToSafeTiles(i, j);
+					if (records.containsKey(k) && !updated.contains(k)) {
+						if (records.get(k)>0){
+							System.out.println("update: " + k + "=" + records.get(k));
+							int labelValue = records.get(k);
+							labelValue--;
+							records.put(k, labelValue);
+							if (labelValue == 0) {
+								System.out.println(" neighbors added");
+								//addNeighborsToSafeTiles(i, j); // FIX THIS PATH; UPDATE LABEL AFTER UNCOVER
+							}
+							updated.add(k);
 						}
-						updated.add(k);
 					}
 				}
 			}
