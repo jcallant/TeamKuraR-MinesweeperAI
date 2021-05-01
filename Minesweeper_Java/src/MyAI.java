@@ -93,7 +93,6 @@ public class MyAI extends AI {
 	public Action getAction(int number) {
 		// store value in records
 		String s = key(currX,currY);
-		if(updatingFlag) number-=1;
 		records.put(s, number);
 		System.out.println(s + ": " + number);
 
@@ -139,13 +138,11 @@ public class MyAI extends AI {
 			ArrayList<Action> possible = countCoveredNeighbors(a.x,a.y);
 			System.out.println(key(a.x,a.y) + " ucn: " + possible.size());
 			if(possible.size() == records.get(key(a.x,a.y))){
-				updatingFlag = true;
 
 				// flag each tile as a mine and update labels of adjacent tiles for each mine
 				return flagAndUpdate(possible, a.x, a.y);
 			}
 		}
-		updatingFlag = false;
 
 		// while covered frontier has tiles
 //		if(!coveredFrontier.isEmpty()){
