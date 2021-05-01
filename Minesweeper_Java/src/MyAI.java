@@ -18,7 +18,10 @@ NOTES:       - If you are having trouble understanding how the shell
 
 package src;
 import src.Action.ACTION;
-import  java.util.LinkedList;
+
+import java.lang.reflect.Array;
+import java.util.LinkedList;
+import java.util.ArrayList;
 
 public class MyAI extends AI {
 	// ########################## INSTRUCTIONS ##########################
@@ -60,6 +63,7 @@ public class MyAI extends AI {
 	private final int TOTAL_MINES;
 	private int flagsLeft;
 	private LinkedList<int[]> coords;
+	private ArrayList<int[]> visited;
 
 	
 	// ################### Implement Constructor (required) ####################	
@@ -68,12 +72,14 @@ public class MyAI extends AI {
 		this.COL_DIMENSIONS = colDimension;
 		this.TOTAL_MINES = this.flagsLeft = totalMines;
 		coords = new LinkedList<>();
+		visited = new ArrayList<>();
 		coords.add(new int[]{startX, startY});
 	}
 	
 	// ################## Implement getAction(), (required) #####################
 	public Action getAction(int number) {
 		int[] last = coords.getLast();
+		visited.add(last);
 		coords.removeLast();
 		if (number == 0) {
 			int tLocation = determineBorder(last[0], last[1]);
@@ -106,64 +112,67 @@ public class MyAI extends AI {
 	}
 
 	private void addNeighborsZero(int tLocation, int x, int y) {
+		int[] topLeft = {x-1,y+1}; int[] top = {x,y+1}; int[] topRight = {x+1,y+1};
+		int[] left = {x-1,y}; 							int[] right = {x+1,y};
+		int[] botLeft = {x-1,y-1}; int[] bot = {x,y-1}; int[] botRight = {x+1,y-1};
 		switch (tLocation) {
 			case 0:
-				coords.add(new int[]{x+1,y});	// right
-				coords.add(new int[]{x,y-1});	// bot
-				coords.add(new int[]{x+1,y-1});	// bot right
+				if (!visited.contains(right)) { coords.add(right); }
+				if (!visited.contains(bot)) { coords.add(bot); }
+				if (!visited.contains(botRight)) { coords.add(botRight); }
 				break;
 			case 1:
-				coords.add(new int[]{x-1,y});	// left
-				coords.add(new int[]{x+1,y});	// right
-				coords.add(new int[]{x-1,y-1});	// bot left
-				coords.add(new int[]{x,y-1});	// bot
-				coords.add(new int[]{x+1,y-1});	// bot right
+				if (!visited.contains(left)) { coords.add(left); }
+				if (!visited.contains(right)) { coords.add(right); }
+				if (!visited.contains(botLeft)) { coords.add(botLeft); }
+				if (!visited.contains(bot)) { coords.add(bot); }
+				if (!visited.contains(botRight)) { coords.add(botRight); }
 				break;
 			case 2:
-				coords.add(new int[]{x-1,y});	// left
-				coords.add(new int[]{x,y-1});	// bot
-				coords.add(new int[]{x-1,y-1});	// bot left
+				if (!visited.contains(left)) { coords.add(left); }
+				if (!visited.contains(bot)) { coords.add(bot); }
+				if (!visited.contains(botLeft)) { coords.add(botLeft); }
 				break;
 			case 3:
-				coords.add(new int[]{x, y+1});	// top
-				coords.add(new int[]{x+1,y+1});	// top right
-				coords.add(new int[]{x+1,y});	// right
-				coords.add(new int[]{x,y-1});	// bot
-				coords.add(new int[]{x+1,y-1});	// bot right
+				if (!visited.contains(top)) { coords.add(top); }
+				if (!visited.contains(topRight)) { coords.add(topRight); }
+				if (!visited.contains(right)) { coords.add(right); }
+				if (!visited.contains(bot)) { coords.add(bot); }
+				if (!visited.contains(botRight)) { coords.add(botRight); }
 				break;
 			case 4:
-				coords.add(new int[]{x-1,y+1}); // top left
-				coords.add(new int[]{x, y+1});	// top
-				coords.add(new int[]{x+1,y+1});	// top right
-				coords.add(new int[]{x-1,y});	// left
-				coords.add(new int[]{x+1,y});	// right
-				coords.add(new int[]{x-1,y-1});	// bot left
-				coords.add(new int[]{x,y-1});	// bot
-				coords.add(new int[]{x+1,y-1});	// bot right
+				if (!visited.contains(topLeft)) { coords.add(topLeft); }
+				if (!visited.contains(top)) { coords.add(top); }
+				if (!visited.contains(topRight)) { coords.add(topRight); }
+				if (!visited.contains(left)) { coords.add(left); }
+				if (!visited.contains(right)) { coords.add(right); }
+				if (!visited.contains(botLeft)) { coords.add(botLeft); }
+				if (!visited.contains(bot)) { coords.add(bot); }
+				if (!visited.contains(botRight)) { coords.add(botRight); }
 				break;
 			case 5:
-				coords.add(new int[]{x-1,y+1}); // top left
-				coords.add(new int[]{x, y+1});	// top
-				coords.add(new int[]{x-1,y});	// left
-				coords.add(new int[]{x-1,y-1});	// bot left
-				coords.add(new int[]{x,y-1});	// bot
+				if (!visited.contains(topLeft)) { coords.add(topLeft); }
+				if (!visited.contains(top)) { coords.add(top); }
+				if (!visited.contains(left)) { coords.add(left); }
+				if (!visited.contains(botLeft)) { coords.add(botLeft); }
+				if (!visited.contains(bot)) { coords.add(bot); }
 				break;
 			case 6:
-				coords.add(new int[]{x, y+1});	// top
-				coords.add(new int[]{x+1,y+1});	// top right
-				coords.add(new int[]{x+1,y});	// right
+				if (!visited.contains(top)) { coords.add(top); }
+				if (!visited.contains(topRight)) { coords.add(topRight); }
+				if (!visited.contains(right)) { coords.add(right); }
 				break;
 			case 7:
-				coords.add(new int[]{x-1,y+1}); // top left
-				coords.add(new int[]{x, y+1});	// top
-				coords.add(new int[]{x+1,y+1});	// top right
-				coords.add(new int[]{x-1,y});	// left
-				coords.add(new int[]{x+1,y});	// right
+				if (!visited.contains(topLeft)) { coords.add(topLeft); }
+				if (!visited.contains(top)) { coords.add(top); }
+				if (!visited.contains(topRight)) { coords.add(topRight); }
+				if (!visited.contains(left)) { coords.add(left); }
+				if (!visited.contains(right)) { coords.add(right); }
 				break;
 			case 8:
-				coords.add(new int[]{x-1,y+1}); // top left
-				coords.add(new int[]{x, y+1});	// top
-				coords.add(new int[]{x-1,y});	// left
+				if (!visited.contains(topLeft)) { coords.add(topLeft); }
+				if (!visited.contains(top)) { coords.add(top); }
+				if (!visited.contains(left)) { coords.add(left); }
 				break;
 			default:
 				break;
