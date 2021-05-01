@@ -38,19 +38,6 @@ public class MyAI extends AI {
 	// if you decide to do so in your implementation.
 	@SuppressWarnings("unchecked")
 
-
-	private final int ROW_DIMENSIONS;
-	private final int COL_DIMENSIONS;
-	private final int TOTAL_MINES;
-	private int flagsLeft;
-	
-	// ################### Implement Constructor (required) ####################	
-	public MyAI(int rowDimension, int colDimension, int totalMines, int startX, int startY) {
-		this.ROW_DIMENSIONS = rowDimension;
-		this.COL_DIMENSIONS = colDimension;
-		this.TOTAL_MINES = this.flagsLeft = totalMines;
-	}
-
 	/* dev in LOCAL -> test in OPENLAB
 	 *
 	 * LOCAL
@@ -67,9 +54,21 @@ public class MyAI extends AI {
 	 *
 	 */
 
+	private final int ROW_DIMENSIONS;
+	private final int COL_DIMENSIONS;
+	private final int TOTAL_MINES;
+	private int flagsLeft;
+	
+	// ################### Implement Constructor (required) ####################	
+	public MyAI(int rowDimension, int colDimension, int totalMines, int startX, int startY) {
+		this.ROW_DIMENSIONS = rowDimension;
+		this.COL_DIMENSIONS = colDimension;
+		this.TOTAL_MINES = this.flagsLeft = totalMines;
+	}
+	
 	// ################## Implement getAction(), (required) #####################
 	public Action getAction(int number) {
-		
+
 
 
 		return new Action(ACTION.LEAVE);
