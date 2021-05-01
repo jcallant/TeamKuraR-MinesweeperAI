@@ -67,6 +67,7 @@ public class MyAI extends AI {
 	private int lastX;
 	private int lastY;
 	private HashMap<String,Integer> records;
+	private ArrayList<Action> safeTiles;
 	private ArrayList<Action> frontier;
 
 
@@ -80,6 +81,7 @@ public class MyAI extends AI {
 		this.lastX = startX;
 		this.lastY = startY;
 		this.records = new HashMap<>();
+		this.safeTiles = new ArrayList<>();
 		this.frontier = new ArrayList<>();
 	}
 
@@ -92,13 +94,24 @@ public class MyAI extends AI {
 
 		// add neighbors to frontier
 		if(number == 0)
-			addNeighbors(currX,currY);
+			addNeighborsToSafeTiles(currX,currY);
+		else
+			addNeighborsToFrontier(currX,currY);
 
-		// while neighbors to uncover...
+		// while safe neighbors to uncover...
+		if(!safeTiles.isEmpty()){
+			Action a = safeTiles.remove(0);
+			currX = a.x;
+			currY = a.y;
+			return a;
+		}
+
+		// while frontier has tiles
 		if(!frontier.isEmpty()){
 			Action a = frontier.remove(0);
 			currX = a.x;
 			currY = a.y;
+			a = findBestAction(currX, currY);
 			return a;
 		}
 
@@ -111,7 +124,7 @@ public class MyAI extends AI {
 	private String key(int x, int y){
 		return "(" + x + "," + y + ")";
 	}
-	private void addNeighbors(int x, int y){
+	private void addNeighborsToSafeTiles(int x, int y){
 		int rowMin = y-1;
 		int rowMax = y+1;
 		if(rowMin<1) rowMin = 1;
@@ -129,9 +142,37 @@ public class MyAI extends AI {
 				System.out.println(k);
 				if (!records.containsKey(k)) {
 					records.put(k, -1);
-					frontier.add(new Action(ACTION.UNCOVER, i, j));
+					safeTiles.add(new Action(ACTION.UNCOVER, i, j));
 				}
 			}
 		}
+	}
+
+	private void addNeighborsToFrontier(int x, int y){
+		int rowMin = y-1;
+		int rowMax = y+1;
+		if(rowMin<1) rowMin = 1;
+		if(rowMax>ROW_DIMENSIONS) rowMax = ROW_DIMENSIONS;
+
+		int colMin = x-1;
+		int colMax = x+1;
+		if(colMin<1) colMin = 1;
+		if(colMax>COL_DIMENSIONS) colMax = COL_DIMENSIONS;
+
+		for(int j=rowMax; j>rowMin-1; j--){
+			for(int i=colMin; i<colMax+1; i++) {
+				if (j==currY && i==currX) continue;
+				String k = key(i, j);
+				System.out.println(k);
+				if (!records.containsKey(k)) {
+					records.put(k, -1);
+					frontier.add(new Action(ACTION.FLAG, i, j));
+				}
+			}
+		}
+	}
+
+	private Action findBestAction(int x, int y){
+		return new Action(ACTION.FLAG, x, y);
 	}
 }
