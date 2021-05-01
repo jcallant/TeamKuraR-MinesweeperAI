@@ -112,7 +112,7 @@ public class MyAI extends AI {
 
 		// while mines to flag...
 		if(!guaranteedMine.isEmpty()){
-			Action a = guaranteedSafe.remove(0);
+			Action a = guaranteedMine.remove(0);
 			currX = a.x;
 			currY = a.y;
 			return a;
