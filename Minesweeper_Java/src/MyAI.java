@@ -114,17 +114,17 @@ public class MyAI extends AI {
 	}
 	private void addNeighbors(int x, int y){
 		int rowMin = y-1;
-		int colMin = x-1;
-		if(rowMin<1) rowMin = 1;
-		if(colMin<1) colMin = 1;
-
 		int rowMax = y+1;
-		int colMax = x+1;
+		if(rowMin<1) rowMin = 1;
 		if(rowMax>ROW_DIMENSIONS) rowMax = ROW_DIMENSIONS;
+
+		int colMin = x-1;
+		int colMax = x+1;
+		if(colMin<1) colMin = 1;
 		if(colMax>COL_DIMENSIONS) colMax = COL_DIMENSIONS;
 
 		for(int i=colMin; i<colMax+1; i++){
-			for(int j=rowMin; j<rowMin+1; j++){
+			for(int j=rowMin; j<rowMax+1; j++){
 				System.out.println(key(i,j));
 				frontier.add(new Action(ACTION.UNCOVER, i, j));
 			}
