@@ -119,7 +119,7 @@ public class MyAI extends AI {
 		}
 
 		// while uncovered frontier has tiles
-		if(!uncoveredFrontier.isEmpty()){
+		while(!uncoveredFrontier.isEmpty()){
 			Action a = uncoveredFrontier.remove(0);
 			ArrayList<Action> possible = countCoveredNeighbors(a.x,a.y);
 			System.out.println(key(a.x,a.y) + " ucn: " + possible.size());
@@ -228,14 +228,33 @@ public class MyAI extends AI {
 	}
 
 	private Action flagAndUpdate(ArrayList<Action> flags, int x, int y){
-		int labelValue = records.get(key(x,y));
-		labelValue--;
-		records.put(key(x,y), labelValue);
-
 		for (Action f : flags){
 			records.put(key(f.x,f.y), -3);
 			guaranteedMine.add(f);
 		}
+
+		int rowMin = y-1;
+		int rowMax = y+1;
+		if(rowMin<1) rowMin = 1;
+		if(rowMax>ROW_DIMENSIONS) rowMax = ROW_DIMENSIONS;
+
+		int colMin = x-1;
+		int colMax = x+1;
+		if(colMin<1) colMin = 1;
+		if(colMax>COL_DIMENSIONS) colMax = COL_DIMENSIONS;
+
+		ArrayList<Action> possible = new ArrayList<>();
+		for(int j=rowMax; j>rowMin-1; j--){
+			for(int i=colMin; i<colMax+1; i++) {
+				String k = key(i, j);
+				if (records.get(k) > 0){
+					int labelValue = records.get(k);
+					labelValue--;
+					records.put(k, labelValue);
+				}
+			}
+		}
+
 		return guaranteedMine.remove(0);
 	}
 
