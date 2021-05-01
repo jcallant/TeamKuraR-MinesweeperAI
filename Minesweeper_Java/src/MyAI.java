@@ -59,8 +59,6 @@ public class MyAI extends AI {
 	private final int COL_DIMENSIONS;
 	private final int TOTAL_MINES;
 	private int flagsLeft;
-	private int x;
-	private int y;
 	private LinkedList<int[]> coords;
 
 	
@@ -69,21 +67,17 @@ public class MyAI extends AI {
 		this.ROW_DIMENSIONS = rowDimension;
 		this.COL_DIMENSIONS = colDimension;
 		this.TOTAL_MINES = this.flagsLeft = totalMines;
-		x = startX;
-		y = startY;
 		coords = new LinkedList<>();
+		coords.add(new int[]{startX, startY});
 	}
 	
 	// ################## Implement getAction(), (required) #####################
 	public Action getAction(int number) {
+		int[] last = coords.getLast();
 		if (number == 0) {
-			int tLocation = determineBorder(x, y);
-			addNeighborsZero(tLocation);
-		}
-		for (int[] a : coords) {
-			System.out.print(a[0]);
-			System.out.print(" ");
-			System.out.println(a[1]);
+			int tLocation = determineBorder(last[0], last[1]);
+			addNeighborsZero(tLocation, last[0], last[1]);
+			return new Action(ACTION.UNCOVER, last[0], last[1]);
 		}
 
 
@@ -110,7 +104,7 @@ public class MyAI extends AI {
 		return 9; // should never be reached
 	}
 
-	private void addNeighborsZero(int tLocation) {
+	private void addNeighborsZero(int tLocation, int x, int y) {
 		switch (tLocation) {
 			case 0:
 				coords.add(new int[]{x+1,y});	// right
