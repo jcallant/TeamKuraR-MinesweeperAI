@@ -196,8 +196,8 @@ public class MyAI extends AI {
 			for(int i=colMin; i<colMax+1; i++) {
 				if (j==currY && i==currX) continue;
 				String k = key(i, j);
-				System.out.println(k);
 				if (!records.containsKey(k)) {
+					System.out.println(k + "added to covered frontier");
 					records.put(k, -1);
 					coveredFrontier.add(new Action(ACTION.FLAG, i, j));
 				}
@@ -206,6 +206,7 @@ public class MyAI extends AI {
 	}
 
 	private void addSelfToUncoveredFrontier(int x, int y){
+		System.out.println(key(x,y) + "added to uncovered frontier");
 		uncoveredFrontier.add(new Action(ACTION.FLAG, x, y));
 	}
 
