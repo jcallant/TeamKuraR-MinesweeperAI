@@ -63,7 +63,7 @@ public class MyAI extends AI {
 	private final int TOTAL_MINES;
 	private int flagsLeft;
 	private LinkedList<int[]> coords;
-	private ArrayList<int[]> visited;
+	private ArrayList<String> visited;
 
 	
 	// ################### Implement Constructor (required) ####################	
@@ -80,13 +80,8 @@ public class MyAI extends AI {
 	public Action getAction(int number) {
 		if (!coords.isEmpty()) {
 			int[] last = coords.getLast();
-			visited.add(last);
+			visited.add(last[0]+ "," + last[1]);
 			coords.removeLast();
-			for (int[] a : visited) {
-				System.out.print(a[0]);
-				System.out.print(" ");
-				System.out.println(a[1]);
-			}
 			if (number == 0) {
 				int tLocation = determineBorder(last[0], last[1]);
 				addNeighborsZero(tLocation, last[0], last[1]);
@@ -120,67 +115,73 @@ public class MyAI extends AI {
 	}
 
 	private void addNeighborsZero(int tLocation, int x, int y) {
+		String leftX = Integer.toString(x-1);
+		String X = Integer.toString(x);
+		String rightX = Integer.toString(x+1);
+		String downY = Integer.toString(y-1);
+		String Y = Integer.toString(y);
+		String upY = Integer.toString(y+1);
 		int[] topLeft = {x-1,y+1}; int[] top = {x,y+1}; int[] topRight = {x+1,y+1};
 		int[] left = {x-1,y}; 							int[] right = {x+1,y};
 		int[] botLeft = {x-1,y-1}; int[] bot = {x,y-1}; int[] botRight = {x+1,y-1};
 		switch (tLocation) {
 			case 0:
-				if (!visited.contains(right)) { coords.add(right); }
-				if (!visited.contains(bot)) { coords.add(bot); }
-				if (!visited.contains(botRight)) { coords.add(botRight); }
+				if (!visited.contains(rightX+ ","+Y)) { coords.add(right); }
+				if (!visited.contains(X+","+downY)) { coords.add(bot); }
+				if (!visited.contains(rightX+","+downY)) { coords.add(botRight); }
 				break;
 			case 1:
-				if (!visited.contains(left)) { coords.add(left); }
-				if (!visited.contains(right)) { coords.add(right); }
-				if (!visited.contains(botLeft)) { coords.add(botLeft); }
-				if (!visited.contains(bot)) { coords.add(bot); }
-				if (!visited.contains(botRight)) { coords.add(botRight); }
+				if (!visited.contains(leftX+","+Y)) { coords.add(left); }
+				if (!visited.contains(rightX+","+Y)) { coords.add(right); }
+				if (!visited.contains(leftX+","+downY)) { coords.add(botLeft); }
+				if (!visited.contains(X+","+downY)) { coords.add(bot); }
+				if (!visited.contains(rightX+","+downY)) { coords.add(botRight); }
 				break;
 			case 2:
-				if (!visited.contains(left)) { coords.add(left); }
-				if (!visited.contains(bot)) { coords.add(bot); }
-				if (!visited.contains(botLeft)) { coords.add(botLeft); }
+				if (!visited.contains(leftX+","+Y)) { coords.add(left); }
+				if (!visited.contains(X+","+downY)) { coords.add(bot); }
+				if (!visited.contains(leftX+","+downY)) { coords.add(botLeft); }
 				break;
 			case 3:
-				if (!visited.contains(top)) { coords.add(top); }
-				if (!visited.contains(topRight)) { coords.add(topRight); }
-				if (!visited.contains(right)) { coords.add(right); }
-				if (!visited.contains(bot)) { coords.add(bot); }
-				if (!visited.contains(botRight)) { coords.add(botRight); }
+				if (!visited.contains(X+","+upY)) { coords.add(top); }
+				if (!visited.contains(rightX+","+upY)) { coords.add(topRight); }
+				if (!visited.contains(rightX+","+Y)) { coords.add(right); }
+				if (!visited.contains(X+","+downY)) { coords.add(bot); }
+				if (!visited.contains(rightX+","+downY)) { coords.add(botRight); }
 				break;
 			case 4:
-				if (!visited.contains(topLeft)) { coords.add(topLeft); }
-				if (!visited.contains(top)) { coords.add(top); }
-				if (!visited.contains(topRight)) { coords.add(topRight); }
-				if (!visited.contains(left)) { coords.add(left); }
-				if (!visited.contains(right)) { coords.add(right); }
-				if (!visited.contains(botLeft)) { coords.add(botLeft); }
-				if (!visited.contains(bot)) { coords.add(bot); }
-				if (!visited.contains(botRight)) { coords.add(botRight); }
+				if (!visited.contains(leftX+","+upY)) { coords.add(topLeft); }
+				if (!visited.contains(X+","+upY)) { coords.add(top); }
+				if (!visited.contains(rightX+","+upY)) { coords.add(topRight); }
+				if (!visited.contains(leftX+","+Y)) { coords.add(left); }
+				if (!visited.contains(rightX+","+Y)) { coords.add(right); }
+				if (!visited.contains(leftX+","+downY)) { coords.add(botLeft); }
+				if (!visited.contains(X+","+downY)) { coords.add(bot); }
+				if (!visited.contains(rightX+","+downY)) { coords.add(botRight); }
 				break;
 			case 5:
-				if (!visited.contains(topLeft)) { coords.add(topLeft); }
-				if (!visited.contains(top)) { coords.add(top); }
-				if (!visited.contains(left)) { coords.add(left); }
-				if (!visited.contains(botLeft)) { coords.add(botLeft); }
-				if (!visited.contains(bot)) { coords.add(bot); }
+				if (!visited.contains(leftX+","+upY)) { coords.add(topLeft); }
+				if (!visited.contains(X+","+upY)) { coords.add(top); }
+				if (!visited.contains(leftX+","+Y)) { coords.add(left); }
+				if (!visited.contains(leftX+","+downY)) { coords.add(botLeft); }
+				if (!visited.contains(X+","+downY)) { coords.add(bot); }
 				break;
 			case 6:
-				if (!visited.contains(top)) { coords.add(top); }
-				if (!visited.contains(topRight)) { coords.add(topRight); }
-				if (!visited.contains(right)) { coords.add(right); }
+				if (!visited.contains(X+","+upY)) { coords.add(top); }
+				if (!visited.contains(rightX+","+upY)) { coords.add(topRight); }
+				if (!visited.contains(rightX+","+Y)) { coords.add(right); }
 				break;
 			case 7:
-				if (!visited.contains(topLeft)) { coords.add(topLeft); }
-				if (!visited.contains(top)) { coords.add(top); }
-				if (!visited.contains(topRight)) { coords.add(topRight); }
-				if (!visited.contains(left)) { coords.add(left); }
-				if (!visited.contains(right)) { coords.add(right); }
+				if (!visited.contains(leftX+","+upY)) { coords.add(topLeft); }
+				if (!visited.contains(X+","+upY)) { coords.add(top); }
+				if (!visited.contains(rightX+","+upY)) { coords.add(topRight); }
+				if (!visited.contains(leftX+","+Y)) { coords.add(left); }
+				if (!visited.contains(rightX+","+Y)) { coords.add(right); }
 				break;
 			case 8:
-				if (!visited.contains(topLeft)) { coords.add(topLeft); }
-				if (!visited.contains(top)) { coords.add(top); }
-				if (!visited.contains(left)) { coords.add(left); }
+				if (!visited.contains(leftX+","+upY)) { coords.add(topLeft); }
+				if (!visited.contains(X+","+upY)) { coords.add(top); }
+				if (!visited.contains(leftX+","+Y)) { coords.add(left); }
 				break;
 			default:
 				break;
