@@ -97,6 +97,7 @@ public class MyAI extends AI {
 			addNeighborsToSafeTiles(currX,currY);
 		else
 			addNeighborsToFrontier(currX,currY);
+		System.out.println(records);
 
 		// while safe neighbors to uncover...
 		if(!safeTiles.isEmpty()){
