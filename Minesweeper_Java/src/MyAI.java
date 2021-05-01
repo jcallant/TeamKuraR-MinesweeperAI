@@ -185,7 +185,7 @@ public class MyAI extends AI {
 	}
 
 	private void addSelfToUncoveredFrontier(int x, int y){
-		coveredFrontier.add(new Action(ACTION.FLAG, x, y));
+		uncoveredFrontier.add(new Action(ACTION.FLAG, x, y));
 	}
 
 	private Action findBestAction(int x, int y){
