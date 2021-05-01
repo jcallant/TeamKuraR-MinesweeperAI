@@ -267,12 +267,12 @@ public class MyAI extends AI {
 					String k = key(i, j);
 					if (records.containsKey(k) && !updated.contains(k)) {
 						if (records.get(k)>0){
-							System.out.println("update: " + k + "=" + records.get(k));
 							int labelValue = records.get(k);
 							labelValue--;
 							records.put(k, labelValue);
+							System.out.println("update: " + k + " = " + records.get(k)+1 + " -> " + records.get(k));
 							if (labelValue == 0) {
-								System.out.println(" neighbors added");
+								//System.out.println(" neighbors added");
 								//addNeighborsToSafeTiles(i, j); // FIX THIS PATH; UPDATE LABEL AFTER UNCOVER
 							}
 							updated.add(k);
