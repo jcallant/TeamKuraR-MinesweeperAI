@@ -121,7 +121,7 @@ public class MyAI extends AI {
 		}
 
 		// while uncovered frontier has tiles
-		if(!uncoveredFrontier.isEmpty()){
+		while(!uncoveredFrontier.isEmpty()){
 			Action a = uncoveredFrontier.remove(0);
 			while(records.get(key(a.x,a.y)) == 0)
 				a = uncoveredFrontier.remove(0);
