@@ -71,6 +71,7 @@ public class MyAI extends AI {
 		this.TOTAL_MINES = this.flagsLeft = totalMines;
 		x = startX;
 		y = startX;
+		coords = new LinkedList<>();
 	}
 	
 	// ################## Implement getAction(), (required) #####################
