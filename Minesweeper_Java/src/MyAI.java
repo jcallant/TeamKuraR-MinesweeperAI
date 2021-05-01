@@ -84,6 +84,7 @@ public class MyAI extends AI {
 			coords.removeLast();
 			if (number == 0) {
 				int tLocation = determineBorder(last[0], last[1]);
+				System.out.println("adding neighbors");
 				addNeighborsZero(tLocation, last[0], last[1]);
 			}
 			return new Action(ACTION.UNCOVER, last[0], last[1]);
