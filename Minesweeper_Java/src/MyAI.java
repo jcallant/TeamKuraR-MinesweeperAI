@@ -18,6 +18,7 @@ NOTES:       - If you are having trouble understanding how the shell
 
 package src;
 import src.Action.ACTION;
+import  java.util.LinkedList;
 
 public class MyAI extends AI {
 	// ########################## INSTRUCTIONS ##########################
@@ -58,22 +59,94 @@ public class MyAI extends AI {
 	private final int COL_DIMENSIONS;
 	private final int TOTAL_MINES;
 	private int flagsLeft;
+	private int x;
+	private int y;
+	private LinkedList<int[]> coords;
+
 	
 	// ################### Implement Constructor (required) ####################	
 	public MyAI(int rowDimension, int colDimension, int totalMines, int startX, int startY) {
 		this.ROW_DIMENSIONS = rowDimension;
 		this.COL_DIMENSIONS = colDimension;
 		this.TOTAL_MINES = this.flagsLeft = totalMines;
+		x = startX;
+		y = startX;
 	}
 	
 	// ################## Implement getAction(), (required) #####################
 	public Action getAction(int number) {
-		System.out.println(number);
+		if (number == 0) {
+			int tLocation = determineBorder(x, y);
+
+		}
 
 
 		return new Action(ACTION.LEAVE);
 	}
 
 	// ################### Helper Functions Go Here (optional) ##################
-	// ...
+	private int determineBorder(int x, int y) {
+		if (y == ROW_DIMENSIONS) {
+			if (x == 1) 							{ return 0; } // top left corner
+			else if (x > 1 && x < COL_DIMENSIONS) 	{ return 1; } // middle top border
+			else if (x == COL_DIMENSIONS) 			{ return 2; } // top right corner
+		}
+		else if (y > 1 && y < ROW_DIMENSIONS) {
+			if (x == 1) 							{ return 3; } // middle left border
+			else if (x > 1 && x < COL_DIMENSIONS) 	{ return 4; } // not a border piece
+			else if (x == COL_DIMENSIONS) 			{ return 5; } // middle right border
+		}
+		else if (y == 1) {
+			if (x == 1) 							{ return 6; } // bot left corner
+			else if (x > 1 && x < COL_DIMENSIONS) 	{ return 7; } // middle bot border
+			else if (x == COL_DIMENSIONS) 			{ return 8; } // bot right corner
+		}
+		return 9; // should never be reached
+	}
+
+	private void addNeighborsZero(int tLocation) {
+		switch (tLocation) {
+			case 0:
+				coords.add(new int[]{x+1,y});	// right
+				coords.add(new int[]{x,y-1});	// bot
+				coords.add(new int[]{x+1,y-1});	// bot right
+				break;
+			case 1:
+				coords.add(new int[]{x-1,y});	// left
+				coords.add(new int[]{x+1,y});	// right
+				coords.add(new int[]{x-1,y-1});	// bot left
+				coords.add(new int[]{x,y-1});	// bot
+				coords.add(new int[]{x+1,y-1});	// bot right
+				break;
+			case 2:
+				coords.add(new int[]{x-1,y});	// left
+				coords.add(new int[]{x,y-1});	// bot
+				coords.add(new int[]{x-1,y-1});	// bot left
+				break;
+			case 3:
+				coords.add(new int[]{x, y+1});	// top
+				coords.add(new int[]{x+1,y+1});	// top right
+				coords.add(new int[]{x+1,y});	// right
+				coords.add(new int[]{x,y-1});	// bot
+				coords.add(new int[]{x+1,y-1});	// bot right
+				break;
+			case 4:
+				coords.add(new int[]{x-1,y+1}); // top left
+				coords.add(new int[]{x, y+1});	// top
+				coords.add(new int[]{x+1,y+1});	// top right
+				coords.add(new int[]{x-1,y});	// left
+				coords.add(new int[]{x+1,y});	// right
+				coords.add(new int[]{x-1,y-1});	// bot left
+				coords.add(new int[]{x,y-1});	// bot
+				coords.add(new int[]{x+1,y-1});	// bot right
+				break;
+			case 5:
+				coords.add(new int[]{x-1,y+1}); // top left
+				coords.add(new int[]{x, y+1});	// top
+				coords.add(new int[]{x-1,y});	// left
+				coords.add(new int[]{x-1,y-1});	// bot left
+				coords.add(new int[]{x,y-1});	// bot
+
+		}
+	}
 }
