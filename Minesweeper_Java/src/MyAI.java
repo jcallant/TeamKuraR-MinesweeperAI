@@ -77,7 +77,12 @@ public class MyAI extends AI {
 	public Action getAction(int number) {
 		if (number == 0) {
 			int tLocation = determineBorder(x, y);
-
+			addNeighborsZero(tLocation);
+		}
+		for (int[] a : coords) {
+			System.out.print(a[0]);
+			System.out.print(" ");
+			System.out.println(a[1]);
 		}
 
 
@@ -146,7 +151,26 @@ public class MyAI extends AI {
 				coords.add(new int[]{x-1,y});	// left
 				coords.add(new int[]{x-1,y-1});	// bot left
 				coords.add(new int[]{x,y-1});	// bot
-
+				break;
+			case 6:
+				coords.add(new int[]{x, y+1});	// top
+				coords.add(new int[]{x+1,y+1});	// top right
+				coords.add(new int[]{x+1,y});	// right
+				break;
+			case 7:
+				coords.add(new int[]{x-1,y+1}); // top left
+				coords.add(new int[]{x, y+1});	// top
+				coords.add(new int[]{x+1,y+1});	// top right
+				coords.add(new int[]{x-1,y});	// left
+				coords.add(new int[]{x+1,y});	// right
+				break;
+			case 8:
+				coords.add(new int[]{x-1,y+1}); // top left
+				coords.add(new int[]{x, y+1});	// top
+				coords.add(new int[]{x-1,y});	// left
+				break;
+			default:
+				break;
 		}
 	}
 }
