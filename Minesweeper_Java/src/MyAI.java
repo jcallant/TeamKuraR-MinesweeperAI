@@ -82,7 +82,6 @@ public class MyAI extends AI {
 		coords = new LinkedList<>();
 		visited = new ArrayList<>();
 		coords.add(new int[]{startX, startY});
-		actions = 0;
 	}
 	
 	// ################## Implement getAction(), (required) #####################
