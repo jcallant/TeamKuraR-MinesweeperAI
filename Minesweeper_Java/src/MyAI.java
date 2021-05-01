@@ -245,6 +245,8 @@ public class MyAI extends AI {
 	}
 
 	private Action flagAndUpdate(ArrayList<Action> flags, int x, int y){
+		Set<String> updated = new HashSet<>();
+
 		for (Action f : flags) {
 			System.out.println("flag: " + key(f.x,f.y));
 			records.put(key(f.x,f.y),-3);
@@ -260,7 +262,6 @@ public class MyAI extends AI {
 			if (colMin < 1) colMin = 1;
 			if (colMax > COL_DIMENSIONS) colMax = COL_DIMENSIONS;
 
-			Set<String> updated = new HashSet<>();
 			for (int j = rowMax; j > rowMin - 1; j--) {
 				for (int i = colMin; i < colMax + 1; i++) {
 					String k = key(i, j);
