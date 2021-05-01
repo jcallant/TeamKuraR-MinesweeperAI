@@ -65,7 +65,6 @@ public class MyAI extends AI {
 	private int flagsLeft;
 	private LinkedList<int[]> coords;
 	private ArrayList<String> visited;
-	private int actions;
 	private int startX;
 	private int startY;
 	private int prevX;
@@ -78,6 +77,8 @@ public class MyAI extends AI {
 		this.TOTAL_MINES = this.flagsLeft = totalMines;
 		this.startX = startX;
 		this.startY = startY;
+		this.prevX = -1;
+		this.prevY = -1;
 		coords = new LinkedList<>();
 		visited = new ArrayList<>();
 		coords.add(new int[]{startX, startY});
@@ -86,8 +87,10 @@ public class MyAI extends AI {
 	
 	// ################## Implement getAction(), (required) #####################
 	public Action getAction(int number) {
-		if (actions == 0) {
-			actions++;
+		if (visited.size() == (ROW_DIMENSIONS*COL_DIMENSIONS)-TOTAL_MINES) {
+			return new Action(ACTION.LEAVE);
+		}
+		if (prevX == -1 && prevY == -1) {
 			prevX = startX;
 			prevY = startY;
 			return new Action(ACTION.UNCOVER, startX, startY);
@@ -98,15 +101,11 @@ public class MyAI extends AI {
 			System.out.println("currently " + prevX + "," + prevY);
 			visited.add(prevX+ "," + prevY);
 			coords.removeLast();
-			for (int[] a : coords) {
-				System.out.println(a[0] + "," + a[1]);
-			}
 			if (number == 0) {
 				int tLocation = determineBorder(prevX, prevY);
 				System.out.println("added neighbors");
 				addNeighborsZero(tLocation, prevX, prevY);
 			}
-			actions++;
 			prevX = last[0];
 			prevY = last[1];
 			return new Action(ACTION.UNCOVER, last[0], last[1]);
