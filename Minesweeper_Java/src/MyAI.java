@@ -275,7 +275,7 @@ public class MyAI extends AI {
 							int labelValue = records.get(k);
 							labelValue--;
 							records.put(k, labelValue);
-							System.out.println("update: " + k + " = " + records.get(k)+1 + " -> " + records.get(k));
+							System.out.println("update: " + k + " = " + (records.get(k)+1) + " -> " + records.get(k));
 
 							// if new label == 0, uncover any remaining covered neighbors
 							if (labelValue == 0) {
