@@ -50,10 +50,28 @@ public class MyAI extends AI {
 		this.COL_DIMENSIONS = colDimension;
 		this.TOTAL_MINES = this.flagsLeft = totalMines;
 	}
-	
+
+	/* dev in LOCAL -> test in OPENLAB
+	 *
+	 * LOCAL
+	 * 1. make changes to MyAI.java
+	 * 2. git add MyAI.java
+	 * 3. git commit -m
+	 * 4. git push
+	 *
+	 * in OPENLAB
+	 * 1. git branch/checkout (make sure in correct branch)
+	 * 1. git pull
+	 * 2. check changes
+	 * 3. test
+	 *
+	 */
+
 	// ################## Implement getAction(), (required) #####################
 	public Action getAction(int number) {
-		/* testing local repo -> ics repo */
+		
+
+
 		return new Action(ACTION.LEAVE);
 	}
 
