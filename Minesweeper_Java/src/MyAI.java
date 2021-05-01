@@ -21,6 +21,8 @@ import src.Action.ACTION;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public class MyAI extends AI {
 	// ########################## INSTRUCTIONS ##########################
@@ -119,8 +121,10 @@ public class MyAI extends AI {
 		}
 
 		// while uncovered frontier has tiles
-		while(!uncoveredFrontier.isEmpty()){
+		if(!uncoveredFrontier.isEmpty()){
 			Action a = uncoveredFrontier.remove(0);
+			while(records.get(key(a.x,a.y)) == 0)
+				a = uncoveredFrontier.remove(0);
 			ArrayList<Action> possible = countCoveredNeighbors(a.x,a.y);
 			System.out.println(key(a.x,a.y) + " ucn: " + possible.size());
 			if(possible.size() == records.get(key(a.x,a.y))){
@@ -229,28 +233,29 @@ public class MyAI extends AI {
 
 	private Action flagAndUpdate(ArrayList<Action> flags, int x, int y){
 		System.out.println("flagAndUpdate: " + key(x,y));
-		for (Action f : flags){
-			records.put(key(f.x,f.y), -3);
+		for (Action f : flags) {
 			guaranteedMine.add(f);
-		}
 
-		int rowMin = y-1;
-		int rowMax = y+1;
-		if(rowMin<1) rowMin = 1;
-		if(rowMax>ROW_DIMENSIONS) rowMax = ROW_DIMENSIONS;
+			int rowMin = f.y - 1;
+			int rowMax = f.y + 1;
+			if (rowMin < 1) rowMin = 1;
+			if (rowMax > ROW_DIMENSIONS) rowMax = ROW_DIMENSIONS;
 
-		int colMin = x-1;
-		int colMax = x+1;
-		if(colMin<1) colMin = 1;
-		if(colMax>COL_DIMENSIONS) colMax = COL_DIMENSIONS;
+			int colMin = f.x - 1;
+			int colMax = f.x + 1;
+			if (colMin < 1) colMin = 1;
+			if (colMax > COL_DIMENSIONS) colMax = COL_DIMENSIONS;
 
-		for(int j=rowMax; j>rowMin-1; j--){
-			for(int i=colMin; i<colMax+1; i++) {
-				String k = key(i, j);
-				if (records.get(k) > 0){
-					int labelValue = records.get(k);
-					labelValue--;
-					records.put(k, labelValue);
+			Set<String> updated = new HashSet<>();
+			for (int j = rowMax; j > rowMin - 1; j--) {
+				for (int i = colMin; i < colMax + 1; i++) {
+					String k = key(i, j);
+					if (records.get(k) > 0 && !updated.contains(k)) {
+						int labelValue = records.get(k);
+						labelValue--;
+						records.put(k, labelValue);
+						updated.add(k);
+					}
 				}
 			}
 		}
