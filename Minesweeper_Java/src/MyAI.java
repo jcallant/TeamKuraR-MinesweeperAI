@@ -124,7 +124,7 @@ public class MyAI extends AI {
 
 		for(int j=rowMax; j>rowMin-1; j--){
 			for(int i=colMin; i<colMax+1; i++) {
-				if (j == i) continue;
+				if (j==currY && i==currX) continue;
 				String k = key(i, j);
 				if (!records.containsKey(k)) {
 					System.out.println(key(i, j));
