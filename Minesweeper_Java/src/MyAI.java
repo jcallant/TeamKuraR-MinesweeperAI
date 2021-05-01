@@ -112,7 +112,15 @@ public class MyAI extends AI {
 			return a;
 		}
 
-		// while frontier has tiles
+		// while uncovered frontier has tiles
+		if(!uncoveredFrontier.isEmpty()){
+			Action a = uncoveredFrontier.remove(0);
+			ArrayList<String> keys = countCoveredNeighbors(a.x,a.y);
+			if(keys.size() == records.get(key(a.x,a.y)))
+				return flagAndUpdate(a.x, a.y, keys);
+		}
+
+		// while covered frontier has tiles
 		if(!coveredFrontier.isEmpty()){
 			Action a = coveredFrontier.remove(0);
 			while(records.get(key(a.x,a.y))==0)
@@ -149,11 +157,11 @@ public class MyAI extends AI {
 				String k = key(i, j);
 				System.out.println(k);
 				if (!records.containsKey(k)) {
-					records.put(k, -1);
+					records.put(k, 0);
 					safeTiles.add(new Action(ACTION.UNCOVER, i, j));
 				}
-				else if(records.get(k)==-2) {
-					records.put(k, -1);
+				else if(records.get(k)==-1) {
+					records.put(k, 0);
 					safeTiles.add(new Action(ACTION.UNCOVER, i, j));
 				}
 			}
@@ -177,7 +185,7 @@ public class MyAI extends AI {
 				String k = key(i, j);
 				System.out.println(k);
 				if (!records.containsKey(k)) {
-					records.put(k, -2);
+					records.put(k, -1);
 					coveredFrontier.add(new Action(ACTION.FLAG, i, j));
 				}
 			}
@@ -187,6 +195,40 @@ public class MyAI extends AI {
 	private void addSelfToUncoveredFrontier(int x, int y){
 		uncoveredFrontier.add(new Action(ACTION.FLAG, x, y));
 	}
+
+	private ArrayList<String> countCoveredNeighbors(int x, int y){
+		int rowMin = y-1;
+		int rowMax = y+1;
+		if(rowMin<1) rowMin = 1;
+		if(rowMax>ROW_DIMENSIONS) rowMax = ROW_DIMENSIONS;
+
+		int colMin = x-1;
+		int colMax = x+1;
+		if(colMin<1) colMin = 1;
+		if(colMax>COL_DIMENSIONS) colMax = COL_DIMENSIONS;
+
+		ArrayList<String> keys = new ArrayList<>();
+		for(int j=rowMax; j>rowMin-1; j--){
+			for(int i=colMin; i<colMax+1; i++) {
+				if (j==currY && i==currX) continue;
+				String k = key(i, j);
+				if (records.get(k)==-1)
+					keys.add(key(i,j));
+			}
+		}
+		return keys;
+	}
+
+	private Action flagAndUpdate(int x, int y, ArrayList<String> keys){
+		for (String k : keys){
+			int labelValue = records.get(k);
+			labelValue--;
+			records.put(k, labelValue);
+		}
+		records.put(key(x,y), -3);
+		return new Action(ACTION.FLAG, x, y);
+	}
+
 
 	private Action findBestAction(int x, int y){
 		return new Action(ACTION.FLAG, x, y);
