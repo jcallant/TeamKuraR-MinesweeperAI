@@ -84,26 +84,25 @@ public class MyAI extends AI {
 	}
 
 	// ################## Implement getAction(), (required) #####################
-	String s = key(currX, currY);
 	public Action getAction(int number) {
-		String r = String.format("(%d,%d): %d", lastX, lastY, number);
-		System.out.println(r);
-
 		// store value in records
+		String s = key(currX,currY);
 		records.put(s, number);
-
-		// while neighbors to uncover...
-		if(!frontier.isEmpty());
+		System.out.println(s + ": " + number);
 
 		// add neighbors to frontier
-		addNeighbors(currX,currY);
+		if(number == 0)
+			addNeighbors(currX,currY);
 
-		//if label is zero, start uncovering neighbors
-		if(number == 0){
-			if(currX<COL_DIMENSIONS) currX++;
-			if(currY<ROW_DIMENSIONS) currY++;
-			return new Action(ACTION.UNCOVER, currX, currY);
+		// while neighbors to uncover...
+		if(!frontier.isEmpty()){
+			Action a = frontier.remove(0);
+			currX = a.x;
+			currY = a.y;
+			return a;
 		}
+
+
 
 		return new Action(ACTION.LEAVE);
 	}
