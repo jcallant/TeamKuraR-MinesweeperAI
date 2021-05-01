@@ -70,7 +70,7 @@ public class MyAI extends AI {
 		this.COL_DIMENSIONS = colDimension;
 		this.TOTAL_MINES = this.flagsLeft = totalMines;
 		x = startX;
-		y = startX;
+		y = startY;
 		coords = new LinkedList<>();
 	}
 	
