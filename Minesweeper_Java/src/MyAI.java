@@ -85,13 +85,13 @@ public class MyAI extends AI {
 			if (number == 0) {
 				int tLocation = determineBorder(last[0], last[1]);
 				addNeighborsZero(tLocation, last[0], last[1]);
-				return new Action(ACTION.UNCOVER, last[0], last[1]);
 			}
+			return new Action(ACTION.UNCOVER, last[0], last[1]);
+
 		}
 		else {
 			return new Action(ACTION.LEAVE);
 		}
-		return new Action(ACTION.LEAVE);
 	}
 
 	// ################### Helper Functions Go Here (optional) ##################
