@@ -126,8 +126,8 @@ public class MyAI extends AI {
 			for(int i=colMin; i<colMax+1; i++) {
 				if (j==currY && i==currX) continue;
 				String k = key(i, j);
+				System.out.println(k);
 				if (!records.containsKey(k)) {
-					System.out.println(key(i, j));
 					frontier.add(new Action(ACTION.UNCOVER, i, j));
 				}
 			}
