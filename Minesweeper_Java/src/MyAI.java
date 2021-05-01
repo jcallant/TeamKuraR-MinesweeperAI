@@ -100,7 +100,7 @@ public class MyAI extends AI {
 			addNeighborsToCoveredFrontier(currX, currY);
 			addSelfToUncoveredFrontier(currX,currY);
 		}
-//		System.out.println("\n" + records);
+		System.out.println("\n" + records);
 		System.out.println("\n" + safeTiles);
 		System.out.println("\n" + uncoveredFrontier);
 
