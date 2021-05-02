@@ -111,9 +111,10 @@ public class MyAI extends AI {
 			}
 		}
 
-		System.out.println("\n" + records);
-		System.out.println("\n" + guaranteedSafe);
-		System.out.println("\n" + uncoveredFrontier);
+		System.out.println("\n records: " + records);
+		System.out.println("\n safe: " + guaranteedSafe);
+		System.out.println("\n ucsafeset: " + guaranteedSafeByFlag);
+		System.out.println("\n ucfrontier: " + uncoveredFrontier);
 
 		// while mines to flag...
 		if(!guaranteedMine.isEmpty()){
@@ -151,7 +152,13 @@ public class MyAI extends AI {
 //				currY = a.y;
 				// flag each tile as a mine and update labels of adjacent tiles for each mine
 				flagAndUpdate(possible, a.x, a.y);
-				if (!guaranteedSafe.isEmpty()) {
+				if (!guaranteedMine.isEmpty()) {
+					a = guaranteedMine.remove(0);
+					currX = a.x;
+					currY = a.y;
+					return a;
+				}
+				else if (!guaranteedSafe.isEmpty()) {
 					a = guaranteedSafe.remove(0);
 					currX = a.x;
 					currY = a.y;
