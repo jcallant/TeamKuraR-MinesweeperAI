@@ -97,6 +97,7 @@ public class MyAI extends AI {
 			String k = key(currX, currY);
 			records.put(k, number);
 			records.put(k, refreshLabel(currX,currY));
+			number = records.get(k);
 			System.out.println(k + ": " + number);
 
 			// add neighbors to frontier
