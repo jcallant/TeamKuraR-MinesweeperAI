@@ -135,7 +135,7 @@ public class MyAI extends AI {
 			int label = records.get(key(a.x,a.y));
 
 			// if no adjacent mines or is mine itself, pick another
-			while((label == 0 || label == -3)) {
+			while((label == -3)) {
 				if(uncoveredFrontier.isEmpty()) return new Action(ACTION.LEAVE);
 				a = uncoveredFrontier.remove(0);
 				label = records.get(key(a.x,a.y));
