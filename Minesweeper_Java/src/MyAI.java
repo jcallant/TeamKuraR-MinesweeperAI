@@ -256,7 +256,6 @@ public class MyAI extends AI {
 
 		// for each guaranteed mine
 		for (Action f : flags) {
-//			Set<String> updated = new HashSet<>();
 
 			// flag the mine
 			System.out.println("flag: " + key(f.x,f.y));
@@ -277,7 +276,7 @@ public class MyAI extends AI {
 			for (int j = rowMax; j > rowMin - 1; j--) {
 				for (int i = colMin; i < colMax + 1; i++) {
 					String k = key(i, j);
-					if (records.containsKey(k) /*&& !updated.contains(k)*/) {
+					if (records.containsKey(k)) {
 						if (records.get(k)>0){
 							int labelValue = records.get(k);
 							labelValue--;
@@ -286,7 +285,6 @@ public class MyAI extends AI {
 
 							// if new label == 0, uncover any remaining covered neighbors
 							if (labelValue == 0) {
-								//System.out.println(" neighbors added");
 								addNeighborsToSafeTiles(i, j); // FIX THIS PATH; UPDATE LABEL AFTER UNCOVER
 							}
 						}
