@@ -95,16 +95,13 @@ public class MyAI extends AI {
 		// store valid value in records
 		if(number >= 0) {
 			String k = key(currX, currY);
-			if(guaranteedSafeByFlag.contains(k)){
-				number--;
-				guaranteedSafeByFlag.remove(k);
-			}
 			records.put(k, number);
+			records.put(k, refreshLabel(currX,currY));
 			System.out.println(k + ": " + number);
 
 			// add neighbors to frontier
 			if (number == 0)
-				addNeighborsToSafeTiles(currX, currY, false);
+				addNeighborsToSafeTiles(currX, currY);
 			else {
 				addNeighborsToCoveredFrontier(currX, currY);
 				addSelfToUncoveredFrontier(currX, currY);
@@ -148,16 +145,19 @@ public class MyAI extends AI {
 			System.out.println(key(a.x,a.y) + " ucn: " + possible.size());
 			if(possible.size() == records.get(key(a.x,a.y))){
 				System.out.println("--match");
-//				currX = a.x;
-//				currY = a.y;
+
 				// flag each tile as a mine and update labels of adjacent tiles for each mine
 				flagAndUpdate(possible, a.x, a.y);
+
+				// flag mines if found
 				if (!guaranteedMine.isEmpty()) {
 					a = guaranteedMine.remove(0);
 					currX = a.x;
 					currY = a.y;
 					return a;
 				}
+
+				// uncover safe if found
 				else if (!guaranteedSafe.isEmpty()) {
 					a = guaranteedSafe.remove(0);
 					currX = a.x;
@@ -174,7 +174,7 @@ public class MyAI extends AI {
 		return "(" + x + "," + y + ")";
 	}
 
-	private void addNeighborsToSafeTiles(int x, int y, boolean decrementFlag){
+	private void addNeighborsToSafeTiles(int x, int y){
 		int rowMin = y-1;
 		int rowMax = y+1;
 		if(rowMin<1) rowMin = 1;
@@ -193,7 +193,6 @@ public class MyAI extends AI {
 					System.out.println(k + " added to safe");
 					records.put(k, 0);
 					guaranteedSafe.add(new Action(ACTION.UNCOVER, i, j));
-					if(decrementFlag) guaranteedSafeByFlag.add(k);
 				}
 			}
 		}
@@ -253,7 +252,6 @@ public class MyAI extends AI {
 
 	private void flagAndUpdate(ArrayList<Action> flags, int x, int y){
 
-
 		// for each guaranteed mine
 		for (Action f : flags) {
 //			Set<String> updated = new HashSet<>();
@@ -287,24 +285,38 @@ public class MyAI extends AI {
 							// if new label == 0, uncover any remaining covered neighbors
 							if (labelValue == 0) {
 								//System.out.println(" neighbors added");
-								addNeighborsToSafeTiles(i, j, true); // FIX THIS PATH; UPDATE LABEL AFTER UNCOVER
+								addNeighborsToSafeTiles(i, j); // FIX THIS PATH; UPDATE LABEL AFTER UNCOVER
 							}
-//							updated.add(k);
 						}
 					}
 				}
 			}
 		}
-//		if(!guaranteedSafe.isEmpty()) {
-//			Action a = guaranteedSafe.remove(0);
-//			currX = a.x;
-//			currY = a.y;
-//			return a;
-//		}
-//		else if(guaranteedMine.isEmpty()) return new Action(ACTION.LEAVE);
-//		else return guaranteedMine.remove(0);
 	}
 
+	private int refreshLabel(int x, int y){
+		int rowMin = y - 1;
+		int rowMax = y + 1;
+		if (rowMin < 1) rowMin = 1;
+		if (rowMax > ROW_DIMENSIONS) rowMax = ROW_DIMENSIONS;
+
+		int colMin = x - 1;
+		int colMax = x + 1;
+		if (colMin < 1) colMin = 1;
+		if (colMax > COL_DIMENSIONS) colMax = COL_DIMENSIONS;
+
+		int label = records.get(key(x,y));
+		for (int j = rowMax; j > rowMin - 1; j--) {
+			for (int i = colMin; i < colMax + 1; i++) {
+				String k = key(i, j);
+				if (records.containsKey(k) /*&& !updated.contains(k)*/) {
+					if (records.get(k) == -3)
+						label--;
+				}
+			}
+		}
+		return label;
+	}
 
 	private Action findBestAction(int x, int y){
 		return new Action(ACTION.FLAG, x, y);
