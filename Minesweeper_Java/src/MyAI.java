@@ -147,26 +147,18 @@ public class MyAI extends AI {
 			System.out.println(key(a.x,a.y) + " ucn: " + possible.size());
 			if(possible.size() == records.get(key(a.x,a.y))){
 				System.out.println("--match");
-				currX = a.x;
-				currY = a.y;
+//				currX = a.x;
+//				currY = a.y;
 				// flag each tile as a mine and update labels of adjacent tiles for each mine
-				return flagAndUpdate(possible, currX, currY);
+				flagAndUpdate(possible, a.x, a.y);
+				if (!guaranteedSafe.isEmpty()) {
+					a = guaranteedSafe.remove(0);
+					currX = a.x;
+					currY = a.y;
+					return a;
+				}
 			}
 		}
-
-		// while covered frontier has tiles
-//		if(!coveredFrontier.isEmpty()){
-//			Action a = coveredFrontier.remove(0);
-//			while(records.get(key(a.x,a.y))==0)
-//				a = coveredFrontier.remove(0);
-//			currX = a.x;
-//			currY = a.y;
-//			a = findBestAction(currX, currY);
-//			return a;
-//		}
-
-
-
 		return new Action(ACTION.LEAVE);
 	}
 
@@ -252,7 +244,7 @@ public class MyAI extends AI {
 		return possible;
 	}
 
-	private Action flagAndUpdate(ArrayList<Action> flags, int x, int y){
+	private void flagAndUpdate(ArrayList<Action> flags, int x, int y){
 
 
 		// for each guaranteed mine
@@ -296,9 +288,14 @@ public class MyAI extends AI {
 				}
 			}
 		}
-		if(!guaranteedSafe.isEmpty()) return guaranteedSafe.remove(0);
-//		if(guaranteedMine.isEmpty()) return new Action(ACTION.LEAVE);
-		else return guaranteedMine.remove(0);
+//		if(!guaranteedSafe.isEmpty()) {
+//			Action a = guaranteedSafe.remove(0);
+//			currX = a.x;
+//			currY = a.y;
+//			return a;
+//		}
+//		else if(guaranteedMine.isEmpty()) return new Action(ACTION.LEAVE);
+//		else return guaranteedMine.remove(0);
 	}
 
 
