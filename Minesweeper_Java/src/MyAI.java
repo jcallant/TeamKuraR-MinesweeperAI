@@ -135,7 +135,8 @@ public class MyAI extends AI {
 			int label = records.get(key(a.x,a.y));
 
 			// if no adjacent mines or is mine itself, pick another
-			while(label == 0 || label == -3) {
+			while((label == 0 || label == -3)) {
+//				if(uncoveredFrontier.isEmpty()) return new Action(ACTION.LEAVE);
 				a = uncoveredFrontier.remove(0);
 				label = records.get(key(a.x,a.y));
 			}
@@ -191,7 +192,7 @@ public class MyAI extends AI {
 				String k = key(i, j);
 				if (!records.containsKey(k) || records.get(k)==-1) {
 					System.out.println(k + " added to safe");
-					records.put(k, 0);
+					records.put(k, -1);
 					guaranteedSafe.add(new Action(ACTION.UNCOVER, i, j));
 				}
 			}
