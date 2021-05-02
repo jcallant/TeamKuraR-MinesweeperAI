@@ -144,7 +144,7 @@ public class MyAI extends AI {
 			// if label matches the number of adjacent covered tiles
 			ArrayList<Action> possible = countCoveredNeighbors(a.x,a.y);
 			System.out.println(key(a.x,a.y) + " ucn: " + possible.size());
-			if(possible.size() == records.get(key(a.x,a.y))){
+			if(possible.size() <= records.get(key(a.x,a.y))){
 				System.out.println("--match");
 
 				// flag each tile as a mine and update labels of adjacent tiles for each mine
