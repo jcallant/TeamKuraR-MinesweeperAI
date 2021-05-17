@@ -163,10 +163,12 @@ public class MyAI extends AI {
 		// [STEP4.2] Pick from ucf with highest probability
 		System.out.println("\nprobability: " + probability);
 		System.out.println("Picking from ucf with lowest probability...");
-		return coveredFrontier.stream()
+		Action a = coveredFrontier.stream()
 				.filter(t -> probability.containsKey(key(t.x,t.y)))
 				.min(Comparator.comparing(t -> probability.get(key(t.x, t.y))))
 				.orElse(new Action(ACTION.LEAVE));
+		coveredFrontier.remove(a);
+		return a;
 
 		// [STEP4]: use covered frontier to gain new knowledge /
 //		System.out.println("\nPicking from cf...");
