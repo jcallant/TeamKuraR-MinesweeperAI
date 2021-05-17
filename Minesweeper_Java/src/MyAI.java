@@ -19,10 +19,7 @@ NOTES:       - If you are having trouble understanding how the shell
 package src;
 import src.Action.ACTION;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class MyAI extends AI {
 	// ########################## INSTRUCTIONS ##########################
@@ -126,12 +123,15 @@ public class MyAI extends AI {
 
 		// [STEP3]: use uncovered frontier to gain new knowledge
 		System.out.println("\nPicking from ucf...");
-		while(!uncoveredFrontier.isEmpty()){
-			Action a = uncoveredFrontier.remove(0);
+		Iterator<Action> it = uncoveredFrontier.iterator();
+		while(it.hasNext()){
+			//Action a = uncoveredFrontier.remove(0);
+			Action a = it.next();
 			int label = records.get(key(a.x,a.y));
 
 			// if label has no new info, pop again
 			if (label == 0) {
+				it.remove();
 				System.out.println(String.format("%s->%d cn: 0 [no new info]", key(a.x,a.y), label));
 				continue;
 			}
@@ -155,6 +155,7 @@ public class MyAI extends AI {
 		while(!coveredFrontier.isEmpty()){
 			Action a = coveredFrontier.remove(0);
 			int label = records.get(key(a.x, a.y));
+			System.out.println(String.format("%s->%d", key(a.x, a.y), label));
 			while(label != -1) continue;
 
 			// take a ris
