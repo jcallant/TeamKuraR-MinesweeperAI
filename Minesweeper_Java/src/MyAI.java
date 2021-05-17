@@ -138,16 +138,12 @@ public class MyAI extends AI {
 
 			// if label matches the number of adjacent covered tiles
 			ArrayList<Action> possible = countCoveredNeighbors(a.x,a.y);
-			System.out.println(String.format("%s->%d cn: %d", key(a.x,a.y), label, possible.size()));
+			System.out.println(String.format("%s->%d  cn: %d", key(a.x,a.y), label, possible.size()));
 			if(possible.size() <= label){
 				System.out.println("--match");
 
 				// flag each tile as a mine and update labels of adjacent tiles for each mine
 				flagAndUpdate(possible, a.x, a.y);
-
-				// output new details
-				outputKnowledge();
-
 				a = handleGuaranteed();
 				if (a != null) return a;
 			}
@@ -159,6 +155,10 @@ public class MyAI extends AI {
 		while(!coveredFrontier.isEmpty()){
 			Action a = coveredFrontier.remove(0);
 			int label = records.get(key(a.x, a.y));
+			while(label != -1) continue;
+
+			// take a risk
+			return new Action(ACTION.UNCOVER, a.x, a.y);
 		}
 		return new Action(ACTION.LEAVE);
 	}
