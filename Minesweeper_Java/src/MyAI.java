@@ -90,7 +90,7 @@ public class MyAI extends AI {
 	// ################## Implement getAction(), (required) #####################
 	public Action getAction(int number) {
 
-		// store valid value in records
+		// store uncovered value in records
 		if(number >= 0) {
 			String k = key(currX, currY);
 
@@ -100,7 +100,7 @@ public class MyAI extends AI {
 			// refresh value if any neighbors are flagged mines
 			records.put(k, refreshLabel(currX,currY));
 
-			// output label
+			// assign fresh value
 			number = records.get(k);
 			System.out.println(k + ": " + number);
 
@@ -114,30 +114,38 @@ public class MyAI extends AI {
 			}
 		}
 
-		System.out.println("\n records: " + records);
-		System.out.println("\n safe: " + guaranteedSafe);
-		System.out.println("\n uc_frontier: " + uncoveredFrontier);
-		System.out.println("\n c_frontier: " + coveredFrontier);
+		// output all details
+		System.out.println("\nrecords: " + records);
+		System.out.println("\nsafe: " + guaranteedSafe);
+		System.out.println("\nuc frontier: " + uncoveredFrontier);
+		System.out.println("\nc frontier: " + coveredFrontier);
 
-		// while mines to flag...
-		if(!guaranteedMine.isEmpty()){
-			Action a = guaranteedMine.remove(0);
-			currX = a.x;
-			currY = a.y;
-			return a;
-		}
-
-		// while safe neighbors to uncover...
-		if(!guaranteedSafe.isEmpty()){
-			Action a = guaranteedSafe.remove(0);
-			currX = a.x;
-			currY = a.y;
-			return a;
-		}
+//		// while mines to flag...
+//		if(!guaranteedMine.isEmpty()){
+//			Action a = guaranteedMine.remove(0);
+//			currX = a.x;
+//			currY = a.y;
+//			return a;
+//		}
+//
+//		// while safe neighbors to uncover...
+//		if(!guaranteedSafe.isEmpty()){
+//			Action a = guaranteedSafe.remove(0);
+//			currX = a.x;
+//			currY = a.y;
+//			return a;
+//		}
 
 		// while uncovered frontier has tiles
+		// if any guaranteed mines or safe tiles
+		Action guaranteedAction = handleGuaranteed();
+		if(guaranteedAction != null) return guaranteedAction;
+
+		//
 		while(!uncoveredFrontier.isEmpty()){
 			Action a = uncoveredFrontier.remove(0);
+			int label = records.get(key(a.x,a.y));
+			if (label == 0) continue;
 
 			//int label = records.get(key(a.x,a.y));
 			// if is mine itself, pick another or leave
@@ -149,28 +157,30 @@ public class MyAI extends AI {
 
 			// if label matches the number of adjacent covered tiles
 			ArrayList<Action> possible = countCoveredNeighbors(a.x,a.y);
-			System.out.println(key(a.x,a.y) + " ucn: " + possible.size());
-			if(possible.size() <= records.get(key(a.x,a.y))){
+			System.out.println(String.format("%s l: %d cn: %d", key(a.x,a.y), label, possible.size()));
+			if(possible.size() <= label){
 				System.out.println("--match");
 
 				// flag each tile as a mine and update labels of adjacent tiles for each mine
 				flagAndUpdate(possible, a.x, a.y);
 
 				// flag mines if found
-				if (!guaranteedMine.isEmpty()) {
-					a = guaranteedMine.remove(0);
-					currX = a.x;
-					currY = a.y;
-					return a;
-				}
+				//if (!guaranteedMine.isEmpty()) {
+				//	a = guaranteedMine.remove(0);
+				//	currX = a.x;
+				//	currY = a.y;
+				//	return a;
+				//}
 
 				// uncover safe if found
-				else if (!guaranteedSafe.isEmpty()) {
-					a = guaranteedSafe.remove(0);
-					currX = a.x;
-					currY = a.y;
-					return a;
-				}
+				//if (!guaranteedSafe.isEmpty()) {
+				//	a = guaranteedSafe.remove(0);
+				//	currX = a.x;
+				//	currY = a.y;
+				//	return a;
+				//}
+				a = handleGuaranteed();
+				if (a != null) return a;
 			}
 		}
 
@@ -329,7 +339,23 @@ public class MyAI extends AI {
 		return label;
 	}
 
-	private Action findBestAction(int x, int y){
-		return new Action(ACTION.FLAG, x, y);
+	private Action handleGuaranteed(){
+		// flag mines if any
+		if (!guaranteedMine.isEmpty()) {
+			Action a = guaranteedMine.remove(0);
+			currX = a.x;
+			currY = a.y;
+			return a;
+		}
+
+		// uncover safe if any
+		if (!guaranteedSafe.isEmpty()) {
+			Action a = guaranteedSafe.remove(0);
+			currX = a.x;
+			currY = a.y;
+			return a;
+		}
+
+		return null;
 	}
 }
