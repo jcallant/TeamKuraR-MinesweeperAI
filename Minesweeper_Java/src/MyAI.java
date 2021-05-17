@@ -330,6 +330,29 @@ public class MyAI extends AI {
 		return label;
 	}
 
+	private boolean checkNeighborsForMines(int x, int y){
+		int rowMin = y - 1;
+		int rowMax = y + 1;
+		if (rowMin < 1) rowMin = 1;
+		if (rowMax > ROW_DIMENSIONS) rowMax = ROW_DIMENSIONS;
+
+		int colMin = x - 1;
+		int colMax = x + 1;
+		if (colMin < 1) colMin = 1;
+		if (colMax > COL_DIMENSIONS) colMax = COL_DIMENSIONS;
+
+		for (int j = rowMax; j > rowMin - 1; j--) {
+			for (int i = colMin; i < colMax + 1; i++) {
+				String k = key(i, j);
+				if (records.containsKey(k)) {
+					if (records.get(k) == MINE)
+						return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	private Action handleGuaranteed(){
 		// flag mines if any
 		if (!guaranteedMine.isEmpty()) {
@@ -367,13 +390,18 @@ public class MyAI extends AI {
 			int b = records.get(key(i,j-1));
 			int l = records.get(key(i-1,j));
 			int r = records.get(key(i+1,j));
+			
 			if(t == 1 && b == 1) {
-				if(l == COV_NEIGHBOR)
+				if (checkNeighborsForMines(i, j+1) || checkNeighborsForMines(i, j-1)) continue;
+				if(l == COV_NEIGHBOR) {
 					flags.add(new Action(ACTION.FLAG,i-1,j));
-				else if(r == COV_NEIGHBOR)
+				}
+				else if(r == COV_NEIGHBOR) {
 					flags.add(new Action(ACTION.FLAG,i+1,j));
+				}
 			}
 			else if(l == 1 && r == 1) {
+				if (checkNeighborsForMines(i-1, j) || checkNeighborsForMines(i+1, j)) continue;
 				if(t == COV_NEIGHBOR)
 					flags.add(new Action(ACTION.FLAG,i,j+1));
 				else if(b == COV_NEIGHBOR)
