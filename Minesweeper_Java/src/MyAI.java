@@ -67,7 +67,6 @@ public class MyAI extends AI {
 	private int currY;
 	private HashMap<String,Integer> records;
 	private ArrayList<Action> guaranteedSafe;
-	private Set<String> guaranteedSafeByFlag;
 	private ArrayList<Action> guaranteedMine;
 	private ArrayList<Action> coveredFrontier;
 	private ArrayList<Action> uncoveredFrontier;
@@ -83,7 +82,6 @@ public class MyAI extends AI {
 		this.currY = startY;
 		this.records = new HashMap<>();
 		this.guaranteedSafe = new ArrayList<>();
-		this.guaranteedSafeByFlag = new HashSet<>();
 		this.guaranteedMine = new ArrayList<>();
 		this.coveredFrontier = new ArrayList<>();
 		this.uncoveredFrontier = new ArrayList<>();
@@ -118,8 +116,8 @@ public class MyAI extends AI {
 
 		System.out.println("\n records: " + records);
 		System.out.println("\n safe: " + guaranteedSafe);
-		System.out.println("\n ucsafeset: " + guaranteedSafeByFlag);
-		System.out.println("\n ucfrontier: " + uncoveredFrontier);
+		System.out.println("\n uc_frontier: " + uncoveredFrontier);
+		System.out.println("\n c_frontier: " + coveredFrontier);
 
 		// while mines to flag...
 		if(!guaranteedMine.isEmpty()){
