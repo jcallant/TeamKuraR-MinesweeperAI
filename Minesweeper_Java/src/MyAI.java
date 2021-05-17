@@ -349,6 +349,7 @@ public class MyAI extends AI {
 		for (int j = rowMax; j > rowMin - 1; j--) {
 			for (int i = colMin; i < colMax + 1; i++) {
 				String k = key(i, j);
+				System.out.printf("Checking %s neighbors for mines...", k);
 				if (records.containsKey(k)) {
 					if (records.get(k) == MINE)
 						return true;
@@ -391,6 +392,7 @@ public class MyAI extends AI {
 			int i = a.x;
 			int j = a.y;
 
+			System.out.println(key(i,j));
 			int t = records.get(key(i,j+1));
 			int b = records.get(key(i,j-1));
 			int l = records.get(key(i-1,j));
