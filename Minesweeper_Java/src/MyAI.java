@@ -112,7 +112,7 @@ public class MyAI extends AI {
 		System.out.println("\n safe: " + guaranteedSafe);
 		System.out.println("\n ucsafeset: " + guaranteedSafeByFlag);
 		System.out.println("\n ucfrontier: " + uncoveredFrontier);
-        System.out.println("\n cfrontier: " + coveredFrontier);
+        System.out.println("\n cfrontier: " + coveredFrontier.size() + coveredFrontier);
 
 		// while mines to flag...
 		if(!guaranteedMine.isEmpty()){
