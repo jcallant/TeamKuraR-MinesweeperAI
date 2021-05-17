@@ -431,23 +431,23 @@ public class MyAI extends AI {
 		System.out.println("probability: " + probability);
 
 		// pick min probability
-//		Action a = coveredFrontier.stream()
-//				.filter(t -> probability.containsKey(key(t.x,t.y)))
-//				.min(Comparator.comparing(t -> probability.get(key(t.x, t.y))))
-//				.orElse(null);
-
-		// pick min probability that isn't diagonal from corner
 		Action a = coveredFrontier.stream()
 				.filter(t -> probability.containsKey(key(t.x,t.y)))
-				.filter(t -> {
-					boolean right = (t.x != COL_DIMENSIONS && records.containsKey(key(t.x+1, t.y)) && records.get(key(t.x+1, t.y)) == -1);
-					boolean left = (t.x != 1 && records.containsKey(key(t.x-1, t.y)) &&records.get(key(t.x-1, t.y)) == -1);
-					boolean top = (t.y != ROW_DIMENSIONS && records.containsKey(key(t.x, t.y+1)) && records.get(key(t.x, t.y+1)) == -1);
-					boolean bottom = (t.y != 1 && records.containsKey(key(t.x,t.y-1)) && records.get(key(t.x,t.y-1)) == -1);
-					return (top && right) || (top && left) || (bottom && right) || (bottom && left);
-				})
 				.min(Comparator.comparing(t -> probability.get(key(t.x, t.y))))
 				.orElse(null);
+
+		// pick min probability that isn't diagonal from corner
+//		Action a = coveredFrontier.stream()
+//				.filter(t -> probability.containsKey(key(t.x,t.y)))
+//				.filter(t -> {
+//					boolean right = (t.x != COL_DIMENSIONS && records.containsKey(key(t.x+1, t.y)) && records.get(key(t.x+1, t.y)) == -1);
+//					boolean left = (t.x != 1 && records.containsKey(key(t.x-1, t.y)) &&records.get(key(t.x-1, t.y)) == -1);
+//					boolean top = (t.y != ROW_DIMENSIONS && records.containsKey(key(t.x, t.y+1)) && records.get(key(t.x, t.y+1)) == -1);
+//					boolean bottom = (t.y != 1 && records.containsKey(key(t.x,t.y-1)) && records.get(key(t.x,t.y-1)) == -1);
+//					return (top && right) || (top && left) || (bottom && right) || (bottom && left);
+//				})
+//				.min(Comparator.comparing(t -> probability.get(key(t.x, t.y))))
+//				.orElse(null);
 
 		if(a!=null) {
 			coveredFrontier.remove(a);
