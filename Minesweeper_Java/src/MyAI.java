@@ -125,8 +125,8 @@ public class MyAI extends AI {
 
 
 		// [STEP3]: use uncovered frontier to gain new knowledge
+		System.out.println("\nPicking from ucf...");
 		while(!uncoveredFrontier.isEmpty()){
-			System.out.println("\nPicking from ucf...");
 			Action a = uncoveredFrontier.remove(0);
 			int label = records.get(key(a.x,a.y));
 
@@ -155,6 +155,7 @@ public class MyAI extends AI {
 
 
 		// [STEP4]: use covered frontier to gain new knowledge /
+		System.out.println("\nPicking from cf...");
 		while(!coveredFrontier.isEmpty()){
 			Action a = coveredFrontier.remove(0);
 			int label = records.get(key(a.x, a.y));
