@@ -353,7 +353,7 @@ public class MyAI extends AI {
 	private Action checkCase121(){
 		System.out.println("\nSearching ucf for 121...");
 		ArrayList<Action> twos = uncoveredFrontier.stream()
-				.filter(a -> records.get(key(a.x,a.y))!=2)
+				.filter(a -> records.get(key(a.x,a.y))==2)
 				.collect(Collectors.toCollection(ArrayList::new));
 		System.out.println("twos: " + twos);
 		ArrayList<Action> flags = new ArrayList<>();
