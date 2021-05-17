@@ -168,6 +168,8 @@ public class MyAI extends AI {
 				.min(Comparator.comparing(t -> probability.get(key(t.x, t.y))))
 				.orElse(new Action(ACTION.LEAVE));
 		coveredFrontier.remove(a);
+		currX = a.x;
+		currY = a.y;
 		return a;
 
 		// [STEP4]: use covered frontier to gain new knowledge /
