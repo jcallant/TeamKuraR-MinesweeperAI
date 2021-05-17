@@ -67,7 +67,12 @@ public class MyAI extends AI {
 	private ArrayList<Action> guaranteedMine;
 	private ArrayList<Action> coveredFrontier;
 	private ArrayList<Action> uncoveredFrontier;
+	private HashMap<String, Integer> probability;
 	private double elapsedTime;
+
+	// label value constants
+	private final int MINE = -9;
+	private final int COV_NEIGHBOR = -10;
 
 
 	// ################### Implement Constructor (required) ####################	
@@ -82,6 +87,7 @@ public class MyAI extends AI {
 		this.guaranteedMine = new ArrayList<>();
 		this.coveredFrontier = new ArrayList<>();
 		this.uncoveredFrontier = new ArrayList<>();
+		this.probability = new HashMap<>();
 	}
 
 	// ################## Implement getAction(), (required) #####################
@@ -123,7 +129,6 @@ public class MyAI extends AI {
 
 		// [STEP3]: use uncovered frontier to gain new knowledge
 		System.out.println("\nPicking from ucf...");
-		HashMap<String, Double> probability = new HashMap<>();
 		Iterator<Action> it = uncoveredFrontier.iterator();
 		while(it.hasNext()){
 			//Action a = uncoveredFrontier.remove(0);
@@ -137,13 +142,14 @@ public class MyAI extends AI {
 				continue;
 			}
 
-			// if label matches the number of adjacent covered tiles
+			// probability map used to record probabilities of covered tiles
+			probability = new HashMap<>();
+			// get number of covered neighbors
 			ArrayList<Action> possible = countCoveredNeighbors(a.x,a.y);
-			Double p = label / (double) possible.size();
-			probability.put(key(a.x,a.y), p);
-			System.out.println(String.format("%s->%d  cn: %d  p: %.2f", key(a.x,a.y), label, possible.size(), p));
-			//if(possible.size() <= label){
-			if(p >= 1.0){
+			System.out.println(String.format("%s->%d  cn: %d", key(a.x,a.y), label, possible.size()));
+
+			// if number of covered neighbors == label value (remaining numbers are mines)
+			if(possible.size() <= label){
 				System.out.println("--match");
 
 				// flag each tile as a mine and update labels of adjacent tiles for each mine
@@ -154,20 +160,27 @@ public class MyAI extends AI {
 		}
 
 
-		// [STEP4]: use covered frontier to gain new knowledge /
-		System.out.println("\nPicking from cf...");
-		while(!coveredFrontier.isEmpty()){
-			Action a = coveredFrontier.remove(0);
-			int label = records.get(key(a.x, a.y));
-			System.out.println(String.format("%s->%d", key(a.x, a.y), label));
-			if(label != -1) continue;
+		// [STEP4.2] Pick from ucf with highest probability
+		System.out.println("probability: " + probability);
+		System.out.println("Picking from ucf with highest probability...");
+		return uncoveredFrontier.stream()
+				.max(Comparator.comparing(t -> probability.get(key(t.x, t.y))))
+				.orElse(new Action(ACTION.LEAVE));
 
-			// take a risk
-			currX = a.x;
-			currY = a.y;
-			return new Action(ACTION.UNCOVER, a.x, a.y);
-		}
-		return new Action(ACTION.LEAVE);
+		// [STEP4]: use covered frontier to gain new knowledge /
+//		System.out.println("\nPicking from cf...");
+//		while(!coveredFrontier.isEmpty()){
+//			Action a = coveredFrontier.remove(0);
+//			int label = records.get(key(a.x, a.y));
+//			System.out.println(String.format("%s->%d", key(a.x, a.y), label));
+//			if(label != -1) continue;
+//
+//			// take a risk
+//			currX = a.x;
+//			currY = a.y;
+//			return new Action(ACTION.UNCOVER, a.x, a.y);
+//		}
+//		return new Action(ACTION.LEAVE);
 	}
 
 	// ################### Helper Functions Go Here (optional) ##################
@@ -191,7 +204,7 @@ public class MyAI extends AI {
 			for(int i=colMin; i<colMax+1; i++) {
 				if (j==currY && i==currX) continue;
 				String k = key(i, j);
-				if (!records.containsKey(k) || records.get(k)==-1) {
+				if (!records.containsKey(k) || records.get(k)==COV_NEIGHBOR) {
 					System.out.println(k + " added to safe");
 					records.put(k, 0);
 					guaranteedSafe.add(new Action(ACTION.UNCOVER, i, j));
@@ -217,7 +230,7 @@ public class MyAI extends AI {
 				String k = key(i, j);
 				if (!records.containsKey(k)) {
 					System.out.println(k + " added to covered frontier");
-					records.put(k, -1); // -1 placeholder for neighbors of uncovered tiles
+					records.put(k, COV_NEIGHBOR); // -10 placeholder for neighbors of uncovered tiles
 					coveredFrontier.add(new Action(ACTION.FLAG, i, j));
 				}
 			}
@@ -245,8 +258,15 @@ public class MyAI extends AI {
 			for(int i=colMin; i<colMax+1; i++) {
 				if (j==currY && i==currX) continue;
 				String k = key(i, j);
-				if (records.get(k)==-1)
+				if (records.get(k)==COV_NEIGHBOR) {
 					possible.add(new Action(ACTION.FLAG, i, j));
+					if (!probability.containsKey(k))
+						probability.put(k, 1);
+					else{
+						int p = probability.get(k);
+						probability.put(k, ++p);
+					}
+				}
 			}
 		}
 		return possible;
@@ -259,7 +279,7 @@ public class MyAI extends AI {
 
 			// flag the mine
 			System.out.println("flag: " + key(f.x,f.y));
-			records.put(key(f.x,f.y),-3); // -3 value for mines
+			records.put(key(f.x,f.y),MINE); // MINE = -9 value for mines
 			guaranteedMine.add(f);
 
 			// update labels for neighboring tiles
@@ -310,7 +330,7 @@ public class MyAI extends AI {
 			for (int i = colMin; i < colMax + 1; i++) {
 				String k = key(i, j);
 				if (records.containsKey(k)) {
-					if (records.get(k) == -3)
+					if (records.get(k) == MINE)
 						label--;
 				}
 			}
