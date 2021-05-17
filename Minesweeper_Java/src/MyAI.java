@@ -388,7 +388,7 @@ public class MyAI extends AI {
 		ArrayList<Action> flags = new ArrayList<>();
 		for (Action a : twos) {
 			if (a.y == 1 || a.y == ROW_DIMENSIONS) continue;
-			if (a.x == 1 || a.x > COL_DIMENSIONS) continue;
+			if (a.x == 1 || a.x == COL_DIMENSIONS) continue;
 			int i = a.x;
 			int j = a.y;
 
