@@ -390,22 +390,28 @@ public class MyAI extends AI {
 			int b = records.get(key(i,j-1));
 			int l = records.get(key(i-1,j));
 			int r = records.get(key(i+1,j));
-			
+
 			if(t == 1 && b == 1) {
 				if (checkNeighborsForMines(i, j+1) || checkNeighborsForMines(i, j-1)) continue;
 				if(l == COV_NEIGHBOR) {
-					flags.add(new Action(ACTION.FLAG,i-1,j));
+					flags.add(new Action(ACTION.FLAG,i-1,j+1));
+					flags.add(new Action(ACTION.FLAG,i-1,j-1));
 				}
 				else if(r == COV_NEIGHBOR) {
-					flags.add(new Action(ACTION.FLAG,i+1,j));
+					flags.add(new Action(ACTION.FLAG,i+1,j+1));
+					flags.add(new Action(ACTION.FLAG,i+1,j-1));
 				}
 			}
 			else if(l == 1 && r == 1) {
 				if (checkNeighborsForMines(i-1, j) || checkNeighborsForMines(i+1, j)) continue;
-				if(t == COV_NEIGHBOR)
-					flags.add(new Action(ACTION.FLAG,i,j+1));
-				else if(b == COV_NEIGHBOR)
-					flags.add(new Action(ACTION.FLAG,i,j-1));
+				if(t == COV_NEIGHBOR) {
+					flags.add(new Action(ACTION.FLAG, i-1, j + 1));
+					flags.add(new Action(ACTION.FLAG, i+1, j + 1));
+				}
+				else if(b == COV_NEIGHBOR) {
+					flags.add(new Action(ACTION.FLAG, i-1, j - 1));
+					flags.add(new Action(ACTION.FLAG, i+1, j - 1));
+				}
 			}
 		}
 		flagAndUpdate(flags);
