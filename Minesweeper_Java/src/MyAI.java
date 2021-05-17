@@ -156,7 +156,7 @@ public class MyAI extends AI {
 			Action a = coveredFrontier.remove(0);
 			int label = records.get(key(a.x, a.y));
 			System.out.println(String.format("%s->%d", key(a.x, a.y), label));
-			while(label != -1) continue;
+			if(label != -1) continue;
 
 			// take a ris
 			currX = a.x;
