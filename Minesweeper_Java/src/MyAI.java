@@ -129,6 +129,8 @@ public class MyAI extends AI {
 
 		// [STEP3]: use uncovered frontier to gain new knowledge
 		System.out.println("\nPicking from ucf...");
+		// probability map used to record probabilities of covered tiles
+		probability = new HashMap<>();
 		Iterator<Action> it = uncoveredFrontier.iterator();
 		while(it.hasNext()){
 			//Action a = uncoveredFrontier.remove(0);
@@ -142,8 +144,6 @@ public class MyAI extends AI {
 				continue;
 			}
 
-			// probability map used to record probabilities of covered tiles
-			probability = new HashMap<>();
 			// get number of covered neighbors
 			ArrayList<Action> possible = countCoveredNeighbors(a.x,a.y);
 			System.out.println(String.format("%s->%d  cn: %d", key(a.x,a.y), label, possible.size()));
