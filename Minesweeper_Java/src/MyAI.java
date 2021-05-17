@@ -99,7 +99,7 @@ public class MyAI extends AI {
 
 			// assign fresh value
 			number = records.get(k);
-			System.out.println(k + ": " + number);
+			//System.out.println(k + ": " + number);
 
 			// if label = 0, all neighbors are safe
 			if (number == 0)
@@ -122,7 +122,7 @@ public class MyAI extends AI {
 
 
 		// [STEP3]: use uncovered frontier to gain new knowledge
-		System.out.println("\nPicking from ucf...");
+		//System.out.println("\nPicking from ucf...");
 		Iterator<Action> it = uncoveredFrontier.iterator();
 		while(it.hasNext()){
 			//Action a = uncoveredFrontier.remove(0);
