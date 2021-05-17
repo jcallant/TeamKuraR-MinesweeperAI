@@ -157,7 +157,9 @@ public class MyAI extends AI {
 			int label = records.get(key(a.x, a.y));
 			while(label != -1) continue;
 
-			// take a risk
+			// take a ris
+			currX = a.x;
+			currY = a.y;
 			return new Action(ACTION.UNCOVER, a.x, a.y);
 		}
 		return new Action(ACTION.LEAVE);
