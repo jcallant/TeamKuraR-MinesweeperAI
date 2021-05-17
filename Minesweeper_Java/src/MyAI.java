@@ -427,8 +427,8 @@ public class MyAI extends AI {
 	}
 
 	private Action handleProbability(){
-		System.out.println("\nPicking from cf with lowest probability...");
-		System.out.println("probability: " + probability);
+		//System.out.println("\nPicking from cf with lowest probability...");
+		//System.out.println("probability: " + probability);
 		Action a = coveredFrontier.stream()
 				.filter(t -> probability.containsKey(key(t.x,t.y)))
 				.min(Comparator.comparing(t -> probability.get(key(t.x, t.y))))
