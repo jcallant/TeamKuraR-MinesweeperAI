@@ -161,7 +161,7 @@ public class MyAI extends AI {
 		}
 
 		// [STEP4.3] Check for 121 cases
-		Action case121Action = checkCase121();
+		Action case121Action = handleCase121();
 		if (case121Action != null) return case121Action;
 
 		// [STEP4.2] Pick from ucf with highest probability
@@ -301,6 +301,11 @@ public class MyAI extends AI {
 							}
 						}
 					}
+					else {
+						System.out.println(k + " added to covered frontier");
+						records.put(k, COV_NEIGHBOR); // -10 placeholder for neighbors of uncovered tiles
+						coveredFrontier.add(new Action(ACTION.UNCOVER, i, j));
+					}
 				}
 			}
 		}
@@ -373,7 +378,7 @@ public class MyAI extends AI {
 		return null;
 	}
 
-	private Action checkCase121(){
+	private Action handleCase121(){
 		System.out.println("\nSearching ucf for 121...");
 		ArrayList<Action> twos = uncoveredFrontier.stream()
 				.filter(a -> records.get(key(a.x,a.y))==2)
