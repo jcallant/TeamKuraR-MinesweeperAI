@@ -20,6 +20,7 @@ package src;
 import src.Action.ACTION;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class MyAI extends AI {
 	// ########################## INSTRUCTIONS ##########################
@@ -140,52 +141,38 @@ public class MyAI extends AI {
 			// if label has no new info, pop again
 			if (label == 0) {
 				it.remove();
-				System.out.println(String.format("%s->%d cn: 0 [no new info, removed]", key(a.x,a.y), label));
+				System.out.printf("%s->%d cn: 0 [no new info, removed]%n", key(a.x,a.y), label);
 				continue;
 			}
 
 			// get number of covered neighbors
 			ArrayList<Action> possible = countCoveredNeighbors(a.x,a.y);
-			System.out.println(String.format("%s->%d  cn: %d", key(a.x,a.y), label, possible.size()));
+			System.out.printf("%s->%d  cn: %d%n", key(a.x,a.y), label, possible.size());
 
 			// if number of covered neighbors == label value (remaining numbers are mines)
 			if(possible.size() <= label){
 				System.out.println("--match");
 
 				// flag each tile as a mine and update labels of adjacent tiles for each mine
-				flagAndUpdate(possible, a.x, a.y);
+				flagAndUpdate(possible);
 				a = handleGuaranteed();
 				if (a != null) return a;
 			}
 		}
 
+		// [STEP4.3] Check for 121 cases
+		Action case121Action = checkCase121();
+		if (case121Action != null) return case121Action;
 
 		// [STEP4.2] Pick from ucf with highest probability
-		System.out.println("\nprobability: " + probability);
-		System.out.println("Picking from ucf with lowest probability...");
-		Action a = coveredFrontier.stream()
-				.filter(t -> probability.containsKey(key(t.x,t.y)))
-				.min(Comparator.comparing(t -> probability.get(key(t.x, t.y))))
-				.orElse(new Action(ACTION.LEAVE));
-		coveredFrontier.remove(a);
-		currX = a.x;
-		currY = a.y;
-		return a;
+		Action probabilityAction = handleProbability();
+		if (probabilityAction != null) return probabilityAction;
 
 		// [STEP4]: use covered frontier to gain new knowledge /
-//		System.out.println("\nPicking from cf...");
-//		while(!coveredFrontier.isEmpty()){
-//			Action a = coveredFrontier.remove(0);
-//			int label = records.get(key(a.x, a.y));
-//			System.out.println(String.format("%s->%d", key(a.x, a.y), label));
-//			if(label != -1) continue;
-//
-//			// take a risk
-//			currX = a.x;
-//			currY = a.y;
-//			return new Action(ACTION.UNCOVER, a.x, a.y);
-//		}
-//		return new Action(ACTION.LEAVE);
+		Action anyCoveredAction = handleAny();
+		if (anyCoveredAction != null) return anyCoveredAction;
+
+		return new Action(ACTION.LEAVE);
 	}
 
 	// ################### Helper Functions Go Here (optional) ##################
@@ -277,7 +264,7 @@ public class MyAI extends AI {
 		return possible;
 	}
 
-	private void flagAndUpdate(ArrayList<Action> flags, int x, int y){
+	private void flagAndUpdate(ArrayList<Action> flags){
 
 		// for each guaranteed mine
 		for (Action f : flags) {
@@ -360,6 +347,80 @@ public class MyAI extends AI {
 			return a;
 		}
 
+		return null;
+	}
+
+	private Action checkCase121(){
+		System.out.println("\nSearching ucf for 121...");
+		ArrayList<Action> twos = uncoveredFrontier.stream()
+				.filter(a -> records.get(key(a.x,a.y))!=2)
+				.collect(Collectors.toCollection(ArrayList::new));
+		System.out.println("twos: " + twos);
+		ArrayList<Action> flags = new ArrayList<>();
+		for (Action a : twos) {
+			int rowMin = a.y - 1;
+			int rowMax = a.y + 1;
+			if (rowMin < 1 || rowMax > ROW_DIMENSIONS) continue;
+
+			int colMin = a.x - 1;
+			int colMax = a.x + 1;
+			if (colMin < 1 || colMax > COL_DIMENSIONS) continue;
+
+			for (int j = rowMax; j > rowMin - 1; j--) {
+				for (int i = colMin; i < colMax + 1; i++) {
+					String k = key(i, j);
+					int t = records.get(key(i,j+1));
+					int b = records.get(key(i,j-1));
+					int l = records.get(key(i-1,j));
+					int r = records.get(key(i+1,j));
+					if(t == 1 && b == 1) {
+						if(l == COV_NEIGHBOR)
+							flags.add(new Action(ACTION.FLAG,i-1,j));
+						else if(r == COV_NEIGHBOR)
+							flags.add(new Action(ACTION.FLAG,i+1,j));
+					}
+					else if(l == 1 && r == 1) {
+						if(t == COV_NEIGHBOR)
+							flags.add(new Action(ACTION.FLAG,i,j+1));
+						else if(b == COV_NEIGHBOR)
+							flags.add(new Action(ACTION.FLAG,i,j-1));
+					}
+				}
+			}
+		}
+		flagAndUpdate(flags);
+		return handleGuaranteed();
+	}
+
+	private Action handleProbability(){
+		System.out.println("\nPicking from cf with lowest probability...");
+		System.out.println("probability: " + probability);
+		Action a = coveredFrontier.stream()
+				.filter(t -> probability.containsKey(key(t.x,t.y)))
+				.min(Comparator.comparing(t -> probability.get(key(t.x, t.y))))
+				.orElse(null);
+		if(a!=null) {
+			coveredFrontier.remove(a);
+			currX = a.x;
+			currY = a.y;
+			return a;
+		}
+		return null;
+	}
+
+	private Action handleAny(){
+		System.out.println("\nPicking from cf...");
+		while(!coveredFrontier.isEmpty()){
+			Action a = coveredFrontier.remove(0);
+			int label = records.get(key(a.x, a.y));
+			System.out.println(String.format("%s->%d", key(a.x, a.y), label));
+			if(label != COV_NEIGHBOR) continue;
+
+			// take a risk
+			currX = a.x;
+			currY = a.y;
+			return new Action(ACTION.UNCOVER, a.x, a.y);
+		}
 		return null;
 	}
 
