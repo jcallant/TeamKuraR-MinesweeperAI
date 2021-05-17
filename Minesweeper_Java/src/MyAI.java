@@ -131,14 +131,18 @@ public class MyAI extends AI {
 		}
 
 		// while uncovered frontier has tiles
-		while(!uncoveredFrontier.isEmpty()){
-			Action a = uncoveredFrontier.remove(0);
+        int uncoveredSize = uncoveredFrontier.size();
+		while(uncoveredSize > 0){
+			Action a = uncoveredFrontier.get(0);
 			int label = records.get(key(a.x,a.y));
 
 			// if no adjacent mines or is mine itself, pick another
 			while((label == -3)) {
 				if(uncoveredFrontier.isEmpty()) return new Action(ACTION.LEAVE);
-				a = uncoveredFrontier.remove(0);
+				// remove current tile and get next
+                uncoveredFrontier.remove(0);
+                uncoveredSize--;
+				a = uncoveredFrontier.get(0);
 				label = records.get(key(a.x,a.y));
 			}
 
@@ -166,12 +170,13 @@ public class MyAI extends AI {
 					currY = a.y;
 					return a;
 				}
+                uncoveredFrontier.remove(0);
 			}
+            uncoveredSize--;
 		}
 
-		while (!coveredFrontier.isEmpty()) {
-
-		}
+//		while (!coveredFrontier.isEmpty()) {
+//        }
 
 		return new Action(ACTION.LEAVE);
 	}
