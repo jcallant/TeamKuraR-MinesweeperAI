@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Set;
 
 public class MyAI extends AI {
 	// ########################## INSTRUCTIONS ##########################
@@ -111,6 +112,7 @@ public class MyAI extends AI {
 		System.out.println("\n safe: " + guaranteedSafe);
 		System.out.println("\n ucsafeset: " + guaranteedSafeByFlag);
 		System.out.println("\n ucfrontier: " + uncoveredFrontier);
+        System.out.println("\n cfrontier: " + coveredFrontier);
 
 		// while mines to flag...
 		if(!guaranteedMine.isEmpty()){
@@ -166,6 +168,11 @@ public class MyAI extends AI {
 				}
 			}
 		}
+
+		while (!coveredFrontier.isEmpty()) {
+
+		}
+
 		return new Action(ACTION.LEAVE);
 	}
 
