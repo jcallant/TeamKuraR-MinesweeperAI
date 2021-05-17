@@ -358,34 +358,26 @@ public class MyAI extends AI {
 		System.out.println("twos: " + twos);
 		ArrayList<Action> flags = new ArrayList<>();
 		for (Action a : twos) {
-			int rowMin = a.y - 1;
-			int rowMax = a.y + 1;
-			if (rowMin < 1 || rowMax > ROW_DIMENSIONS) continue;
+			if (a.y == 1 || a.y == ROW_DIMENSIONS) continue;
+			if (a.x == 1 || a.x > COL_DIMENSIONS) continue;
+			int i = a.x;
+			int j = a.y;
 
-			int colMin = a.x - 1;
-			int colMax = a.x + 1;
-			if (colMin < 1 || colMax > COL_DIMENSIONS) continue;
-
-			for (int j = rowMax; j > rowMin - 1; j--) {
-				for (int i = colMin; i < colMax + 1; i++) {
-					String k = key(i, j);
-					int t = records.get(key(i,j+1));
-					int b = records.get(key(i,j-1));
-					int l = records.get(key(i-1,j));
-					int r = records.get(key(i+1,j));
-					if(t == 1 && b == 1) {
-						if(l == COV_NEIGHBOR)
-							flags.add(new Action(ACTION.FLAG,i-1,j));
-						else if(r == COV_NEIGHBOR)
-							flags.add(new Action(ACTION.FLAG,i+1,j));
-					}
-					else if(l == 1 && r == 1) {
-						if(t == COV_NEIGHBOR)
-							flags.add(new Action(ACTION.FLAG,i,j+1));
-						else if(b == COV_NEIGHBOR)
-							flags.add(new Action(ACTION.FLAG,i,j-1));
-					}
-				}
+			int t = records.get(key(i,j+1));
+			int b = records.get(key(i,j-1));
+			int l = records.get(key(i-1,j));
+			int r = records.get(key(i+1,j));
+			if(t == 1 && b == 1) {
+				if(l == COV_NEIGHBOR)
+					flags.add(new Action(ACTION.FLAG,i-1,j));
+				else if(r == COV_NEIGHBOR)
+					flags.add(new Action(ACTION.FLAG,i+1,j));
+			}
+			else if(l == 1 && r == 1) {
+				if(t == COV_NEIGHBOR)
+					flags.add(new Action(ACTION.FLAG,i,j+1));
+				else if(b == COV_NEIGHBOR)
+					flags.add(new Action(ACTION.FLAG,i,j-1));
 			}
 		}
 		flagAndUpdate(flags);
