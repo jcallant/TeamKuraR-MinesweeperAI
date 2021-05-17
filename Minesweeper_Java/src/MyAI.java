@@ -95,14 +95,21 @@ public class MyAI extends AI {
 		// store valid value in records
 		if(number >= 0) {
 			String k = key(currX, currY);
+
+			// put value in records
 			records.put(k, number);
+
+			// refresh value if any neighbors are flagged mines
 			records.put(k, refreshLabel(currX,currY));
+
+			// output label
 			number = records.get(k);
 			System.out.println(k + ": " + number);
 
-			// add neighbors to frontier
+			// if label = 0, all neighbors are safe
 			if (number == 0)
 				addNeighborsToSafeTiles(currX, currY);
+
 			else {
 				addNeighborsToCoveredFrontier(currX, currY);
 				addSelfToUncoveredFrontier(currX, currY);
@@ -133,14 +140,14 @@ public class MyAI extends AI {
 		// while uncovered frontier has tiles
 		while(!uncoveredFrontier.isEmpty()){
 			Action a = uncoveredFrontier.remove(0);
-			int label = records.get(key(a.x,a.y));
 
-			// if no adjacent mines or is mine itself, pick another
-			while((label == -3)) {
-				if(uncoveredFrontier.isEmpty()) return new Action(ACTION.LEAVE);
-				a = uncoveredFrontier.remove(0);
-				label = records.get(key(a.x,a.y));
-			}
+			//int label = records.get(key(a.x,a.y));
+			// if is mine itself, pick another or leave
+			//while(label == -3) {
+			//	if(uncoveredFrontier.isEmpty()) return new Action(ACTION.LEAVE);
+			//	a = uncoveredFrontier.remove(0);
+			//	label = records.get(key(a.x,a.y));
+			//}
 
 			// if label matches the number of adjacent covered tiles
 			ArrayList<Action> possible = countCoveredNeighbors(a.x,a.y);
@@ -167,6 +174,12 @@ public class MyAI extends AI {
 					return a;
 				}
 			}
+		}
+
+		while(!coveredFrontier.isEmpty()){
+			Action a = coveredFrontier.remove(0);
+			int label = records.get(key(a.x, a.y));
+
 		}
 		return new Action(ACTION.LEAVE);
 	}
@@ -217,7 +230,7 @@ public class MyAI extends AI {
 				String k = key(i, j);
 				if (!records.containsKey(k)) {
 					System.out.println(k + " added to covered frontier");
-					records.put(k, -1);
+					records.put(k, -1); // -1 placeholder for neighbors of uncovered tiles
 					coveredFrontier.add(new Action(ACTION.FLAG, i, j));
 				}
 			}
@@ -259,7 +272,7 @@ public class MyAI extends AI {
 
 			// flag the mine
 			System.out.println("flag: " + key(f.x,f.y));
-			records.put(key(f.x,f.y),-3);
+			records.put(key(f.x,f.y),-3); // -3 value for mines
 			guaranteedMine.add(f);
 
 			// update labels for neighboring tiles
@@ -309,7 +322,7 @@ public class MyAI extends AI {
 		for (int j = rowMax; j > rowMin - 1; j--) {
 			for (int i = colMin; i < colMax + 1; i++) {
 				String k = key(i, j);
-				if (records.containsKey(k) /*&& !updated.contains(k)*/) {
+				if (records.containsKey(k)) {
 					if (records.get(k) == -3)
 						label--;
 				}
