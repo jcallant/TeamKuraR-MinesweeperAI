@@ -90,7 +90,7 @@ public class MyAI extends AI {
 	// ################## Implement getAction(), (required) #####################
 	public Action getAction(int number) {
 
-		// store uncovered value in records
+		// [STEP1]: store uncovered value in records
 		if(number >= 0) {
 			String k = key(currX, currY);
 
@@ -114,85 +114,56 @@ public class MyAI extends AI {
 			}
 		}
 
+
 		// output all details
-		System.out.println("\nrecords: " + records);
-		System.out.println("\nsafe: " + guaranteedSafe);
-		System.out.println("\nuc frontier: " + uncoveredFrontier);
-		System.out.println("\nc frontier: " + coveredFrontier);
+		outputKnowledge();
 
-//		// while mines to flag...
-//		if(!guaranteedMine.isEmpty()){
-//			Action a = guaranteedMine.remove(0);
-//			currX = a.x;
-//			currY = a.y;
-//			return a;
-//		}
-//
-//		// while safe neighbors to uncover...
-//		if(!guaranteedSafe.isEmpty()){
-//			Action a = guaranteedSafe.remove(0);
-//			currX = a.x;
-//			currY = a.y;
-//			return a;
-//		}
 
-		// while uncovered frontier has tiles
-		// if any guaranteed mines or safe tiles
+		// [STEP2]: if any guaranteed mines or safe tiles
 		Action guaranteedAction = handleGuaranteed();
 		if(guaranteedAction != null) return guaranteedAction;
 
-		//
+
+		// [STEP3]: use uncovered frontier to gain new knowledge
 		while(!uncoveredFrontier.isEmpty()){
+			System.out.println("\nPicking from ucf...");
 			Action a = uncoveredFrontier.remove(0);
 			int label = records.get(key(a.x,a.y));
-			if (label == 0) continue;
 
-			//int label = records.get(key(a.x,a.y));
-			// if is mine itself, pick another or leave
-			//while(label == -3) {
-			//	if(uncoveredFrontier.isEmpty()) return new Action(ACTION.LEAVE);
-			//	a = uncoveredFrontier.remove(0);
-			//	label = records.get(key(a.x,a.y));
-			//}
+			// if label has no new info, pop again
+			if (label == 0) {
+				System.out.println(String.format("%s->%d cn: 0 [no new info]", key(a.x,a.y), label));
+				continue;
+			}
 
 			// if label matches the number of adjacent covered tiles
 			ArrayList<Action> possible = countCoveredNeighbors(a.x,a.y);
-			System.out.println(String.format("%s l: %d cn: %d", key(a.x,a.y), label, possible.size()));
+			System.out.println(String.format("%s->%d cn: %d", key(a.x,a.y), label, possible.size()));
 			if(possible.size() <= label){
 				System.out.println("--match");
 
 				// flag each tile as a mine and update labels of adjacent tiles for each mine
 				flagAndUpdate(possible, a.x, a.y);
 
-				// flag mines if found
-				//if (!guaranteedMine.isEmpty()) {
-				//	a = guaranteedMine.remove(0);
-				//	currX = a.x;
-				//	currY = a.y;
-				//	return a;
-				//}
+				// output new details
+				outputKnowledge();
 
-				// uncover safe if found
-				//if (!guaranteedSafe.isEmpty()) {
-				//	a = guaranteedSafe.remove(0);
-				//	currX = a.x;
-				//	currY = a.y;
-				//	return a;
-				//}
 				a = handleGuaranteed();
 				if (a != null) return a;
 			}
 		}
 
+
+		// [STEP4]: use covered frontier to gain new knowledge /
 		while(!coveredFrontier.isEmpty()){
 			Action a = coveredFrontier.remove(0);
 			int label = records.get(key(a.x, a.y));
-
 		}
 		return new Action(ACTION.LEAVE);
 	}
 
 	// ################### Helper Functions Go Here (optional) ##################
+
 	private String key(int x, int y){
 		return "(" + x + "," + y + ")";
 	}
@@ -357,5 +328,12 @@ public class MyAI extends AI {
 		}
 
 		return null;
+	}
+
+	private void outputKnowledge(){
+		System.out.println("\nrecords: " + records);
+		System.out.println("\nsafe: " + guaranteedSafe);
+		System.out.println("\nuc frontier: " + uncoveredFrontier);
+		System.out.println("\nc frontier: " + coveredFrontier);
 	}
 }
