@@ -565,6 +565,7 @@ public class MyAI extends AI {
 				if (hypoRecords.containsKey(k) && hypoRecords.get(k) >= 0) {
 					int labelValue = hypoRecords.get(k);
 					labelValue--;
+					System.out.println(String.format(" -label update: %s %d -> %d",k,labelValue+1, labelValue));
 					if (labelValue == -1){
 						System.out.println(" -label conflict: " + k);
 						hypoRecords = null;
@@ -580,6 +581,7 @@ public class MyAI extends AI {
 				else if (records.containsKey(k) && records.get(k) >= 0){
 					int labelValue = records.get(k);
 					labelValue--;
+					System.out.println(String.format(" -label update: %s %d -> %d",k,labelValue+1, labelValue));
 					if (labelValue == -1) {
 						System.out.println(" -label conflict: " + k);
 						hypoRecords = null;
