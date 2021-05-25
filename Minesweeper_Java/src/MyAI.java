@@ -543,6 +543,7 @@ public class MyAI extends AI {
 					labelValue--;
 					if (labelValue == -1){
 						System.out.println(" -label conflict: " + k);
+						hypoRecords = null;
 						return null; // if flagging as mine causes label conflict, then not possible
 					}
 					hypoRecords.put(k, labelValue);
@@ -557,6 +558,7 @@ public class MyAI extends AI {
 					labelValue--;
 					if (labelValue == -1) {
 						System.out.println(" -label conflict: " + k);
+						hypoRecords = null;
 						return null; // if flagging as mine causes label conflict, then not possible
 					}
 					hypoRecords.put(k, labelValue);
@@ -569,10 +571,7 @@ public class MyAI extends AI {
 			}
 		}
 		System.out.println(" hypoRecord: " + hypoRecords);
-		while(hypoFlagAndUpdate(frontier,hypoRecords) == null) {
-			System.out.println(frontier);
-			if(frontier.isEmpty()) hypoRecords = null;
-		}
+		while(hypoFlagAndUpdate(frontier,hypoRecords) == null);
 		return hypoRecords;
 	}
 
