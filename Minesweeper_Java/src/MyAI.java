@@ -540,16 +540,18 @@ public class MyAI extends AI {
 
 
 
-	private HashMap<String, Integer> hypoFlagAndUpdate(ArrayList<Action> frontier, HashMap<String, Integer> hypoRecords){
+	private HashMap<String, Integer> hypoFlagAndUpdate(ArrayList<Action> frontier, HashMap<String, Integer> hypoRecords) {
 
 		Action a = frontier.remove(0);
 		int x = a.x;
 		int y = a.y;
-		System.out.println(" hypoFlag: " + key(x,y));
+		System.out.println(" <hypoFlag: " + key(x, y));
 
 		// if already marked safe, then can't be flagged as mine
-		if(hypoRecords.containsKey(key(x,y)) && hypoRecords.get(key(x,y)) == SAFE)
-				return null;
+		if (hypoRecords.containsKey(key(x, y)) && hypoRecords.get(key(x, y)) == SAFE){
+			System.out.println(" </hypoFlag>");
+			return null;
+		}
 
 		// mark tile as mine in hypoRecords
 		hypoRecords.put(key(x,y), MINE);
@@ -574,6 +576,7 @@ public class MyAI extends AI {
 					System.out.println(String.format(" -label update: %s %d -> %d",k,labelValue+1, labelValue));
 					if (labelValue == -1){
 						System.out.println(" -label conflict: " + k);
+						System.out.println(" </hypoFlag>");
 						return null; // if flagging as mine causes label conflict, then not possible
 					}
 					hypoRecords.put(k, labelValue);
@@ -589,6 +592,7 @@ public class MyAI extends AI {
 					System.out.println(String.format(" -label update: %s %d -> %d",k,labelValue+1, labelValue));
 					if (labelValue == -1) {
 						System.out.println(" -label conflict: " + k);
+						System.out.println(" </hypoFlag>");
 						return null; // if flagging as mine causes label conflict, then not possible
 					}
 					hypoRecords.put(k, labelValue);
@@ -602,7 +606,7 @@ public class MyAI extends AI {
 		}
 		System.out.println(" hypoRecord: " + hypoRecords);
 
-		System.out.print(" >>>>>>> checking if valid...");
+		System.out.print(" ======= checking if valid...");
 		boolean valid = true;
 		for (Action action : uncoveredFrontier) {
 			String k = key(action.x, action.y);
@@ -614,19 +618,23 @@ public class MyAI extends AI {
 		}
 		if(valid) {
 			System.out.println("Y: possible world found\n");
+			System.out.println(" </hypoFlag>");
 			return hypoRecords;
 		}
 		else if (!frontier.isEmpty()) {
-			System.out.printf("frontier: %s", frontier);
+			System.out.printf(" frontier: %s", frontier);
 			while (hypoFlagAndUpdate(frontier, hypoRecords) == null) {
 				System.out.println(" -not possible. trying next.");
 				if (frontier.isEmpty()) {
 					System.out.println(" -list empty. cascading.");
+					System.out.println(" </hypoFlag>");
 					return null;
 				}
 			}
+			System.out.println(" </hypoFlag>");
 			return hypoRecords;
 		}
+		System.out.println(" </hypoFlag>");
 		return null;
 	}
 
