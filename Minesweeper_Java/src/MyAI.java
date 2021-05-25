@@ -183,8 +183,7 @@ public class MyAI extends AI {
 		if (probabilityAction != null) return probabilityAction;
 
 		// [STEP4.3] Pick any from cf
-		Action anyCoveredAction = handleAny();
-		if (anyCoveredAction != null) return anyCoveredAction;
+		if(flagsLeft != 0) return handleAny();
 
 		// [STEP 5] Leave
 		return new Action(ACTION.LEAVE);
@@ -480,19 +479,17 @@ public class MyAI extends AI {
 	}
 
 	private Action handleAny(){
-		//System.out.println("\nPicking from cf...");
-		while(!coveredFrontier.isEmpty()){
-			Action a = coveredFrontier.remove(0);
-			int label = records.get(key(a.x, a.y));
-			//System.out.println(String.format("%s->%d", key(a.x, a.y), label));
-			if(label != COV_NEIGHBOR) continue;
-
-			// take a risk
-			currX = a.x;
-			currY = a.y;
-			return new Action(ACTION.UNCOVER, a.x, a.y);
+		System.out.println("\nPicking random tile...");
+		Random random = new Random();
+		int randomX = random.nextInt(COL_DIMENSIONS)+1;
+		int randomY = random.nextInt(ROW_DIMENSIONS)+1;
+		String k = key(randomX,randomY);
+		while(records.containsKey(k) && records.get(k) < 0 && records.get(k) != MINE){
+			randomX = random.nextInt(COL_DIMENSIONS)+1;
+			randomY = random.nextInt(ROW_DIMENSIONS)+1;
+			k = key(randomX,randomY);
 		}
-		return null;
+		return new Action(ACTION.UNCOVER, randomX, randomY);
 	}
 
 	private void outputKnowledge(){
