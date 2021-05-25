@@ -512,12 +512,14 @@ public class MyAI extends AI {
 			}
 		}
 		System.out.printf(">> %d possible worlds\n",possibleWorlds);
+		System.out.printf(">> cf: %s\n", coveredFrontier);
 		HashMap<String, Integer> probabilities = new HashMap<>();
 		for (Action a : coveredFrontier) {
 			String k = key(a.x, a.y);
 			probabilities.put(k, 0);
 		}
 		for(int i=0; i<possibleWorlds.size(); i++){
+			System.out.printf("world%d: %s", i, possibleWorlds.get(i));
 			for (Action a : coveredFrontier) {
 				String k = key(a.x, a.y);
 				if (possibleWorlds.get(i).get(k) == MINE) {
