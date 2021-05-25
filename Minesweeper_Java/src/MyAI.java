@@ -513,23 +513,25 @@ public class MyAI extends AI {
 		}
 		System.out.printf(">> %d possible worlds\n",possibleWorlds.size());
 		System.out.printf(">> cf: %s\n", coveredFrontier);
-		HashMap<String, Integer> probabilities = new HashMap<>();
+		HashMap<Action, Integer> probabilities = new HashMap<>();
 		for (Action a : coveredFrontier) {
-			String k = key(a.x, a.y);
-			probabilities.put(k, 0);
+			probabilities.put(a, 0);
 		}
 		for(int i=0; i<possibleWorlds.size(); i++){
 			System.out.printf("world%d: %s\n", i, possibleWorlds.get(i));
 			for (Action a : coveredFrontier) {
 				String k = key(a.x, a.y);
-				if (possibleWorlds.get(i).get(k) == MINE) {
-					int p = probabilities.get(k);
-					probabilities.put(k, ++p);
+				if (possibleWorlds.get(i).containsKey(k) && possibleWorlds.get(i).get(k) == MINE) {
+					int p = probabilities.get(a);
+					probabilities.put(a, ++p);
 				}
 			}
 		}
 		System.out.println(probabilities);
-		return null;
+		Action a = probabilities.keySet().stream()
+				.min(Comparator.comparing(probabilities::get))
+				.orElse(null);
+		return a;
 	}
 
 
