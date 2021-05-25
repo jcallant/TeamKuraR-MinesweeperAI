@@ -502,8 +502,9 @@ public class MyAI extends AI {
 
 		for(int i=0; i<coveredFrontier.size(); i++){
 			System.out.printf("i=%d: %s\n",i, coveredFrontier);
-			ArrayList<Action> copy = new ArrayList<>();
-			copy.addAll(i, coveredFrontier);
+			ArrayList<Action> copy = coveredFrontier.stream()
+					.skip(i)
+					.collect(Collectors.toCollection(ArrayList::new));
 			HashMap<String, Integer> worldRecords = new HashMap<>();
 
 			if(hypoFlagAndUpdate(copy, worldRecords)!=null) {
