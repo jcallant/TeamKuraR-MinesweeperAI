@@ -327,11 +327,11 @@ public class MyAI extends AI {
 							}
 						}
 					}
-					else {
-						System.out.println(k + " added to covered frontier");
-						records.put(k, COV_NEIGHBOR); // -10 placeholder for neighbors of uncovered tiles
-						coveredFrontier.add(new Action(ACTION.UNCOVER, i, j));
-					}
+//					else {
+//						System.out.println(k + " added to covered frontier");
+//						records.put(k, COV_NEIGHBOR); //
+//						coveredFrontier.add(new Action(ACTION.UNCOVER, i, j));
+//					}
 				}
 			}
 		}
