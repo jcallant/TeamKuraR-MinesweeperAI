@@ -545,11 +545,11 @@ public class MyAI extends AI {
 		Action a = frontier.remove(0);
 		int x = a.x;
 		int y = a.y;
-		System.out.println(" <hypoFlag: " + key(x, y));
+		//System.out.println(" <hypoFlag: " + key(x, y));
 
 		// if already marked safe, then can't be flagged as mine
 		if (hypoRecords.containsKey(key(x, y)) && hypoRecords.get(key(x, y)) == SAFE){
-			System.out.println(" </hypoFlag>");
+			//System.out.println(" </hypoFlag>");
 			return null;
 		}
 
@@ -573,10 +573,10 @@ public class MyAI extends AI {
 				if (hypoRecords.containsKey(k) && hypoRecords.get(k) >= 0) {
 					int labelValue = hypoRecords.get(k);
 					labelValue--;
-					System.out.println(String.format(" -label update: %s %d -> %d",k,labelValue+1, labelValue));
+					//System.out.println(String.format(" -label update: %s %d -> %d",k,labelValue+1, labelValue));
 					if (labelValue == -1){
-						System.out.println(" -label conflict: " + k);
-						System.out.println(" </hypoFlag>");
+						//System.out.println(" -label conflict: " + k);
+						//System.out.println(" </hypoFlag>");
 						return null; // if flagging as mine causes label conflict, then not possible
 					}
 					hypoRecords.put(k, labelValue);
@@ -589,10 +589,10 @@ public class MyAI extends AI {
 				else if (records.containsKey(k) && records.get(k) >= 0){
 					int labelValue = records.get(k);
 					labelValue--;
-					System.out.println(String.format(" -label update: %s %d -> %d",k,labelValue+1, labelValue));
+					//System.out.println(String.format(" -label update: %s %d -> %d",k,labelValue+1, labelValue));
 					if (labelValue == -1) {
-						System.out.println(" -label conflict: " + k);
-						System.out.println(" </hypoFlag>");
+						//System.out.println(" -label conflict: " + k);
+						//System.out.println(" </hypoFlag>");
 						return null; // if flagging as mine causes label conflict, then not possible
 					}
 					hypoRecords.put(k, labelValue);
@@ -604,37 +604,37 @@ public class MyAI extends AI {
 				}
 			}
 		}
-		System.out.println(" hypoRecord: " + hypoRecords);
+		//System.out.println(" hypoRecord: " + hypoRecords);
 
-		System.out.print(" ======= checking if valid...");
+		//System.out.print(" ======= checking if valid...");
 		boolean valid = true;
 		for (Action action : uncoveredFrontier) {
 			String k = key(action.x, action.y);
 			if (!hypoRecords.containsKey(k) || hypoRecords.get(k) > 0) {
-				System.out.println("N: unsatisfied label " + k);
+				//System.out.println("N: unsatisfied label " + k);
 				valid = false;
 				break;
 			}
 		}
 		if(valid) {
-			System.out.println("Y: possible world found\n");
-			System.out.println(" </hypoFlag>");
+			//System.out.println("Y: possible world found\n");
+			//System.out.println(" </hypoFlag>");
 			return hypoRecords;
 		}
 		else if (!frontier.isEmpty()) {
-			System.out.printf(" frontier: %s", frontier);
+			//System.out.printf(" frontier: %s\n", frontier);
 			while (hypoFlagAndUpdate(frontier, hypoRecords) == null) {
-				System.out.println(" -not possible. trying next.");
+				//System.out.println(" -not possible. trying next.");
 				if (frontier.isEmpty()) {
-					System.out.println(" -list empty. cascading.");
-					System.out.println(" </hypoFlag>");
+					//System.out.println(" -list empty. cascading.");
+					//System.out.println(" </hypoFlag>");
 					return null;
 				}
 			}
-			System.out.println(" </hypoFlag>");
+			//System.out.println(" </hypoFlag>");
 			return hypoRecords;
 		}
-		System.out.println(" </hypoFlag>");
+		//System.out.println(" </hypoFlag>");
 		return null;
 	}
 
@@ -655,12 +655,12 @@ public class MyAI extends AI {
 				String k = key(i, j);
 				if (hypoRecords.containsKey(k)){
 					if(hypoRecords.get(k)==COV_NEIGHBOR) {
-						System.out.printf(" -safe %s\n", k);
+						//System.out.printf(" -safe %s\n", k);
 						hypoRecords.put(k, SAFE);
 					}
 				}
 				else if (!records.containsKey(k) || records.get(k)==COV_NEIGHBOR) {
-					System.out.printf(" -safe %s\n", k);
+					//System.out.printf(" -safe %s\n", k);
 					hypoRecords.put(k, SAFE);
 				}
 			}
