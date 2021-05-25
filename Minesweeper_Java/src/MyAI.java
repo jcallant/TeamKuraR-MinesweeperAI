@@ -631,6 +631,7 @@ public class MyAI extends AI {
 					return null;
 				}
 			}
+			return hypoRecords;
 		}
 		return null;
 	}
