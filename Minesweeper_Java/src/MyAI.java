@@ -176,14 +176,15 @@ public class MyAI extends AI {
 		outputKnowledge();
 
 		Action modelCheckingAction = handleModelChecking();
-		if(modelCheckingAction != null) return modelCheckingAction;
+		if (modelCheckingAction != null) return modelCheckingAction;
 
 		// [STEP4.2] Pick from ucf with lowest probability
-		//Action probabilityAction = handleProbability();
-		//if (probabilityAction != null) return probabilityAction;
+		Action probabilityAction = handleProbability();
+		if (probabilityAction != null) return probabilityAction;
 
 		// [STEP4.3] Pick any from cf
-		if(flagsLeft != 0) return handleAny();
+		// this function will actually never be called because handleProbability() will exhaust options
+		if (flagsLeft != 0) return handleAny();
 
 		// [STEP 5] Leave
 		return new Action(ACTION.LEAVE);
