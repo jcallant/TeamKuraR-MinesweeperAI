@@ -641,7 +641,7 @@ public class MyAI extends AI {
 
 		for(int j=rowMax; j>rowMin-1; j--){
 			for(int i=colMin; i<colMax+1; i++) {
-				if (j==x && i==y) continue;
+				if (j==y && i==x) continue;
 				String k = key(i, j);
 				if (hypoRecords.containsKey(k)){
 					if(hypoRecords.get(k)==COV_NEIGHBOR) {
