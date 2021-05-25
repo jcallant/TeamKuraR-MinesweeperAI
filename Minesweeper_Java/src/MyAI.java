@@ -179,8 +179,8 @@ public class MyAI extends AI {
 		if(modelCheckingAction != null) return modelCheckingAction;
 
 		// [STEP4.2] Pick from ucf with lowest probability
-		Action probabilityAction = handleProbability();
-		if (probabilityAction != null) return probabilityAction;
+		//Action probabilityAction = handleProbability();
+		//if (probabilityAction != null) return probabilityAction;
 
 		// [STEP4.3] Pick any from cf
 		if(flagsLeft != 0) return handleAny();
