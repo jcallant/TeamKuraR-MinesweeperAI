@@ -74,6 +74,7 @@ public class MyAI extends AI {
 	// label value constants
 	private final int MINE = -9;
 	private final int COV_NEIGHBOR = -10;
+	private final int SAFE = -11;
 
 
 	// ################### Implement Constructor (required) ####################	
@@ -175,6 +176,7 @@ public class MyAI extends AI {
 		// output updated details
 		outputKnowledge();
 
+		System.out.println("Attempting Model Checking...");
 		Action modelCheckingAction = handleModelChecking();
 		if (modelCheckingAction != null) return modelCheckingAction;
 
@@ -211,7 +213,7 @@ public class MyAI extends AI {
 
 		for(int j=rowMax; j>rowMin-1; j--){
 			for(int i=colMin; i<colMax+1; i++) {
-				if (j==currY && i==currX) continue;
+				if (j==y && i==x) continue;
 				String k = key(i, j);
 				if (!records.containsKey(k) || records.get(k)==COV_NEIGHBOR) {
 					//System.out.println(k + " added to safe");
@@ -235,7 +237,7 @@ public class MyAI extends AI {
 
 		for(int j=rowMax; j>rowMin-1; j--){
 			for(int i=colMin; i<colMax+1; i++) {
-				if (j==currY && i==currX) continue;
+				if (j==y && i==x) continue;
 				String k = key(i, j);
 				if (!records.containsKey(k)) {
 					//System.out.println(k + " added to covered frontier");
@@ -265,7 +267,7 @@ public class MyAI extends AI {
 		ArrayList<Action> possible = new ArrayList<>();
 		for(int j=rowMax; j>rowMin-1; j--){
 			for(int i=colMin; i<colMax+1; i++) {
-				if (j==currY && i==currX) continue;
+				if (j==y && i==x) continue;
 				String k = key(i, j);
 				if (records.get(k)==COV_NEIGHBOR) {
 					possible.add(new Action(ACTION.FLAG, i, j));
@@ -314,7 +316,7 @@ public class MyAI extends AI {
 
 							// if new label == 0, uncover any remaining covered neighbors
 							if (labelValue == 0) {
-								addNeighborsToSafeTiles(i, j); // FIX THIS PATH; UPDATE LABEL AFTER UNCOVER
+								addNeighborsToSafeTiles(i, j);
 							}
 						}
 					}
@@ -443,10 +445,6 @@ public class MyAI extends AI {
 		return handleGuaranteed();
 	}
 
-	private Action handleModelChecking(){
-		return null;
-	}
-
 	private Action handleProbability(){
 		System.out.println("\nPicking from cf with lowest probability...");
 		System.out.println("probability: " + probability);
@@ -456,19 +454,6 @@ public class MyAI extends AI {
 				.filter(t -> probability.containsKey(key(t.x,t.y)))
 				.min(Comparator.comparing(t -> probability.get(key(t.x, t.y))))
 				.orElse(null);
-
-		// pick min probability that isn't diagonal from corner
-//		Action a = coveredFrontier.stream()
-//				.filter(t -> probability.containsKey(key(t.x,t.y)))
-//				.filter(t -> {
-//					boolean right = (t.x != COL_DIMENSIONS && records.containsKey(key(t.x+1, t.y)) && records.get(key(t.x+1, t.y)) == -1);
-//					boolean left = (t.x != 1 && records.containsKey(key(t.x-1, t.y)) &&records.get(key(t.x-1, t.y)) == -1);
-//					boolean top = (t.y != ROW_DIMENSIONS && records.containsKey(key(t.x, t.y+1)) && records.get(key(t.x, t.y+1)) == -1);
-//					boolean bottom = (t.y != 1 && records.containsKey(key(t.x,t.y-1)) && records.get(key(t.x,t.y-1)) == -1);
-//					return (top && right) || (top && left) || (bottom && right) || (bottom && left);
-//				})
-//				.min(Comparator.comparing(t -> probability.get(key(t.x, t.y))))
-//				.orElse(null);
 
 		if(a!=null) {
 			coveredFrontier.remove(a);
@@ -501,4 +486,119 @@ public class MyAI extends AI {
 		System.out.println("\nuc frontier: " + uncoveredFrontier);
 		System.out.println("\nc frontier: " + coveredFrontier);
 	}
+
+
+	// ################### ModelChecking Functions ##################
+
+	private Action handleModelChecking(){
+		ArrayList<HashMap<String,Integer>> possibleWorlds = new ArrayList<>();
+
+		for(int i=0; i<coveredFrontier.size(); i++){
+			HashMap<String, Integer> worldRecords = new HashMap<>();
+			ArrayList<Action> copy = new ArrayList<>(coveredFrontier);
+			if(hypoFlagAndUpdate(copy, worldRecords)!=null)
+				possibleWorlds.add(worldRecords);
+		}
+		System.out.println(possibleWorlds);
+		return null;
+	}
+
+
+
+	private HashMap<String, Integer> hypoFlagAndUpdate(ArrayList<Action> frontier, HashMap<String, Integer> hypoRecords){
+		// base case
+		if(frontier.isEmpty()) {
+			System.out.println(" >> frontier empty. found possible solution.");
+			return hypoRecords;
+		}
+
+		Action a = frontier.remove(0);
+		int x = a.x;
+		int y = a.y;
+		System.out.println(" hypoFlag: " + key(x,y));
+
+		// if already marked safe, then can't be flagged as mine
+		if(hypoRecords.containsKey(key(x,y)) && hypoRecords.get(key(x,y)) == SAFE)
+				return null;
+
+		// mark tile as mine in hypoRecords
+		hypoRecords.put(key(x,y), MINE);
+
+		// update labels for neighboring tiles in hypoRecords
+		int rowMin = y - 1;
+		int rowMax = y + 1;
+		if (rowMin < 1) rowMin = 1;
+		if (rowMax > ROW_DIMENSIONS) rowMax = ROW_DIMENSIONS;
+
+		int colMin = x - 1;
+		int colMax = x + 1;
+		if (colMin < 1) colMin = 1;
+		if (colMax > COL_DIMENSIONS) colMax = COL_DIMENSIONS;
+
+		for (int j = rowMax; j > rowMin - 1; j--) {
+			for (int i = colMin; i < colMax + 1; i++) {
+				String k = key(i, j);
+				if (hypoRecords.containsKey(k) && hypoRecords.get(k) >= 0) {
+					int labelValue = hypoRecords.get(k);
+					labelValue--;
+					if (labelValue == -1){
+						System.out.println(" -label conflict: " + k);
+						return null; // if flagging as mine causes label conflict, then not possible
+					}
+					hypoRecords.put(k, labelValue);
+
+					// if new label == 0, uncover any remaining covered neighbors
+					if (labelValue == 0) {
+						hypoAddCoveredNeighborsToSafeTiles(i, j, hypoRecords); // FIX THIS PATH; UPDATE LABEL AFTER UNCOVER
+					}
+				}
+				else if (records.containsKey(k) && records.get(k) >= 0){
+					int labelValue = records.get(k);
+					labelValue--;
+					if (labelValue == -1) {
+						System.out.println(" -label conflict: " + k);
+						return null; // if flagging as mine causes label conflict, then not possible
+					}
+					hypoRecords.put(k, labelValue);
+
+					// if new label == 0, uncover any remaining covered neighbors
+					if (labelValue == 0) {
+						hypoAddCoveredNeighborsToSafeTiles(i, j, hypoRecords);// FIX THIS PATH; UPDATE LABEL AFTER UNCOVER
+					}
+				}
+			}
+		}
+		System.out.println(" hypoRecord: " + hypoRecords);
+		while(hypoFlagAndUpdate(frontier,hypoRecords) == null) {
+			if(frontier.isEmpty()) hypoRecords = null;
+		}
+		return hypoRecords;
+	}
+
+	private HashMap<String, Integer> hypoAddCoveredNeighborsToSafeTiles(int x, int y, HashMap<String, Integer> hypoRecords){
+		int rowMin = y-1;
+		int rowMax = y+1;
+		if(rowMin<1) rowMin = 1;
+		if(rowMax>ROW_DIMENSIONS) rowMax = ROW_DIMENSIONS;
+
+		int colMin = x-1;
+		int colMax = x+1;
+		if(colMin<1) colMin = 1;
+		if(colMax>COL_DIMENSIONS) colMax = COL_DIMENSIONS;
+
+		for(int j=rowMax; j>rowMin-1; j--){
+			for(int i=colMin; i<colMax+1; i++) {
+				if (j==x && i==y) continue;
+				String k = key(i, j);
+				if (hypoRecords.containsKey(k) && hypoRecords.get(k)==COV_NEIGHBOR) {
+					hypoRecords.put(k, SAFE);
+				}
+				else if (!records.containsKey(k) || records.get(k)==COV_NEIGHBOR) {
+					hypoRecords.put(k, SAFE);
+				}
+			}
+		}
+		return hypoRecords;
+	}
+
 }
