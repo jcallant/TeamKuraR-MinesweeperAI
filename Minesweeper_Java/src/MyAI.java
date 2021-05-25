@@ -500,16 +500,17 @@ public class MyAI extends AI {
 	private Action handleModelChecking(){
 		ArrayList<HashMap<String,Integer>> possibleWorlds = new ArrayList<>();
 
+		ArrayList<Action> copy = new ArrayList<>(coveredFrontier);
 		for(int i=0; i<coveredFrontier.size(); i++){
+			ArrayList<Action> temp = copy;
 			System.out.printf("\ni=%d: %s\n",i, coveredFrontier);
-			ArrayList<Action> copy = coveredFrontier.stream()
-					.skip(i)
-					.collect(Collectors.toCollection(ArrayList::new));
 			HashMap<String, Integer> worldRecords = new HashMap<>();
 
 			if(hypoFlagAndUpdate(copy, worldRecords)!=null) {
 				possibleWorlds.add(worldRecords);
 			}
+			copy = temp;
+			copy.add(copy.remove(0));
 		}
 		System.out.printf(">> %d possible worlds\n",possibleWorlds.size());
 		System.out.printf(">> cf: %s\n", coveredFrontier);
