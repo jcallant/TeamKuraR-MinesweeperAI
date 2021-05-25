@@ -93,7 +93,7 @@ public class MyAI extends AI {
 
 	// ################## Implement getAction(), (required) #####################
 	public Action getAction(int number) {
-		
+
 		// [STEP1]: store uncovered value in records
 		if(number >= 0) {
 			String k = key(currX, currY);
@@ -120,7 +120,7 @@ public class MyAI extends AI {
 
 
 		// output all details
-		outputKnowledge();
+		//outputKnowledge();
 
 
 		// [STEP2]: if any guaranteed mines or safe tiles
@@ -163,6 +163,10 @@ public class MyAI extends AI {
 		// [STEP4.1] Check for 121 cases
 		Action case121Action = handleCase121();
 		if (case121Action != null) return case121Action;
+
+
+		/* At this point, making guesses */
+		outputKnowledge();
 
 		// [STEP4.2] Pick from ucf with lowest probability
 		Action probabilityAction = handleProbability();
