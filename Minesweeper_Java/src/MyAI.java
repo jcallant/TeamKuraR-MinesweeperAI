@@ -93,7 +93,7 @@ public class MyAI extends AI {
 
 	// ################## Implement getAction(), (required) #####################
 	public Action getAction(int number) {
-
+		
 		// [STEP1]: store uncovered value in records
 		if(number >= 0) {
 			String k = key(currX, currY);
@@ -366,6 +366,7 @@ public class MyAI extends AI {
 			Action a = guaranteedMine.remove(0);
 			currX = a.x;
 			currY = a.y;
+			flagsLeft--;
 			return a;
 		}
 
@@ -475,9 +476,9 @@ public class MyAI extends AI {
 	}
 
 	private void outputKnowledge(){
-		//System.out.println("\nrecords: " + records);
-		//System.out.println("\nsafe: " + guaranteedSafe);
-		//System.out.println("\nuc frontier: " + uncoveredFrontier);
-		//System.out.println("\nc frontier: " + coveredFrontier);
+		System.out.println("\nrecords: " + records);
+		System.out.println("\nsafe: " + guaranteedSafe);
+		System.out.println("\nuc frontier: " + uncoveredFrontier);
+		System.out.println("\nc frontier: " + coveredFrontier);
 	}
 }
