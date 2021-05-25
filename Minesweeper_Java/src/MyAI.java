@@ -500,13 +500,14 @@ public class MyAI extends AI {
 	private Action handleModelChecking(){
 		ArrayList<HashMap<String,Integer>> possibleWorlds = new ArrayList<>();
 
-		ArrayList<Action> copy = new ArrayList<>(coveredFrontier);
-		for(int i=0; i<copy.size(); i++){
+		for(int i=0; i<coveredFrontier.size(); i++){
+			ArrayList<Action> copy = new ArrayList<>();
+			copy.addAll(i, coveredFrontier);
 			HashMap<String, Integer> worldRecords = new HashMap<>();
+
 			if(hypoFlagAndUpdate(copy, worldRecords)!=null) {
 				possibleWorlds.add(worldRecords);
 			}
-			copy.remove(0);
 		}
 
 		HashMap<String, Integer> probabilities = new HashMap<>();
