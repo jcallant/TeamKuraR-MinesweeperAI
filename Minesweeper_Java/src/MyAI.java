@@ -519,7 +519,7 @@ public class MyAI extends AI {
 			probabilities.put(k, 0);
 		}
 		for(int i=0; i<possibleWorlds.size(); i++){
-			System.out.printf("world%d: %s", i, possibleWorlds.get(i));
+			System.out.printf("world%d: %s\n", i, possibleWorlds.get(i));
 			for (Action a : coveredFrontier) {
 				String k = key(a.x, a.y);
 				if (possibleWorlds.get(i).get(k) == MINE) {
@@ -632,7 +632,7 @@ public class MyAI extends AI {
 				}
 			}
 		}
-		return hypoRecords;
+		return null;
 	}
 
 	private HashMap<String, Integer> hypoAddCoveredNeighborsToSafeTiles(int x, int y, HashMap<String, Integer> hypoRecords){
