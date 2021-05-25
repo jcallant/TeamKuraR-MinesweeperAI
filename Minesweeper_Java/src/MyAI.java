@@ -503,9 +503,10 @@ public class MyAI extends AI {
 		ArrayList<Action> copy = new ArrayList<>(coveredFrontier);
 		for(int i=0; i<copy.size(); i++){
 			HashMap<String, Integer> worldRecords = new HashMap<>();
-			if(i>0) copy.remove(0);
-			if(hypoFlagAndUpdate(copy, worldRecords)!=null)
+			if(hypoFlagAndUpdate(copy, worldRecords)!=null) {
 				possibleWorlds.add(worldRecords);
+			}
+			copy.remove(0);
 		}
 
 		HashMap<String, Integer> probabilities = new HashMap<>();
