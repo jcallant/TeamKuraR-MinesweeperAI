@@ -596,7 +596,7 @@ public class MyAI extends AI {
 			System.out.print(" >> checking if valid...");
 			for (Action action : uncoveredFrontier) {
 				String k = key(action.x, action.y);
-				if (hypoRecords.get(k) > 0) {
+				if (!hypoRecords.containsKey(k) || hypoRecords.get(k) > 0) {
 					System.out.println("N: unsatisfied label " + k);
 					return null;
 				}
