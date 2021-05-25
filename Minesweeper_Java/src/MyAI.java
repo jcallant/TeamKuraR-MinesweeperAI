@@ -507,7 +507,8 @@ public class MyAI extends AI {
 			HashMap<String, Integer> worldRecords = new HashMap<>();
 
 			if(hypoFlagAndUpdate(copy, worldRecords)!=null) {
-				possibleWorlds.add(worldRecords);
+				if(!possibleWorlds.contains(worldRecords))
+					possibleWorlds.add(worldRecords);
 			}
 			copy = temp;
 			copy.add(copy.remove(0));
