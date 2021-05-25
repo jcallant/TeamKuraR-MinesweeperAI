@@ -21,6 +21,7 @@ import src.Action.ACTION;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class MyAI extends AI {
 	// ########################## INSTRUCTIONS ##########################
@@ -499,7 +500,26 @@ public class MyAI extends AI {
 			if(hypoFlagAndUpdate(copy, worldRecords)!=null)
 				possibleWorlds.add(worldRecords);
 		}
-		System.out.println(possibleWorlds);
+
+		HashMap<String, Integer> probabilities = new HashMap<>();
+		Iterator<Action> it = coveredFrontier.iterator();
+		while(it.hasNext()){
+			Action a = it.next();
+			String k = key(a.x, a.y);
+			probabilities.put(k, 0);
+		}
+		for(int i=0; i<possibleWorlds.size(); i++){
+			it = coveredFrontier.iterator();
+			while(it.hasNext()){
+				Action a = it.next();
+				String k = key(a.x, a.y);
+				if(possibleWorlds.get(i).get(k)==MINE){
+					int p = probabilities.get(k);
+					probabilities.put(k, ++p);
+				}
+			}
+		}
+		System.out.println(probabilities);
 		return null;
 	}
 
