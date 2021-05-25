@@ -600,7 +600,6 @@ public class MyAI extends AI {
 
 					// if new label == 0, uncover any remaining covered neighbors
 					if (labelValue == 0) {
-						System.out.println(" -neighbors made safe: " + k);
 						hypoAddCoveredNeighborsToSafeTiles(i, j, hypoRecords);// FIX THIS PATH; UPDATE LABEL AFTER UNCOVER
 					}
 				}
@@ -608,9 +607,11 @@ public class MyAI extends AI {
 		}
 		System.out.println(" hypoRecord: " + hypoRecords);
 
+		ArrayList<Action> copy = new ArrayList<>(frontier);
 		while(hypoFlagAndUpdate(frontier, hypoRecords)==null){
 			System.out.println(" -not possible. trying next.");
 			if(frontier.isEmpty()) {
+				frontier = copy;
 				System.out.println(" -list empty. cascading.");
 				return null;
 			}
@@ -635,10 +636,12 @@ public class MyAI extends AI {
 				String k = key(i, j);
 				if (hypoRecords.containsKey(k)){
 					if(hypoRecords.get(k)==COV_NEIGHBOR) {
+						System.out.printf(" -safe %s\n", k);
 						hypoRecords.put(k, SAFE);
 					}
 				}
 				else if (!records.containsKey(k) || records.get(k)==COV_NEIGHBOR) {
+					System.out.printf(" -safe %s\n", k);
 					hypoRecords.put(k, SAFE);
 				}
 			}
