@@ -529,20 +529,6 @@ public class MyAI extends AI {
 
 
 	private HashMap<String, Integer> hypoFlagAndUpdate(ArrayList<Action> frontier, HashMap<String, Integer> hypoRecords){
-		// base case
-		if(frontier.isEmpty()) {
-			System.out.print(" >> checking if valid...");
-			for (Action a : uncoveredFrontier) {
-				String k = key(a.x, a.y);
-				if (hypoRecords.get(k) > 0) {
-					System.out.println("N: unsatisfied label " + k);
-					hypoRecords = null;
-					return null;
-				}
-			}
-			System.out.println("Y: possible world found");
-			return hypoRecords;
-		}
 
 		Action a = frontier.remove(0);
 		int x = a.x;
@@ -576,7 +562,6 @@ public class MyAI extends AI {
 					System.out.println(String.format(" -label update: %s %d -> %d",k,labelValue+1, labelValue));
 					if (labelValue == -1){
 						System.out.println(" -label conflict: " + k);
-						hypoRecords = null;
 						return null; // if flagging as mine causes label conflict, then not possible
 					}
 					hypoRecords.put(k, labelValue);
@@ -592,7 +577,6 @@ public class MyAI extends AI {
 					System.out.println(String.format(" -label update: %s %d -> %d",k,labelValue+1, labelValue));
 					if (labelValue == -1) {
 						System.out.println(" -label conflict: " + k);
-						hypoRecords = null;
 						return null; // if flagging as mine causes label conflict, then not possible
 					}
 					hypoRecords.put(k, labelValue);
@@ -606,7 +590,20 @@ public class MyAI extends AI {
 			}
 		}
 		System.out.println(" hypoRecord: " + hypoRecords);
-		while(hypoFlagAndUpdate(frontier,hypoRecords) == null);
+
+		if(frontier.isEmpty()) {
+			System.out.print(" >> checking if valid...");
+			for (Action action : uncoveredFrontier) {
+				String k = key(action.x, action.y);
+				if (hypoRecords.get(k) > 0) {
+					System.out.println("N: unsatisfied label " + k);
+					return null;
+				}
+			}
+			System.out.println("Y: possible world found");
+			return hypoRecords;
+		}
+		while(hypoFlagAndUpdate(frontier, hypoRecords)==null);
 		return hypoRecords;
 	}
 
