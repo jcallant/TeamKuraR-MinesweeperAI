@@ -502,18 +502,14 @@ public class MyAI extends AI {
 		}
 
 		HashMap<String, Integer> probabilities = new HashMap<>();
-		Iterator<Action> it = coveredFrontier.iterator();
-		while(it.hasNext()){
-			Action a = it.next();
+		for (Action a : coveredFrontier) {
 			String k = key(a.x, a.y);
 			probabilities.put(k, 0);
 		}
 		for(int i=0; i<possibleWorlds.size(); i++){
-			it = coveredFrontier.iterator();
-			while(it.hasNext()){
-				Action a = it.next();
+			for (Action a : coveredFrontier) {
 				String k = key(a.x, a.y);
-				if(possibleWorlds.get(i).get(k)==MINE){
+				if (possibleWorlds.get(i).get(k) == MINE) {
 					int p = probabilities.get(k);
 					probabilities.put(k, ++p);
 				}
@@ -528,7 +524,15 @@ public class MyAI extends AI {
 	private HashMap<String, Integer> hypoFlagAndUpdate(ArrayList<Action> frontier, HashMap<String, Integer> hypoRecords){
 		// base case
 		if(frontier.isEmpty()) {
-			System.out.println(" >> frontier empty. found possible solution.");
+			System.out.print(" >> checking if valid...");
+			for (Action a : uncoveredFrontier) {
+				String k = key(a.x, a.y);
+				if (hypoRecords.get(k) > 0) {
+					System.out.println("N: unsatisfied label " + k);
+					return null;
+				}
+			}
+			System.out.println("Y: possible world found");
 			return hypoRecords;
 		}
 
@@ -585,6 +589,7 @@ public class MyAI extends AI {
 
 					// if new label == 0, uncover any remaining covered neighbors
 					if (labelValue == 0) {
+						System.out.println(" -neighbors made safe: " + k);
 						hypoAddCoveredNeighborsToSafeTiles(i, j, hypoRecords);// FIX THIS PATH; UPDATE LABEL AFTER UNCOVER
 					}
 				}
@@ -610,8 +615,10 @@ public class MyAI extends AI {
 			for(int i=colMin; i<colMax+1; i++) {
 				if (j==x && i==y) continue;
 				String k = key(i, j);
-				if (hypoRecords.containsKey(k) && hypoRecords.get(k)==COV_NEIGHBOR) {
-					hypoRecords.put(k, SAFE);
+				if (hypoRecords.containsKey(k)){
+					if(hypoRecords.get(k)==COV_NEIGHBOR) {
+						hypoRecords.put(k, SAFE);
+					}
 				}
 				else if (!records.containsKey(k) || records.get(k)==COV_NEIGHBOR) {
 					hypoRecords.put(k, SAFE);
