@@ -169,7 +169,7 @@ public class MyAI extends AI {
 
 		// update coveredFrontier with new knowledge
 		coveredFrontier = coveredFrontier.stream()
-				.filter(a -> records.get(key(a.x,a.y))==-1)
+				.filter(a -> records.get(key(a.x,a.y))==COV_NEIGHBOR)
 				.collect(Collectors.toCollection(ArrayList::new));
 
 		// output updated details
