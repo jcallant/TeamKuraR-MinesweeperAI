@@ -166,7 +166,17 @@ public class MyAI extends AI {
 
 
 		/* At this point, making guesses */
+
+		// update coveredFrontier with new knowledge
+		coveredFrontier = coveredFrontier.stream()
+				.filter(a -> records.get(key(a.x,a.y))==-1)
+				.collect(Collectors.toCollection(ArrayList::new));
+
+		// output updated details
 		outputKnowledge();
+
+		Action modelCheckingAction = handleModelChecking();
+		if(modelCheckingAction != null) return modelCheckingAction;
 
 		// [STEP4.2] Pick from ucf with lowest probability
 		Action probabilityAction = handleProbability();
@@ -180,7 +190,9 @@ public class MyAI extends AI {
 		return new Action(ACTION.LEAVE);
 	}
 
+
 	// ################### Helper Functions Go Here (optional) ##################
+
 
 	private String key(int x, int y){
 		return "(" + x + "," + y + ")";
@@ -429,6 +441,10 @@ public class MyAI extends AI {
 		}
 		flagAndUpdate(flags);
 		return handleGuaranteed();
+	}
+
+	private Action handleModelChecking(){
+		return null;
 	}
 
 	private Action handleProbability(){
