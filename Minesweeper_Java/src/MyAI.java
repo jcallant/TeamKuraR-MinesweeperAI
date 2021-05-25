@@ -534,18 +534,18 @@ public class MyAI extends AI {
 
 	private HashMap<String, Integer> hypoFlagAndUpdate(ArrayList<Action> frontier, HashMap<String, Integer> hypoRecords){
 
-		if(frontier.isEmpty()) {
-			System.out.print(" >> checking if valid...");
-			for (Action action : uncoveredFrontier) {
-				String k = key(action.x, action.y);
-				if (!hypoRecords.containsKey(k) || hypoRecords.get(k) > 0) {
-					System.out.println("N: unsatisfied label " + k);
-					return null;
-				}
-			}
-			System.out.println("Y: possible world found");
-			return hypoRecords;
-		}
+//		if(frontier.isEmpty()) {
+//			System.out.print(" >> checking if valid...");
+//			for (Action action : uncoveredFrontier) {
+//				String k = key(action.x, action.y);
+//				if (!hypoRecords.containsKey(k) || hypoRecords.get(k) > 0) {
+//					System.out.println("N: unsatisfied label " + k);
+//					return null;
+//				}
+//			}
+//			System.out.println("Y: possible world found");
+//			return hypoRecords;
+//		}
 
 		Action a = frontier.remove(0);
 		int x = a.x;
@@ -607,13 +607,27 @@ public class MyAI extends AI {
 		}
 		System.out.println(" hypoRecord: " + hypoRecords);
 
-		ArrayList<Action> copy = new ArrayList<>(frontier);
-		while(hypoFlagAndUpdate(frontier, hypoRecords)==null){
-			System.out.println(" -not possible. trying next.");
-			if(frontier.isEmpty()) {
-				frontier = copy;
-				System.out.println(" -list empty. cascading.");
-				return null;
+		System.out.print(" >> checking if valid...");
+		boolean valid = true;
+		for (Action action : uncoveredFrontier) {
+			String k = key(action.x, action.y);
+			if (!hypoRecords.containsKey(k) || hypoRecords.get(k) > 0) {
+				System.out.println("N: unsatisfied label " + k);
+				valid = false;
+				break;
+			}
+		}
+		if(valid) {
+			System.out.println("Y: possible world found");
+			return hypoRecords;
+		}
+		else if (!frontier.isEmpty()) {
+			while (hypoFlagAndUpdate(frontier, hypoRecords) == null) {
+				System.out.println(" -not possible. trying next.");
+				if (frontier.isEmpty()) {
+					System.out.println(" -list empty. cascading.");
+					return null;
+				}
 			}
 		}
 		return hypoRecords;
