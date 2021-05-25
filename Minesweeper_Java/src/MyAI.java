@@ -609,7 +609,11 @@ public class MyAI extends AI {
 		System.out.println(" hypoRecord: " + hypoRecords);
 
 		while(hypoFlagAndUpdate(frontier, hypoRecords)==null){
-			if(frontier.isEmpty()) return null;
+			System.out.println(" -not possible. trying next.");
+			if(frontier.isEmpty()) {
+				System.out.println(" -list empty. cascading.");
+				return null;
+			}
 		}
 		return hypoRecords;
 	}
