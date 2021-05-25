@@ -501,6 +501,7 @@ public class MyAI extends AI {
 		ArrayList<HashMap<String,Integer>> possibleWorlds = new ArrayList<>();
 
 		for(int i=0; i<coveredFrontier.size(); i++){
+			System.out.printf("i=%d: %s\n",i, coveredFrontier);
 			ArrayList<Action> copy = new ArrayList<>();
 			copy.addAll(i, coveredFrontier);
 			HashMap<String, Integer> worldRecords = new HashMap<>();
