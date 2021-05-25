@@ -531,7 +531,9 @@ public class MyAI extends AI {
 		Action a = probabilities.keySet().stream()
 				.min(Comparator.comparing(probabilities::get))
 				.orElse(null);
-		return a;
+		currX = a.x;
+		currY = a.y;
+		return new Action(ACTION.UNCOVER, a.x, a.y);
 	}
 
 
