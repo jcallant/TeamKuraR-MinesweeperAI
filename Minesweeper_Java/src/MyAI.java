@@ -141,17 +141,17 @@ public class MyAI extends AI {
 			// if label has no new info, pop again
 			if (label == 0) {
 				it.remove();
-				//System.out.printf("%s->%d cn: 0 [no new info, removed]%n", key(a.x,a.y), label);
+				System.out.printf("%s->%d cn: 0 [no new info, removed]%n", key(a.x,a.y), label);
 				continue;
 			}
 
 			// get number of covered neighbors
 			ArrayList<Action> possible = countCoveredNeighbors(a.x,a.y);
-			//System.out.printf("%s->%d  cn: %d%n", key(a.x,a.y), label, possible.size());
+			System.out.printf("%s->%d  cn: %d%n", key(a.x,a.y), label, possible.size());
 
 			// if number of covered neighbors == label value (remaining numbers are mines)
 			if(possible.size() <= label){
-				//System.out.println("--match");
+				System.out.println("--match");
 
 				// flag each tile as a mine and update labels of adjacent tiles for each mine
 				flagAndUpdate(possible);
@@ -286,7 +286,7 @@ public class MyAI extends AI {
 		for (Action f : flags) {
 
 			// flag the mine
-			//System.out.println("flag: " + key(f.x,f.y));
+			System.out.println("flag: " + key(f.x,f.y));
 			records.put(key(f.x,f.y),MINE); // MINE = -9 value for mines
 			guaranteedMine.add(f);
 
@@ -309,7 +309,7 @@ public class MyAI extends AI {
 							int labelValue = records.get(k);
 							labelValue--;
 							records.put(k, labelValue);
-							//System.out.println("update: " + k + " = " + (records.get(k)+1) + " -> " + records.get(k));
+							System.out.println("update: " + k + " = " + (records.get(k)+1) + " -> " + records.get(k));
 
 							// if new label == 0, uncover any remaining covered neighbors
 							if (labelValue == 0) {
@@ -318,7 +318,7 @@ public class MyAI extends AI {
 						}
 					}
 					else {
-						//System.out.println(k + " added to covered frontier");
+						System.out.println(k + " added to covered frontier");
 						records.put(k, COV_NEIGHBOR); // -10 placeholder for neighbors of uncovered tiles
 						coveredFrontier.add(new Action(ACTION.UNCOVER, i, j));
 					}
