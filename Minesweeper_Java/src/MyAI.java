@@ -511,7 +511,7 @@ public class MyAI extends AI {
 				possibleWorlds.add(worldRecords);
 			}
 		}
-		System.out.printf(">> %d possible worlds\n",possibleWorlds);
+		System.out.printf(">> %d possible worlds\n",possibleWorlds.size());
 		System.out.printf(">> cf: %s\n", coveredFrontier);
 		HashMap<String, Integer> probabilities = new HashMap<>();
 		for (Action a : coveredFrontier) {
