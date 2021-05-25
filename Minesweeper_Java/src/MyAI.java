@@ -570,6 +570,7 @@ public class MyAI extends AI {
 		}
 		System.out.println(" hypoRecord: " + hypoRecords);
 		while(hypoFlagAndUpdate(frontier,hypoRecords) == null) {
+			System.out.println(frontier);
 			if(frontier.isEmpty()) hypoRecords = null;
 		}
 		return hypoRecords;
