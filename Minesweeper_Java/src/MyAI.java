@@ -489,6 +489,8 @@ public class MyAI extends AI {
 			randomY = random.nextInt(ROW_DIMENSIONS)+1;
 			k = key(randomX,randomY);
 		}
+		currX = randomX;
+		currY = randomY;
 		return new Action(ACTION.UNCOVER, randomX, randomY);
 	}
 
