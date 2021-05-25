@@ -496,7 +496,7 @@ public class MyAI extends AI {
 
 		for(int i=0; i<coveredFrontier.size(); i++){
 			HashMap<String, Integer> worldRecords = new HashMap<>();
-			ArrayList<Action> copy = new ArrayList<>(coveredFrontier);
+			ArrayList<Action> copy = (ArrayList<Action>) coveredFrontier.subList(i,coveredFrontier.size());
 			if(hypoFlagAndUpdate(copy, worldRecords)!=null)
 				possibleWorlds.add(worldRecords);
 		}
