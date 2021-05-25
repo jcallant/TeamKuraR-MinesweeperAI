@@ -617,6 +617,7 @@ public class MyAI extends AI {
 			return hypoRecords;
 		}
 		else if (!frontier.isEmpty()) {
+			System.out.printf("frontier: %s", frontier);
 			while (hypoFlagAndUpdate(frontier, hypoRecords) == null) {
 				System.out.println(" -not possible. trying next.");
 				if (frontier.isEmpty()) {
