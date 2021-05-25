@@ -503,7 +503,7 @@ public class MyAI extends AI {
 		ArrayList<Action> copy = new ArrayList<>(coveredFrontier);
 		for(int i=0; i<coveredFrontier.size(); i++){
 			ArrayList<Action> temp = new ArrayList<>(copy);
-			System.out.printf("\ni=%d: %s\n",i, coveredFrontier);
+			System.out.printf("\ni=%d: %s\n",i, copy);
 			HashMap<String, Integer> worldRecords = new HashMap<>();
 
 			if(hypoFlagAndUpdate(copy, worldRecords)!=null) {
