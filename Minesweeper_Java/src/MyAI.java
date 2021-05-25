@@ -494,9 +494,10 @@ public class MyAI extends AI {
 	private Action handleModelChecking(){
 		ArrayList<HashMap<String,Integer>> possibleWorlds = new ArrayList<>();
 
-		for(int i=0; i<coveredFrontier.size(); i++){
+		ArrayList<Action> copy = new ArrayList<>(coveredFrontier);
+		for(int i=0; i<copy.size(); i++){
 			HashMap<String, Integer> worldRecords = new HashMap<>();
-			ArrayList<Action> copy = (ArrayList<Action>) coveredFrontier.subList(i,coveredFrontier.size()-1);
+			if(i>0) copy.remove(0);
 			if(hypoFlagAndUpdate(copy, worldRecords)!=null)
 				possibleWorlds.add(worldRecords);
 		}
