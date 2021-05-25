@@ -484,7 +484,7 @@ public class MyAI extends AI {
 		int randomX = random.nextInt(COL_DIMENSIONS)+1;
 		int randomY = random.nextInt(ROW_DIMENSIONS)+1;
 		String k = key(randomX,randomY);
-		while(records.containsKey(k) && records.get(k) < 0 && records.get(k) != MINE){
+		while(records.containsKey(k) && records.get(k) != COV_NEIGHBOR){
 			randomX = random.nextInt(COL_DIMENSIONS)+1;
 			randomY = random.nextInt(ROW_DIMENSIONS)+1;
 			k = key(randomX,randomY);
