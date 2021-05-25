@@ -177,6 +177,12 @@ public class MyAI extends AI {
 		// output updated details
 		outputKnowledge();
 
+		if(flagsLeft == 0){
+			System.out.println("No more flags. Uncovering rest");
+			for(Action a : coveredFrontier)
+				guaranteedSafe.add(new Action(ACTION.UNCOVER,a.x, a.y));
+		}
+
 		System.out.println("Attempting Model Checking...");
 		Action modelCheckingAction = handleModelChecking();
 		if (modelCheckingAction != null) return modelCheckingAction;
@@ -530,6 +536,7 @@ public class MyAI extends AI {
 				String k = key(a.x, a.y);
 				if (hypoRecords.get(k) > 0) {
 					System.out.println("N: unsatisfied label " + k);
+					hypoRecords = null;
 					return null;
 				}
 			}
