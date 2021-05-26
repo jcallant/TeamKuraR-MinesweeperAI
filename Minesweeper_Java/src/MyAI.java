@@ -503,20 +503,40 @@ public class MyAI extends AI {
 	private Action handleModelChecking2(){
 		if(coveredFrontier.isEmpty()) return null;
 
-		ArrayList<Action> mineList = new ArrayList<>();
-		Set<ArrayList<Action>> subset = new HashSet<>();
 		int powerSetSize = (int) Math.pow(2, coveredFrontier.size());
 
-		for(int i=0; i<powerSetSize; i++){
-			for(int j=0; j<coveredFrontier.size(); j++){
-				if((i & (1 << j)) > 0)
-					mineList.add(coveredFrontier.get(j));
-			}
-			if(mineList.size() <= flagsLeft)
-				System.out.println(mineList);
-			mineList = new ArrayList<>();
+		int solutionCount = 1;
+		HashMap<Action, Integer> probabilities = new HashMap<>();
+		for (Action a : coveredFrontier) {
+			probabilities.put(a, 0);
 		}
-		return null;
+		for(int i=0; i<powerSetSize; i++){
+			ArrayList<Action> mineList = new ArrayList<>();
+			for(int j=0; j<coveredFrontier.size(); j++){
+				if((i & (1 << j)) > 0) {
+					mineList.add(coveredFrontier.get(j));
+				}
+			}
+			if(mineList.size() <= flagsLeft) {
+				System.out.printf("\nlist %d: %s\n",solutionCount++, mineList);
+				HashMap<String, Integer> worldRecords = new HashMap<>();
+
+				if(hypoFlagAndUpdate(mineList, worldRecords)!=null) {
+					for(Action a : mineList){
+						int p = probabilities.get(a);
+						probabilities.put(a, ++p);
+					}
+				}
+			}
+		}
+		System.out.printf(">> %d possible solutions\n",solutionCount);
+		System.out.printf(">> probabilities: %s\n", probabilities);
+		Action a = probabilities.keySet().stream()
+				.min(Comparator.comparing(probabilities::get))
+				.orElse(null);
+		currX = a.x;
+		currY = a.y;
+		return new Action(ACTION.UNCOVER, a.x, a.y);
 	}
 
 	private Action handleModelChecking(){
