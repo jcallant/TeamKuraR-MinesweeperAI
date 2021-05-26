@@ -608,7 +608,7 @@ public class MyAI extends AI {
 	private HashMap<String, Integer> hypoFlagAndUpdate(ArrayList<Action> frontier, HashMap<String, Integer> hypoRecords) {
 
 		for(Action a : frontier) {
-			Action a = frontier.remove(0);
+			a = frontier.remove(0);
 			int x = a.x;
 			int y = a.y;
 //		//System.out.println(" <hypoFlag: " + key(x, y));
