@@ -547,7 +547,8 @@ public class MyAI extends AI {
 				.filter(k -> probabilities.get(k) == finalSolutionCount)
 				.map(uncoverAction -> new Action(ACTION.FLAG, uncoverAction.x, uncoverAction.y))
 				.collect(Collectors.toCollection(ArrayList::new));
-		guaranteedMine.addAll(list);
+		flagAndUpdate(list);
+		
 
 		// get guaranteed action if any
 		Action finalAction = handleGuaranteed();
