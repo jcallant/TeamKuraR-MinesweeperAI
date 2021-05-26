@@ -617,7 +617,7 @@ public class MyAI extends AI {
 			System.out.println("Y: possible world found\n");
 			return hypoRecords;
 		}
-		return hypoFlagAndUpdate(frontier, hypoRecords);
+		return hypoFlagAndUpdate2(frontier, hypoRecords);
 	}
 
 
