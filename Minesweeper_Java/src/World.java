@@ -238,9 +238,9 @@ public class World {
 
 			gameOver = this.doMove(actionObj);
 			if (this.debug) {
-				System.out.println("Hit any button to Continue...");
-				Scanner in = new Scanner(System.in);
-				in.nextLine();
+//				System.out.println("Hit any button to Continue...");
+//				Scanner in = new Scanner(System.in);
+//				in.nextLine();
 			}
 		}
 		if (this.gameState == GAMESTATE.WON) {

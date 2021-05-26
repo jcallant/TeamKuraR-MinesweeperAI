@@ -558,9 +558,9 @@ public class MyAI extends AI {
 					System.out.println(key(a.x,a.y));
 				}
 			}
-//			System.out.println("Hit any button to Continue...");
-//			Scanner in = new Scanner(System.in);
-//			in.nextLine();
+			System.out.println("Hit any button to Continue...");
+			Scanner in = new Scanner(System.in);
+			in.nextLine();
 
 			// out of all solutions n, add tiles with n\n of being mine to guaranteedMine
 			final int finalSolutionCount = solutionCount;
