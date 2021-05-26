@@ -586,7 +586,7 @@ public class MyAI extends AI {
 
 			if(ratio < 0.50) {
 				System.out.println("IM TAKING A RISK!!!");
-				return handleAny();
+				return handleProbability();
 			}
 		}
 
