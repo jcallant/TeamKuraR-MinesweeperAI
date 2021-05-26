@@ -505,7 +505,7 @@ public class MyAI extends AI {
 
 		int powerSetSize = (int) Math.pow(2, coveredFrontier.size());
 
-		int solutionCount = 0;
+		int worldCount = 0;
 		HashMap<Action, Integer> probabilities = new HashMap<>();
 		for (Action a : coveredFrontier) {
 			probabilities.put(a, 0);
@@ -518,7 +518,7 @@ public class MyAI extends AI {
 				}
 			}
 			if(mineList.size() <= flagsLeft) {
-				System.out.printf("list %d: %s\n",++solutionCount, mineList);
+				System.out.printf("list %d: %s\n",++worldCount, mineList);
 				HashMap<String, Integer> worldRecords = new HashMap<>();
 
 				if(hypoFlagAndUpdate(mineList, worldRecords)!=null) {
@@ -529,7 +529,8 @@ public class MyAI extends AI {
 				}
 			}
 		}
-		System.out.printf(">> %d possible solutions\n",solutionCount);
+		System.out.printf(">> %d possible worlds\n",worldCount);
+		System.out.printf(">> %d solutions found\n",worldCount);
 		System.out.printf(">> probabilities: %s\n", probabilities);
 		Action a = probabilities.keySet().stream()
 				.min(Comparator.comparing(probabilities::get))
@@ -587,7 +588,7 @@ public class MyAI extends AI {
 		Action a = frontier.remove(0);
 		int x = a.x;
 		int y = a.y;
-		//System.out.println(" <hypoFlag: " + key(x, y));
+		System.out.println(" <hypoFlag: " + key(x, y));
 
 		// if already marked safe, then can't be flagged as mine
 		if (hypoRecords.containsKey(key(x, y)) && hypoRecords.get(key(x, y)) == SAFE){
@@ -615,10 +616,10 @@ public class MyAI extends AI {
 				if (hypoRecords.containsKey(k) && hypoRecords.get(k) >= 0) {
 					int labelValue = hypoRecords.get(k);
 					labelValue--;
-					//System.out.println(String.format(" -label update: %s %d -> %d",k,labelValue+1, labelValue));
+					System.out.println(String.format(" -label update: %s %d -> %d",k,labelValue+1, labelValue));
 					if (labelValue == -1){
-						//System.out.println(" -label conflict: " + k);
-						//System.out.println(" </hypoFlag>");
+						System.out.println(" -label conflict: " + k);
+						System.out.println(" </hypoFlag>");
 						return null; // if flagging as mine causes label conflict, then not possible
 					}
 					hypoRecords.put(k, labelValue);
@@ -631,10 +632,10 @@ public class MyAI extends AI {
 				else if (records.containsKey(k) && records.get(k) >= 0){
 					int labelValue = records.get(k);
 					labelValue--;
-					//System.out.println(String.format(" -label update: %s %d -> %d",k,labelValue+1, labelValue));
+					System.out.println(String.format(" -label update: %s %d -> %d",k,labelValue+1, labelValue));
 					if (labelValue == -1) {
-						//System.out.println(" -label conflict: " + k);
-						//System.out.println(" </hypoFlag>");
+						System.out.println(" -label conflict: " + k);
+						System.out.println(" </hypoFlag>");
 						return null; // if flagging as mine causes label conflict, then not possible
 					}
 					hypoRecords.put(k, labelValue);
@@ -646,37 +647,37 @@ public class MyAI extends AI {
 				}
 			}
 		}
-		//System.out.println(" hypoRecord: " + hypoRecords);
+		System.out.println(" hypoRecord: " + hypoRecords);
 
-		//System.out.print(" ======= checking if valid...");
+		System.out.print(" ======= checking if valid...");
 		boolean valid = true;
 		for (Action action : uncoveredFrontier) {
 			String k = key(action.x, action.y);
 			if (!hypoRecords.containsKey(k) || hypoRecords.get(k) > 0) {
-				//System.out.println("N: unsatisfied label " + k);
+				System.out.println("N: unsatisfied label " + k);
 				valid = false;
 				break;
 			}
 		}
 		if(valid) {
-			//System.out.println("Y: possible world found\n");
-			//System.out.println(" </hypoFlag>");
+			System.out.println("Y: possible world found\n");
+			System.out.println(" </hypoFlag>");
 			return hypoRecords;
 		}
 		else if (!frontier.isEmpty()) {
-			//System.out.printf(" frontier: %s\n", frontier);
+			System.out.printf(" frontier: %s\n", frontier);
 			while (hypoFlagAndUpdate(frontier, hypoRecords) == null) {
-				//System.out.println(" -not possible. trying next.");
+				System.out.println(" -not possible. trying next.");
 				if (frontier.isEmpty()) {
-					//System.out.println(" -list empty. cascading.");
-					//System.out.println(" </hypoFlag>");
+					System.out.println(" -list empty. cascading.");
+					System.out.println(" </hypoFlag>");
 					return null;
 				}
 			}
-			//System.out.println(" </hypoFlag>");
+			System.out.println(" </hypoFlag>");
 			return hypoRecords;
 		}
-		//System.out.println(" </hypoFlag>");
+		System.out.println(" </hypoFlag>");
 		return null;
 	}
 
