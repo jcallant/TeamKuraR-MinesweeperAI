@@ -532,12 +532,36 @@ public class MyAI extends AI {
 		}
 		System.out.printf(">> %d solutions found\n",solutionCount);
 		System.out.printf(">> probabilities: %s\n", probabilities);
-		Action a = probabilities.keySet().stream()
-				.min(Comparator.comparing(probabilities::get))
-				.orElse(null);
-		currX = a.x;
-		currY = a.y;
-		return new Action(ACTION.UNCOVER, a.x, a.y);
+
+		// out of all solutions n, add tiles with 0\n of being mine to guranteedSafe
+		ArrayList<Action> list = probabilities.keySet().stream()
+				.filter(k -> probabilities.get(k)==0)
+				.collect(Collectors.toCollection(ArrayList::new));
+		guaranteedSafe.addAll(list);
+
+		// out of all solutions n, add tiles with n\n of being mine to guaranteedMine
+		final int finalSolutionCount = solutionCount;
+		list = probabilities.keySet().stream()
+				.filter(k -> probabilities.get(k)== finalSolutionCount)
+				.collect(Collectors.toCollection(ArrayList::new));
+		guaranteedMine.addAll(list);
+
+		// get guaranteed action if any
+		Action finalAction = handleGuaranteed();
+
+		// if no guaranteed, uncover tile with min probability
+		if (finalAction == null){
+			finalAction = probabilities.keySet().stream()
+					.min(Comparator.comparing(probabilities::get))
+					.orElse(null);
+		}
+
+		// assuming a solution was found, (if not then it's broken)
+		if(finalAction != null) {
+			currX = finalAction.x;
+			currY = finalAction.y;
+		}
+		return finalAction;
 	}
 
 	private HashMap<String, Integer> hypoFlagAndUpdate2(ArrayList<Action> frontier, HashMap<String, Integer> hypoRecords) {
@@ -613,7 +637,7 @@ public class MyAI extends AI {
 					return null;
 				}
 			}
-			System.out.println(" hypoRecord: " + hypoRecords);
+			System.out.println("\n hypoRecord: " + hypoRecords);
 			System.out.printf(" SOLUTION ");
 			return hypoRecords;
 		}
