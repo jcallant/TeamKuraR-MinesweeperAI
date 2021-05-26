@@ -510,7 +510,7 @@ public class MyAI extends AI {
 		for (Action a : coveredFrontier) {
 			probabilities.put(a, 0);
 		}
-		for(int i=0; i<powerSetSize; i++){
+		for(int i=1; i<powerSetSize; i++){
 			ArrayList<Action> mineList = new ArrayList<>();
 			for(int j=0; j<coveredFrontier.size(); j++){
 				if((i & (1 << j)) > 0) {
