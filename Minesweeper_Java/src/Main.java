@@ -2,6 +2,7 @@ package src;
 
 import org.apache.commons.cli.*;
 import java.io.*;
+import java.util.Scanner;
 
 public class Main {
 	public static void main(String[] args) throws Exception {
@@ -104,8 +105,15 @@ public class Main {
 					// double score = world.run();
                     World.Results results = world.run();
                     double score = results.score;
+
+                    /* added for debugging*/
                     if (score > 0) {for(int i=0; i<100; i++) System.out.printf("WORLD %d -- WIN\n", totalWorlds);} // added for debugging
                     else {for(int i=0; i<100; i++) System.out.printf("WORLD %d -- LOSE\n", totalWorlds);} // added for debugging
+                    System.out.println("Hit any button to Continue...");
+                    Scanner in = new Scanner(System.in);
+                    in.nextLine();
+                    /* ################ */
+
                     int difficulty = results.difficulty;
 					if (score > 0) {
                         totalScore += score;
