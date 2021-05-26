@@ -541,8 +541,8 @@ public class MyAI extends AI {
 				}
 			}
 		}
-		System.out.printf(">> %d solutions found\n",solutionCount);
-		System.out.printf(">> probabilities: %s\n", probabilities);
+		//System.out.printf(">> %d solutions found\n",solutionCount);
+		//System.out.printf(">> probabilities: %s\n", probabilities);
 
 //		// out of all solutions n, add tiles with 0\n of being mine to guaranteedSafe
 //		ArrayList<Action> safe = probabilities.keySet().stream()
