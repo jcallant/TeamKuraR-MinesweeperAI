@@ -535,20 +535,20 @@ public class MyAI extends AI {
 		System.out.printf(">> %d solutions found\n",solutionCount);
 		System.out.printf(">> probabilities: %s\n", probabilities);
 
-		// out of all solutions n, add tiles with 0\n of being mine to guranteedSafe
-		ArrayList<Action> list = probabilities.keySet().stream()
-				.filter(k -> probabilities.get(k)==0)
-				.collect(Collectors.toCollection(ArrayList::new));
-		guaranteedSafe.addAll(list);
+//		// out of all solutions n, add tiles with 0\n of being mine to guranteedSafe
+//		ArrayList<Action> safe = probabilities.keySet().stream()
+//				.filter(k -> probabilities.get(k)==0)
+//				.collect(Collectors.toCollection(ArrayList::new));
+//		guaranteedSafe.addAll(list);
 
 		// out of all solutions n, add tiles with n\n of being mine to guaranteedMine
 		final int finalSolutionCount = solutionCount;
-		list = probabilities.keySet().stream()
+		ArrayList<Action> mines = probabilities.keySet().stream()
 				.filter(k -> probabilities.get(k) == finalSolutionCount)
 				.map(uncoverAction -> new Action(ACTION.FLAG, uncoverAction.x, uncoverAction.y))
 				.collect(Collectors.toCollection(ArrayList::new));
-		flagAndUpdate(list);
-		
+		flagAndUpdate(mines);
+
 
 		// get guaranteed action if any
 		Action finalAction = handleGuaranteed();
