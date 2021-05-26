@@ -503,6 +503,7 @@ public class MyAI extends AI {
 
 	private Action handleModelChecking2(){
 		if(coveredFrontier.isEmpty()) return null;
+		System.out.printf(">> cf: %s\n", coveredFrontier);
 
 		int powerSetSize = (int) Math.pow(2, coveredFrontier.size());
 
