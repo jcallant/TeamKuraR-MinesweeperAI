@@ -226,7 +226,7 @@ public class MyAI extends AI {
 				if (j==y && i==x) continue;
 				String k = key(i, j);
 				if (!records.containsKey(k) || records.get(k)==COV_NEIGHBOR) {
-					////System.out.println(k + " added to safe");
+					System.out.println(k + " added to safe");
 					records.put(k, 0);
 					guaranteedSafe.add(new Action(ACTION.UNCOVER, i, j));
 				}
@@ -299,7 +299,7 @@ public class MyAI extends AI {
 		for (Action f : flags) {
 
 			// flag the mine
-			//System.out.println("flag: " + key(f.x,f.y));
+			System.out.println("flag: " + key(f.x,f.y));
 			records.put(key(f.x,f.y),MINE); // MINE = -9 value for mines
 			guaranteedMine.add(f);
 
@@ -322,7 +322,7 @@ public class MyAI extends AI {
 							int labelValue = records.get(k);
 							labelValue--;
 							records.put(k, labelValue);
-							//System.out.println("update: " + k + " = " + (records.get(k)+1) + " -> " + records.get(k));
+							System.out.println("update: " + k + " = " + (records.get(k)+1) + " -> " + records.get(k));
 
 							// if new label == 0, uncover any remaining covered neighbors
 							if (labelValue == 0) {
@@ -410,11 +410,11 @@ public class MyAI extends AI {
 	}
 
 	private Action handleCase121(){
-		//System.out.println("\nSearching ucf for 121...");
+		System.out.println("\nSearching ucf for 121...");
 		ArrayList<Action> twos = uncoveredFrontier.stream()
 				.filter(a -> records.get(key(a.x,a.y))==2)
 				.collect(Collectors.toCollection(ArrayList::new));
-		//System.out.println("twos: " + twos);
+		System.out.println("twos: " + twos);
 		ArrayList<Action> flags = new ArrayList<>();
 		for (Action a : twos) {
 			if (a.y == 1 || a.y == ROW_DIMENSIONS) continue;
@@ -422,7 +422,7 @@ public class MyAI extends AI {
 			int i = a.x;
 			int j = a.y;
 
-			//System.out.println(key(i,j));
+			System.out.println(key(i,j));
 			int t = records.get(key(i,j+1));
 			int b = records.get(key(i,j-1));
 			int l = records.get(key(i-1,j));
