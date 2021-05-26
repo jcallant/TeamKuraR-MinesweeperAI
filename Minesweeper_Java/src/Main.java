@@ -102,7 +102,7 @@ public class Main {
                     totalWorlds++;
 					world = new World(worldFile.getCanonicalPath(), aiType, debug_mode);
 					// double score = world.run();
-                    for(int i=0; i<100; i++) System.out.printf("WORLD %d", totalWorlds);
+                    for(int i=0; i<100; i++) System.out.printf("WORLD %d\n", totalWorlds);
                     World.Results results = world.run();
                     double score = results.score;
                     int difficulty = results.difficulty;
