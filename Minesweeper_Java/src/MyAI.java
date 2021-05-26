@@ -187,7 +187,7 @@ public class MyAI extends AI {
 		}
 
 		//System.out.println("Attempting Model Checking...");
-		Action modelCheckingAction = handleModelChecking2();
+		Action modelCheckingAction = handleModelChecking2(5000,1);
 		if (modelCheckingAction != null) return modelCheckingAction;
 
 		// [STEP4.2] Pick from ucf with lowest probability
@@ -501,7 +501,9 @@ public class MyAI extends AI {
 
 	// ################### ModelChecking Functions ##################
 
-	private Action handleModelChecking2(){
+	private Action handleModelChecking2(double timeLimit, double timeStep){
+
+
 		if(coveredFrontier.isEmpty()) return null;
 		//System.out.printf(">> cf: %s\n", coveredFrontier);
 
@@ -512,7 +514,13 @@ public class MyAI extends AI {
 		for (Action a : coveredFrontier) {
 			probabilities.put(a, 0);
 		}
+		boolean allFound = true;
 		for(int i=1; i<powerSetSize; i++){
+			timeLimit -= timeStep;
+			if(timeLimit < 0) {
+				allFound = false;
+				break;
+			}
 			ArrayList<Action> mineList = new ArrayList<>();
 			for(int j=0; j<coveredFrontier.size(); j++){
 				if((i & (1 << j)) > 0) {
@@ -541,17 +549,19 @@ public class MyAI extends AI {
 //				.collect(Collectors.toCollection(ArrayList::new));
 //		guaranteedSafe.addAll(list);
 
-		// out of all solutions n, add tiles with n\n of being mine to guaranteedMine
-		final int finalSolutionCount = solutionCount;
-		ArrayList<Action> mines = probabilities.keySet().stream()
-				.filter(k -> probabilities.get(k) == finalSolutionCount)
-				.map(uncoverAction -> new Action(ACTION.FLAG, uncoverAction.x, uncoverAction.y))
-				.collect(Collectors.toCollection(ArrayList::new));
-		flagAndUpdate(mines);
+		Action finalAction = null;
+		if(allFound) {
+			// out of all solutions n, add tiles with n\n of being mine to guaranteedMine
+			final int finalSolutionCount = solutionCount;
+			ArrayList<Action> mines = probabilities.keySet().stream()
+					.filter(k -> probabilities.get(k) == finalSolutionCount)
+					.map(uncoverAction -> new Action(ACTION.FLAG, uncoverAction.x, uncoverAction.y))
+					.collect(Collectors.toCollection(ArrayList::new));
+			flagAndUpdate(mines);
 
-
-		// get guaranteed action if any
-		Action finalAction = handleGuaranteed();
+			// get guaranteed action if any
+			finalAction = handleGuaranteed();
+		}
 
 		// if no guaranteed, uncover tile with min probability
 		if (finalAction == null){
