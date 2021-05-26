@@ -187,7 +187,7 @@ public class MyAI extends AI {
 		}
 
 		//System.out.println("Attempting Model Checking...");
-		Action modelCheckingAction = handleModelChecking();
+		Action modelCheckingAction = handleModelChecking2();
 		if (modelCheckingAction != null) return modelCheckingAction;
 
 		// [STEP4.2] Pick from ucf with lowest probability
@@ -500,6 +500,24 @@ public class MyAI extends AI {
 
 	// ################### ModelChecking Functions ##################
 
+	private Action handleModelChecking2(){
+		if(coveredFrontier.isEmpty()) return null;
+
+		ArrayList<Action> mineList = new ArrayList<>();
+		Set<ArrayList<Action>> subset = new HashSet<>();
+		int powerSetSize = (int) Math.pow(2, coveredFrontier.size());
+
+		for(int i=0; i<powerSetSize; i++){
+			for(int j=0; j<coveredFrontier.size(); j++){
+				if((i & (1 << j)) > 0)
+					mineList.add(coveredFrontier.get(j));
+			}
+			System.out.println(mineList);
+			mineList = new ArrayList<>();
+		}
+		return null;
+	}
+
 	private Action handleModelChecking(){
 		ArrayList<HashMap<String,Integer>> possibleWorlds = new ArrayList<>();
 		if(coveredFrontier.isEmpty()) return null;
@@ -518,13 +536,13 @@ public class MyAI extends AI {
 			copy.add(copy.remove(0));
 		}
 		System.out.printf(">> %d possible worlds\n",possibleWorlds.size());
-		System.out.printf(">> cf: %s\n", coveredFrontier);
+		//System.out.printf(">> cf: %s\n", coveredFrontier);
 		HashMap<Action, Integer> probabilities = new HashMap<>();
 		for (Action a : coveredFrontier) {
 			probabilities.put(a, 0);
 		}
 		for(int i=0; i<possibleWorlds.size(); i++){
-			System.out.printf("world%d: %s\n", i, possibleWorlds.get(i));
+			//System.out.printf("world%d: %s\n", i, possibleWorlds.get(i));
 			for (Action a : coveredFrontier) {
 				String k = key(a.x, a.y);
 				if (possibleWorlds.get(i).containsKey(k) && possibleWorlds.get(i).get(k) == MINE) {
@@ -542,8 +560,7 @@ public class MyAI extends AI {
 		return new Action(ACTION.UNCOVER, a.x, a.y);
 	}
 
-
-
+	// FIX: function only catches first solution (if any)
 	private HashMap<String, Integer> hypoFlagAndUpdate(ArrayList<Action> frontier, HashMap<String, Integer> hypoRecords) {
 
 		Action a = frontier.remove(0);
@@ -587,7 +604,7 @@ public class MyAI extends AI {
 
 					// if new label == 0, uncover any remaining covered neighbors
 					if (labelValue == 0) {
-						hypoAddCoveredNeighborsToSafeTiles(i, j, hypoRecords); // FIX THIS PATH; UPDATE LABEL AFTER UNCOVER
+						hypoAddCoveredNeighborsToSafeTiles(i, j, hypoRecords);
 					}
 				}
 				else if (records.containsKey(k) && records.get(k) >= 0){
@@ -603,7 +620,7 @@ public class MyAI extends AI {
 
 					// if new label == 0, uncover any remaining covered neighbors
 					if (labelValue == 0) {
-						hypoAddCoveredNeighborsToSafeTiles(i, j, hypoRecords);// FIX THIS PATH; UPDATE LABEL AFTER UNCOVER
+						hypoAddCoveredNeighborsToSafeTiles(i, j, hypoRecords);
 					}
 				}
 			}
