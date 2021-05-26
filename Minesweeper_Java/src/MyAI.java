@@ -187,8 +187,8 @@ public class MyAI extends AI {
 		}
 
 		//System.out.println("Attempting Model Checking...");
-		Action modelCheckingAction = handleModelChecking2(5000,1);
-		if (modelCheckingAction != null) return modelCheckingAction;
+		//Action modelCheckingAction = handleModelChecking(5000,1);
+		//if (modelCheckingAction != null) return modelCheckingAction;
 
 		// [STEP4.2] Pick from ucf with lowest probability
 		Action probabilityAction = handleProbability();
@@ -501,7 +501,7 @@ public class MyAI extends AI {
 
 	// ################### ModelChecking Functions ##################
 
-	private Action handleModelChecking2(double timeLimit, double timeStep){
+	private Action handleModelChecking(double timeLimit, double timeStep){
 		if(coveredFrontier.isEmpty()) return null;
 		//System.out.printf(">> cf: %s\n", coveredFrontier);
 
@@ -529,7 +529,7 @@ public class MyAI extends AI {
 				HashMap<String, Integer> worldRecords = new HashMap<>();
 
 				ArrayList<Action> temp = new ArrayList<>(mineList);
-				if(hypoFlagAndUpdate2(mineList, worldRecords)!=null) {
+				if(hypoFlagAndUpdate(mineList, worldRecords)!=null) {
 					//System.out.printf("%d: %s\n",++solutionCount, temp);
 					for(Action a : temp){
 						int p = probabilities.get(a);
@@ -576,7 +576,7 @@ public class MyAI extends AI {
 		return finalAction;
 	}
 
-	private HashMap<String, Integer> hypoFlagAndUpdate2(ArrayList<Action> frontier, HashMap<String, Integer> hypoRecords) {
+	private HashMap<String, Integer> hypoFlagAndUpdate(ArrayList<Action> frontier, HashMap<String, Integer> hypoRecords) {
 
 		Action a = frontier.remove(0);
 		int x = a.x;
@@ -653,150 +653,9 @@ public class MyAI extends AI {
 			//System.out.printf(" SOLUTION ");
 			return hypoRecords;
 		}
-		return hypoFlagAndUpdate2(frontier, hypoRecords);
+		return hypoFlagAndUpdate(frontier, hypoRecords);
 	}
 
-
-	private Action handleModelChecking(){
-		ArrayList<HashMap<String,Integer>> possibleWorlds = new ArrayList<>();
-		if(coveredFrontier.isEmpty()) return null;
-
-		ArrayList<Action> copy = new ArrayList<>(coveredFrontier);
-		for(int i=0; i<copy.size(); i++){
-			ArrayList<Action> temp = new ArrayList<>(copy);
-			//System.out.printf("\ni=%d: %s\n",i, copy);
-			HashMap<String, Integer> worldRecords = new HashMap<>();
-
-			if(hypoFlagAndUpdate(copy, worldRecords)!=null) {
-				if(!possibleWorlds.contains(worldRecords))
-					possibleWorlds.add(worldRecords);
-			}
-			copy = temp;
-			copy.add(copy.remove(0));
-		}
-		//System.out.printf(">> %d possible worlds\n",possibleWorlds.size());
-		//System.out.printf(">> cf: %s\n", coveredFrontier);
-		HashMap<Action, Integer> probabilities = new HashMap<>();
-		for (Action a : coveredFrontier) {
-			probabilities.put(a, 0);
-		}
-		for(int i=0; i<possibleWorlds.size(); i++){
-			//System.out.printf("world%d: %s\n", i, possibleWorlds.get(i));
-			for (Action a : coveredFrontier) {
-				String k = key(a.x, a.y);
-				if (possibleWorlds.get(i).containsKey(k) && possibleWorlds.get(i).get(k) == MINE) {
-					int p = probabilities.get(a);
-					probabilities.put(a, ++p);
-				}
-			}
-		}
-		//System.out.println(probabilities);
-		Action a = probabilities.keySet().stream()
-				.min(Comparator.comparing(probabilities::get))
-				.orElse(null);
-		currX = a.x;
-		currY = a.y;
-		return new Action(ACTION.UNCOVER, a.x, a.y);
-	}
-
-	// FIX: function only catches first solution (if any)
-	private HashMap<String, Integer> hypoFlagAndUpdate(ArrayList<Action> frontier, HashMap<String, Integer> hypoRecords) {
-
-		Action a = frontier.remove(0);
-		int x = a.x;
-		int y = a.y;
-//		System.out.println(" <hypoFlag: " + key(x, y));
-
-		// if already marked safe, then can't be flagged as mine
-		if (hypoRecords.containsKey(key(x, y)) && hypoRecords.get(key(x, y)) == SAFE){
-			//System.out.println(" </hypoFlag>");
-			return null;
-		}
-
-		// mark tile as mine in hypoRecords
-		hypoRecords.put(key(x,y), MINE);
-
-		// update labels for neighboring tiles in hypoRecords
-		int rowMin = y - 1;
-		int rowMax = y + 1;
-		if (rowMin < 1) rowMin = 1;
-		if (rowMax > ROW_DIMENSIONS) rowMax = ROW_DIMENSIONS;
-
-		int colMin = x - 1;
-		int colMax = x + 1;
-		if (colMin < 1) colMin = 1;
-		if (colMax > COL_DIMENSIONS) colMax = COL_DIMENSIONS;
-
-		for (int j = rowMax; j > rowMin - 1; j--) {
-			for (int i = colMin; i < colMax + 1; i++) {
-				String k = key(i, j);
-				if (hypoRecords.containsKey(k) && hypoRecords.get(k) >= 0) {
-					int labelValue = hypoRecords.get(k);
-					labelValue--;
-//					System.out.println(String.format(" -label update: %s %d -> %d",k,labelValue+1, labelValue));
-					if (labelValue == -1){
-//						System.out.println(" -label conflict: " + k);
-//						System.out.println(" </hypoFlag>");
-						return null; // if flagging as mine causes label conflict, then not possible
-					}
-					hypoRecords.put(k, labelValue);
-
-					// if new label == 0, uncover any remaining covered neighbors
-					if (labelValue == 0) {
-						hypoAddCoveredNeighborsToSafeTiles(i, j, hypoRecords);
-					}
-				}
-				else if (records.containsKey(k) && records.get(k) >= 0){
-					int labelValue = records.get(k);
-					labelValue--;
-//					System.out.println(String.format(" -label update: %s %d -> %d",k,labelValue+1, labelValue));
-					if (labelValue == -1) {
-//						System.out.println(" -label conflict: " + k);
-//						System.out.println(" </hypoFlag>");
-						return null; // if flagging as mine causes label conflict, then not possible
-					}
-					hypoRecords.put(k, labelValue);
-
-					// if new label == 0, uncover any remaining covered neighbors
-					if (labelValue == 0) {
-						hypoAddCoveredNeighborsToSafeTiles(i, j, hypoRecords);
-					}
-				}
-			}
-		}
-		//System.out.println(" hypoRecord: " + hypoRecords);
-
-//		System.out.print(" ======= checking if valid...");
-		boolean valid = true;
-		for (Action action : uncoveredFrontier) {
-			String k = key(action.x, action.y);
-			if (!hypoRecords.containsKey(k) || hypoRecords.get(k) > 0) {
-//				System.out.println("N: unsatisfied label " + k);
-				valid = false;
-				break;
-			}
-		}
-		if(valid) {
-			//System.out.println("Y: possible world found\n");
-//			System.out.println(" </hypoFlag>");
-			return hypoRecords;
-		}
-		else if (!frontier.isEmpty()) {
-//			System.out.printf(" frontier: %s\n", frontier);
-			while (hypoFlagAndUpdate(frontier, hypoRecords) == null) {
-//				System.out.println(" -not possible. trying next.");
-				if (frontier.isEmpty()) {
-//					System.out.println(" -list empty. cascading.");
-//					System.out.println(" </hypoFlag>");
-					return null;
-				}
-			}
-//			System.out.println(" </hypoFlag>");
-			return hypoRecords;
-		}
-//		System.out.println(" </hypoFlag>");
-		return null;
-	}
 
 	private HashMap<String, Integer> hypoAddCoveredNeighborsToSafeTiles(int x, int y, HashMap<String, Integer> hypoRecords){
 		int rowMin = y-1;
