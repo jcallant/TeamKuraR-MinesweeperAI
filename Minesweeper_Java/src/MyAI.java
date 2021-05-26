@@ -521,9 +521,9 @@ public class MyAI extends AI {
 				HashMap<String, Integer> worldRecords = new HashMap<>();
 
 				ArrayList<Action> temp = new ArrayList<>(mineList);
-				if(hypoFlagAndUpdate(mineList, worldRecords)!=null) {
+				if(hypoFlagAndUpdate2(mineList, worldRecords)!=null) {
 					System.out.printf("list %d: %s\n",++solutionCount, temp);
-					for(Action a : mineList){
+					for(Action a : temp){
 						int p = probabilities.get(a);
 						probabilities.put(a, ++p);
 					}
@@ -539,6 +539,87 @@ public class MyAI extends AI {
 		currY = a.y;
 		return new Action(ACTION.UNCOVER, a.x, a.y);
 	}
+
+	private HashMap<String, Integer> hypoFlagAndUpdate2(ArrayList<Action> frontier, HashMap<String, Integer> hypoRecords) {
+
+		Action a = frontier.remove(0);
+		int x = a.x;
+		int y = a.y;
+//		System.out.println(" <hypoFlag: " + key(x, y));
+
+		// if already marked safe, then can't be flagged as mine
+		if (hypoRecords.containsKey(key(x, y)) && hypoRecords.get(key(x, y)) == SAFE){
+			//System.out.println(" </hypoFlag>");
+			return null;
+		}
+
+		// mark tile as mine in hypoRecords
+		hypoRecords.put(key(x,y), MINE);
+
+		// update labels for neighboring tiles in hypoRecords
+		int rowMin = y - 1;
+		int rowMax = y + 1;
+		if (rowMin < 1) rowMin = 1;
+		if (rowMax > ROW_DIMENSIONS) rowMax = ROW_DIMENSIONS;
+
+		int colMin = x - 1;
+		int colMax = x + 1;
+		if (colMin < 1) colMin = 1;
+		if (colMax > COL_DIMENSIONS) colMax = COL_DIMENSIONS;
+
+		for (int j = rowMax; j > rowMin - 1; j--) {
+			for (int i = colMin; i < colMax + 1; i++) {
+				String k = key(i, j);
+				if (hypoRecords.containsKey(k) && hypoRecords.get(k) >= 0) {
+					int labelValue = hypoRecords.get(k);
+					labelValue--;
+//					System.out.println(String.format(" -label update: %s %d -> %d",k,labelValue+1, labelValue));
+					if (labelValue == -1){
+//						System.out.println(" -label conflict: " + k);
+//						System.out.println(" </hypoFlag>");
+						return null; // if flagging as mine causes label conflict, then not possible
+					}
+					hypoRecords.put(k, labelValue);
+
+					// if new label == 0, uncover any remaining covered neighbors
+					if (labelValue == 0) {
+						hypoAddCoveredNeighborsToSafeTiles(i, j, hypoRecords);
+					}
+				}
+				else if (records.containsKey(k) && records.get(k) >= 0){
+					int labelValue = records.get(k);
+					labelValue--;
+//					System.out.println(String.format(" -label update: %s %d -> %d",k,labelValue+1, labelValue));
+					if (labelValue == -1) {
+//						System.out.println(" -label conflict: " + k);
+//						System.out.println(" </hypoFlag>");
+						return null; // if flagging as mine causes label conflict, then not possible
+					}
+					hypoRecords.put(k, labelValue);
+
+					// if new label == 0, uncover any remaining covered neighbors
+					if (labelValue == 0) {
+						hypoAddCoveredNeighborsToSafeTiles(i, j, hypoRecords);
+					}
+				}
+			}
+		}
+		System.out.println(" hypoRecord: " + hypoRecords);
+		if(frontier.isEmpty()) {
+		//System.out.print(" ======= checking if valid...");
+			for (Action action : uncoveredFrontier) {
+				String k = key(action.x, action.y);
+				if (!hypoRecords.containsKey(k) || hypoRecords.get(k) > 0) {
+				//System.out.println("N: unsatisfied label " + k);
+					return null;
+				}
+			}
+			System.out.println("Y: possible world found\n");
+			return hypoRecords;
+		}
+		return hypoFlagAndUpdate(frontier, hypoRecords);
+	}
+
 
 	private Action handleModelChecking(){
 		ArrayList<HashMap<String,Integer>> possibleWorlds = new ArrayList<>();
