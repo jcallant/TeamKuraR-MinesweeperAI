@@ -187,7 +187,7 @@ public class MyAI extends AI {
 		}
 
 		//System.out.println("Attempting Model Checking...");
-		Action modelCheckingAction = handleModelChecking(10000,1);
+		Action modelCheckingAction = handleModelChecking(50000,1);
 		if (modelCheckingAction != null) return modelCheckingAction;
 
 		// [STEP4.2] Pick from ucf with lowest probability
