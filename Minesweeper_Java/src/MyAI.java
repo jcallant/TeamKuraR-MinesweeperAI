@@ -505,7 +505,7 @@ public class MyAI extends AI {
 
 		int powerSetSize = (int) Math.pow(2, coveredFrontier.size());
 
-		int solutionCount = 1;
+		int solutionCount = 0;
 		HashMap<Action, Integer> probabilities = new HashMap<>();
 		for (Action a : coveredFrontier) {
 			probabilities.put(a, 0);
@@ -518,7 +518,7 @@ public class MyAI extends AI {
 				}
 			}
 			if(mineList.size() <= flagsLeft) {
-				System.out.printf("\nlist %d: %s\n",solutionCount++, mineList);
+				System.out.printf("list %d: %s\n",++solutionCount, mineList);
 				HashMap<String, Integer> worldRecords = new HashMap<>();
 
 				if(hypoFlagAndUpdate(mineList, worldRecords)!=null) {
