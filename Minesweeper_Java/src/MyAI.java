@@ -550,9 +550,10 @@ public class MyAI extends AI {
 		if(allFound) {
 			// out of all solutions n, add tiles with 0\n of being mine to guaranteedSafe
 			System.out.println(">>> ADDING SAFE FOUND FROM SOLUTIONS:");
-			for (Action uncoverAction : probabilities.keySet()) {
-				if (probabilities.get(uncoverAction) == 0) {
-					Action a = new Action(ACTION.UNCOVER, uncoverAction.x, uncoverAction.y);
+			for (Action action : probabilities.keySet()) {
+				if (probabilities.get(action) == 0) {
+					System.out.printf(">>> safe %s\n", key(action.x, action.y));
+					Action a = new Action(ACTION.UNCOVER, action.x, action.y);
 					records.put(key(a.x,a.y), 0);
 					guaranteedSafe.add(a);
 				}
