@@ -520,8 +520,9 @@ public class MyAI extends AI {
 			if(mineList.size() <= flagsLeft) {
 				HashMap<String, Integer> worldRecords = new HashMap<>();
 
+				ArrayList<Action> temp = new ArrayList<>(mineList);
 				if(hypoFlagAndUpdate(mineList, worldRecords)!=null) {
-					System.out.printf("list %d: %s\n",++solutionCount, mineList);
+					System.out.printf("list %d: %s\n",++solutionCount, temp);
 					for(Action a : mineList){
 						int p = probabilities.get(a);
 						probabilities.put(a, ++p);
