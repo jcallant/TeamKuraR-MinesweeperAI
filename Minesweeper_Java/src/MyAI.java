@@ -531,7 +531,7 @@ public class MyAI extends AI {
 
 				ArrayList<Action> temp = new ArrayList<>(mineList);
 				if(hypoFlagAndUpdate(mineList, worldRecords)!=null) {
-					//System.out.printf("%d: %s\n",++solutionCount, temp);
+					System.out.printf("%d: %s\n",++solutionCount, temp);
 					for(Action a : temp){
 						int p = probabilities.get(a);
 						probabilities.put(a, ++p);
