@@ -502,8 +502,6 @@ public class MyAI extends AI {
 	// ################### ModelChecking Functions ##################
 
 	private Action handleModelChecking2(double timeLimit, double timeStep){
-
-
 		if(coveredFrontier.isEmpty()) return null;
 		//System.out.printf(">> cf: %s\n", coveredFrontier);
 
@@ -543,7 +541,7 @@ public class MyAI extends AI {
 		//System.out.printf(">> %d solutions found\n",solutionCount);
 		//System.out.printf(">> probabilities: %s\n", probabilities);
 
-//		// out of all solutions n, add tiles with 0\n of being mine to guranteedSafe
+//		// out of all solutions n, add tiles with 0\n of being mine to guaranteedSafe
 //		ArrayList<Action> safe = probabilities.keySet().stream()
 //				.filter(k -> probabilities.get(k)==0)
 //				.collect(Collectors.toCollection(ArrayList::new));
@@ -564,11 +562,11 @@ public class MyAI extends AI {
 		}
 
 		// if no guaranteed, uncover tile with min probability
-		if (finalAction == null){
-			finalAction = probabilities.keySet().stream()
-					.min(Comparator.comparing(probabilities::get))
-					.orElse(null);
-		}
+//		if (finalAction == null){
+//			finalAction = probabilities.keySet().stream()
+//					.min(Comparator.comparing(probabilities::get))
+//					.orElse(null);
+//		}
 
 		// assuming a solution was found, (if not then it's broken)
 		if(finalAction != null) {
