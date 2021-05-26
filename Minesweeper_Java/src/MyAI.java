@@ -187,7 +187,7 @@ public class MyAI extends AI {
 		}
 
 		//System.out.println("Attempting Model Checking...");
-		Action modelCheckingAction = handleModelChecking(50000,1);
+		Action modelCheckingAction = handleModelChecking(20000,1);
 		if (modelCheckingAction != null) return modelCheckingAction;
 
 		// [STEP4.2] Pick from ucf with lowest probability
@@ -517,7 +517,7 @@ public class MyAI extends AI {
 		for(int i=1; i<powerSetSize; i++){
 			timeLimit -= timeStep;
 			if(timeLimit < 0) {
-				System.out.println(">> TIME UP!!!");
+				System.out.println(">>>>>>>>>>> TIME UP!!!");
 				allFound = false;
 				break;
 			}
@@ -533,7 +533,7 @@ public class MyAI extends AI {
 				ArrayList<Action> temp = new ArrayList<>(mineList);
 				if(hypoFlagAndUpdate(mineList, worldRecords)!=null) {
 					++solutionCount;
-					System.out.printf("%d: %s\n",solutionCount, temp);
+//					System.out.printf("%d: %s\n",solutionCount, temp);
 					for(Action a : temp){
 						int p = probabilities.get(a);
 						probabilities.put(a, ++p);
