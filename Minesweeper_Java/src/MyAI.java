@@ -507,8 +507,8 @@ public class MyAI extends AI {
 		Set<ArrayList<Action>> subset = new HashSet<>();
 		int powerSetSize = (int) Math.pow(2, coveredFrontier.size());
 
-		for(int i=0; i<powerSetSize; i++){
-			for(int j=0; j<Math.min(flagsLeft, coveredFrontier.size()); j++){
+		for(int i=0; i<Math.min(flagsLeft, powerSetSize); i++){
+			for(int j=0; j<coveredFrontier.size(); j++){
 				if((i & (1 << j)) > 0)
 					mineList.add(coveredFrontier.get(j));
 			}
