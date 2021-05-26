@@ -522,7 +522,7 @@ public class MyAI extends AI {
 
 				ArrayList<Action> temp = new ArrayList<>(mineList);
 				if(hypoFlagAndUpdate2(mineList, worldRecords)!=null) {
-					System.out.printf("list %d: %s\n",++solutionCount, temp);
+					System.out.printf("%d: %s\n",++solutionCount, temp);
 					for(Action a : temp){
 						int p = probabilities.get(a);
 						probabilities.put(a, ++p);
@@ -614,7 +614,7 @@ public class MyAI extends AI {
 				}
 			}
 			System.out.println(" hypoRecord: " + hypoRecords);
-			System.out.println("Y: possible world found\n");
+			System.out.printF(" SOLUTION ");
 			return hypoRecords;
 		}
 		return hypoFlagAndUpdate2(frontier, hypoRecords);
