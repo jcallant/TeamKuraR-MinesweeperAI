@@ -513,12 +513,12 @@ public class MyAI extends AI {
 		for (Action a : coveredFrontier) {
 			probabilities.put(a, 0);
 		}
-		boolean allFound = true;
+		boolean timedOut = false;
 		for(int i=1; i<powerSetSize; i++){
 			timeLimit -= timeStep;
 			if(timeLimit < 0) {
 				System.out.println(">>>>>>>>>>> TIME UP!!!");
-				allFound = false;
+				timedOut = true;
 				break;
 			}
 
@@ -547,8 +547,9 @@ public class MyAI extends AI {
 
 
 
-		Action finalAction = null;
-		if(allFound) {
+
+		// if not stopped by timer, all solutions found and probabilities are valid
+		if(!timedOut) {
 			// idk how but this block makes it worse
 			// out of all solutions n, add tiles with 0\n of being mine to guaranteedSafe
 //			System.out.println(">>> ADDING SAFE FOUND FROM SOLUTIONS:");
@@ -575,8 +576,26 @@ public class MyAI extends AI {
 			flagAndUpdate(mines);
 
 			// get guaranteed action if any
-			finalAction = handleGuaranteed();
+			Action finalAction = handleGuaranteed();
+
+			// if no guaranteed, uncover tile with min probability
+			if (finalAction == null){
+				finalAction = probabilities.keySet().stream()
+						.min(Comparator.comparing(probabilities::get))
+						.map(uncoverAction -> new Action(ACTION.UNCOVER, uncoverAction.x, uncoverAction.y))
+						.orElse(null);
+			}
+
+			// assuming a solution was found, (if not then it's broken)
+			if(finalAction != null) {
+				currX = finalAction.x;
+				currY = finalAction.y;
+			}
+
+			return finalAction;
 		}
+
+		// else if stopped by timer, probabilities not valid
 		else{
 			// calculate odds for random pick
 			double allTiles = ROW_DIMENSIONS * COL_DIMENSIONS;
@@ -591,21 +610,8 @@ public class MyAI extends AI {
 				return handleAny();
 			}
 		}
-
-		// if no guaranteed, uncover tile with min probability
-		if (finalAction == null && allFound){
-			finalAction = probabilities.keySet().stream()
-					.min(Comparator.comparing(probabilities::get))
-					.map(uncoverAction -> new Action(ACTION.UNCOVER, uncoverAction.x, uncoverAction.y))
-					.orElse(null);
-		}
-
-		// assuming a solution was found, (if not then it's broken)
-		if(finalAction != null) {
-			currX = finalAction.x;
-			currY = finalAction.y;
-		}
-		return finalAction;
+		
+		return null;
 	}
 
 	private HashMap<String, Integer> hypoFlagAndUpdate(ArrayList<Action> frontier, HashMap<String, Integer> hypoRecords) {
