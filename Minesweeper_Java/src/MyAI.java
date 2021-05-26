@@ -564,6 +564,7 @@ public class MyAI extends AI {
 			finalAction = handleGuaranteed();
 		}
 		else{
+			// calculate odds for random pick
 			double allTiles = ROW_DIMENSIONS * COL_DIMENSIONS;
 			double knownTiles = (int) records.keySet().stream()
 					.filter(k -> records.get(k) >= 0 || records.get(k) == MINE || records.get(k) == SAFE)
@@ -571,8 +572,10 @@ public class MyAI extends AI {
 			double unknownTiles = allTiles - knownTiles;
 			double ratio = flagsLeft / unknownTiles ;
 
-			if(ratio < 0.5)
+			if(ratio < 0.5) {
+				System.out.println("IM TAKING A RISK!!!");
 				return handleAny();
+			}
 		}
 
 		// if no guaranteed, uncover tile with min probability
