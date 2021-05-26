@@ -544,7 +544,8 @@ public class MyAI extends AI {
 		// out of all solutions n, add tiles with n\n of being mine to guaranteedMine
 		final int finalSolutionCount = solutionCount;
 		list = probabilities.keySet().stream()
-				.filter(k -> probabilities.get(k)== finalSolutionCount)
+				.filter(k -> probabilities.get(k) == finalSolutionCount)
+				.map(uncoverAction -> new Action(ACTION.FLAG, uncoverAction.x, uncoverAction.y))
 				.collect(Collectors.toCollection(ArrayList::new));
 		guaranteedMine.addAll(list);
 
