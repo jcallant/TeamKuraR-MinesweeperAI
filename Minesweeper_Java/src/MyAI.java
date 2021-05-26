@@ -549,17 +549,13 @@ public class MyAI extends AI {
 		Action finalAction = null;
 		if(allFound) {
 			// out of all solutions n, add tiles with 0\n of being mine to guaranteedSafe
-			ArrayList<Action> safe = new ArrayList<>();
-			for (Action uncoverAction : probabilities.keySet()) {
-				if (probabilities.get(uncoverAction) == 0) {
-					Action action = new Action(ACTION.UNCOVER, uncoverAction.x, uncoverAction.y);
-					safe.add(action);
-				}
-			}
-			for(Action a : safe) {
-				records.put(key(a.x,a.y), 0);
-				guaranteedSafe.add(a);
-			}
+//			for (Action uncoverAction : probabilities.keySet()) {
+//				if (probabilities.get(uncoverAction) == 0) {
+//					Action a = new Action(ACTION.UNCOVER, uncoverAction.x, uncoverAction.y);
+//					records.put(key(a.x,a.y), 0);
+//					guaranteedSafe.add(a);
+//				}
+//			}
 
 			// out of all solutions n, add tiles with n\n of being mine to guaranteedMine
 			final int finalSolutionCount = solutionCount;
