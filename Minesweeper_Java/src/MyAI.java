@@ -298,7 +298,8 @@ public class MyAI extends AI {
 		// for each guaranteed mine
 		for (Action f : flags) {
 
-			// flag the mine
+			// check if not already flagged
+			if(records.containsKey(key(f.x,f.y)) && records.get(key(f.x,f.y))==MINE) continue;
 			System.out.println("flag: " + key(f.x,f.y));
 			records.put(key(f.x,f.y),MINE); // MINE = -9 value for mines
 			guaranteedMine.add(f);
