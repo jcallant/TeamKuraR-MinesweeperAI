@@ -533,7 +533,7 @@ public class MyAI extends AI {
 				ArrayList<Action> temp = new ArrayList<>(mineList);
 				if(hypoFlagAndUpdate(mineList, worldRecords)!=null) {
 					++solutionCount;
-//					System.out.printf("%d: %s\n",solutionCount, temp);
+					System.out.printf("%d: %s\n",solutionCount, temp);
 					for(Action a : temp){
 						int p = probabilities.get(a);
 						probabilities.put(a, ++p);
@@ -541,8 +541,8 @@ public class MyAI extends AI {
 				}
 			}
 		}
-		//System.out.printf(">> %d solutions found\n",solutionCount);
-		//System.out.printf(">> probabilities: %s\n", probabilities);
+		System.out.printf(">> %d solutions found\n",solutionCount);
+		System.out.printf(">> probabilities: %s\n", probabilities);
 
 
 
@@ -555,7 +555,6 @@ public class MyAI extends AI {
 					Action a = new Action(ACTION.UNCOVER, uncoverAction.x, uncoverAction.y);
 					records.put(key(a.x,a.y), 0);
 					guaranteedSafe.add(a);
-					System.out.println(key(a.x,a.y));
 				}
 			}
 			System.out.println("Hit any button to Continue...");
