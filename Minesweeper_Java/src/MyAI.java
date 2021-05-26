@@ -516,6 +516,7 @@ public class MyAI extends AI {
 		for(int i=1; i<powerSetSize; i++){
 			timeLimit -= timeStep;
 			if(timeLimit < 0) {
+				System.out.println(">> TIME UP!!!");
 				allFound = false;
 				break;
 			}
@@ -538,8 +539,8 @@ public class MyAI extends AI {
 				}
 			}
 		}
-		//System.out.printf(">> %d solutions found\n",solutionCount);
-		//System.out.printf(">> probabilities: %s\n", probabilities);
+		System.out.printf(">> %d solutions found\n",solutionCount);
+		System.out.printf(">> probabilities: %s\n", probabilities);
 
 //		// out of all solutions n, add tiles with 0\n of being mine to guaranteedSafe
 //		ArrayList<Action> safe = probabilities.keySet().stream()
