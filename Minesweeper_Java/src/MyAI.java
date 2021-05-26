@@ -187,8 +187,8 @@ public class MyAI extends AI {
 		}
 
 		//System.out.println("Attempting Model Checking...");
-		//Action modelCheckingAction = handleModelChecking(5000,1);
-		//if (modelCheckingAction != null) return modelCheckingAction;
+		Action modelCheckingAction = handleModelChecking(10000,1);
+		if (modelCheckingAction != null) return modelCheckingAction;
 
 		// [STEP4.2] Pick from ucf with lowest probability
 		Action probabilityAction = handleProbability();
@@ -562,11 +562,11 @@ public class MyAI extends AI {
 		}
 
 		// if no guaranteed, uncover tile with min probability
-//		if (finalAction == null){
-//			finalAction = probabilities.keySet().stream()
-//					.min(Comparator.comparing(probabilities::get))
-//					.orElse(null);
-//		}
+		if (finalAction == null){
+			finalAction = probabilities.keySet().stream()
+					.min(Comparator.comparing(probabilities::get))
+					.orElse(null);
+		}
 
 		// assuming a solution was found, (if not then it's broken)
 		if(finalAction != null) {
