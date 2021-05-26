@@ -532,7 +532,8 @@ public class MyAI extends AI {
 
 				ArrayList<Action> temp = new ArrayList<>(mineList);
 				if(hypoFlagAndUpdate(mineList, worldRecords)!=null) {
-					//System.out.printf("%d: %s\n",++solutionCount, temp);
+					++solutionCount;
+					System.out.printf("%d: %s\n",solutionCount, temp);
 					for(Action a : temp){
 						int p = probabilities.get(a);
 						probabilities.put(a, ++p);
@@ -540,8 +541,8 @@ public class MyAI extends AI {
 				}
 			}
 		}
-		//System.out.printf(">> %d solutions found\n",solutionCount);
-		//System.out.printf(">> probabilities: %s\n", probabilities);
+		System.out.printf(">> %d solutions found\n",solutionCount);
+		System.out.printf(">> probabilities: %s\n", probabilities);
 
 //		// out of all solutions n, add tiles with 0\n of being mine to guaranteedSafe
 //		ArrayList<Action> safe = probabilities.keySet().stream()
