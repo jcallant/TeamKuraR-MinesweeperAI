@@ -521,6 +521,7 @@ public class MyAI extends AI {
 				allFound = false;
 				break;
 			}
+
 			ArrayList<Action> mineList = new ArrayList<>();
 			for(int j=0; j<coveredFrontier.size(); j++){
 				if((i & (1 << j)) > 0) {
@@ -548,16 +549,17 @@ public class MyAI extends AI {
 
 		Action finalAction = null;
 		if(allFound) {
+			// idk how but this block makes it worse
 			// out of all solutions n, add tiles with 0\n of being mine to guaranteedSafe
-			System.out.println(">>> ADDING SAFE FOUND FROM SOLUTIONS:");
-			for (Action action : probabilities.keySet()) {
-				if (probabilities.get(action) == 0) {
-					System.out.printf(">>> safe %s\n", key(action.x, action.y));
-					Action a = new Action(ACTION.UNCOVER, action.x, action.y);
-					records.put(key(a.x,a.y), 0);
-					guaranteedSafe.add(a);
-				}
-			}
+//			System.out.println(">>> ADDING SAFE FOUND FROM SOLUTIONS:");
+//			for (Action action : probabilities.keySet()) {
+//				if (probabilities.get(action) == 0) {
+//					System.out.printf(">>> safe %s\n", key(action.x, action.y));
+//					Action a = new Action(ACTION.UNCOVER, action.x, action.y);
+//					records.put(key(a.x,a.y), 0);
+//					guaranteedSafe.add(a);
+//				}
+//			}
 //			System.out.println("Hit any button to Continue...");
 //			Scanner in = new Scanner(System.in);
 //			in.nextLine();
@@ -586,7 +588,7 @@ public class MyAI extends AI {
 
 			if(ratio < 0.50) {
 				System.out.println("IM TAKING A RISK!!!");
-				return handleProbability();
+				return handleAny();
 			}
 		}
 
