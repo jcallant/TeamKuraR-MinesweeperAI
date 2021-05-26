@@ -604,16 +604,16 @@ public class MyAI extends AI {
 				}
 			}
 		}
-		System.out.println(" hypoRecord: " + hypoRecords);
 		if(frontier.isEmpty()) {
-		//System.out.print(" ======= checking if valid...");
+			//System.out.print(" ======= checking if valid...");
 			for (Action action : uncoveredFrontier) {
 				String k = key(action.x, action.y);
 				if (!hypoRecords.containsKey(k) || hypoRecords.get(k) > 0) {
-				//System.out.println("N: unsatisfied label " + k);
+					//System.out.println("N: unsatisfied label " + k);
 					return null;
 				}
 			}
+			System.out.println(" hypoRecord: " + hypoRecords);
 			System.out.println("Y: possible world found\n");
 			return hypoRecords;
 		}
