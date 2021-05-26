@@ -252,7 +252,7 @@ public class MyAI extends AI {
 				if (!records.containsKey(k)) {
 					//System.out.println(k + " added to covered frontier");
 					records.put(k, COV_NEIGHBOR); // -10 placeholder for neighbors of uncovered tiles
-					coveredFrontier.add(new Action(ACTION.UNCOVER, i, j));
+					coveredFrontier.add(new Action(ACTION.FLAG, i, j));
 				}
 			}
 		}
@@ -334,7 +334,7 @@ public class MyAI extends AI {
 //					else {
 //						System.out.println(k + " added to covered frontier");
 //						records.put(k, COV_NEIGHBOR); //
-//						coveredFrontier.add(new Action(ACTION.UNCOVER, i, j));
+//						coveredFrontier.add(new Action(ACTION.FLAG, i, j));
 //					}
 				}
 			}
@@ -463,6 +463,7 @@ public class MyAI extends AI {
 		// pick min probability
 		Action a = coveredFrontier.stream()
 				.filter(t -> probability.containsKey(key(t.x,t.y)))
+				.map(uncoverAction -> new Action(ACTION.UNCOVER, uncoverAction.x, uncoverAction.y))
 				.min(Comparator.comparing(t -> probability.get(key(t.x, t.y))))
 				.orElse(null);
 
@@ -545,6 +546,7 @@ public class MyAI extends AI {
 //		// out of all solutions n, add tiles with 0\n of being mine to guaranteedSafe
 //		ArrayList<Action> safe = probabilities.keySet().stream()
 //				.filter(k -> probabilities.get(k)==0)
+//				.map(uncoverAction -> new Action(ACTION.UNCOVER, uncoverAction.x, uncoverAction.y))
 //				.collect(Collectors.toCollection(ArrayList::new));
 //		guaranteedSafe.addAll(list);
 
@@ -554,7 +556,6 @@ public class MyAI extends AI {
 			final int finalSolutionCount = solutionCount;
 			ArrayList<Action> mines = probabilities.keySet().stream()
 					.filter(k -> probabilities.get(k) == finalSolutionCount)
-					.map(uncoverAction -> new Action(ACTION.FLAG, uncoverAction.x, uncoverAction.y))
 					.collect(Collectors.toCollection(ArrayList::new));
 			flagAndUpdate(mines);
 
