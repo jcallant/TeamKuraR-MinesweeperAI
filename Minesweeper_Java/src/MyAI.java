@@ -593,7 +593,7 @@ public class MyAI extends AI {
 		}
 
 		// if no guaranteed, uncover tile with min probability
-		if (finalAction == null){
+		if (finalAction == null && allFound){
 			finalAction = probabilities.keySet().stream()
 					.min(Comparator.comparing(probabilities::get))
 					.map(uncoverAction -> new Action(ACTION.UNCOVER, uncoverAction.x, uncoverAction.y))
