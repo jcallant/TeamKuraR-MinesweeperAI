@@ -102,9 +102,11 @@ public class Main {
                     totalWorlds++;
 					world = new World(worldFile.getCanonicalPath(), aiType, debug_mode);
 					// double score = world.run();
-                    for(int i=0; i<100; i++) System.out.printf("WORLD %d\n", totalWorlds);
+                    for(int i=0; i<100; i++) System.out.printf("WORLD %d\n", totalWorlds); // added for debugging
                     World.Results results = world.run();
                     double score = results.score;
+                    if (score > 0) {for(int i=0; i<100; i++) System.out.printf("WORLD %d -- WIN\n", totalWorlds);} // added for debugging
+                    else {for(int i=0; i<100; i++) System.out.printf("WORLD %d -- LOSE\n", totalWorlds);} // added for debugging
                     int difficulty = results.difficulty;
 					if (score > 0) {
                         totalScore += score;
