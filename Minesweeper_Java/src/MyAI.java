@@ -226,7 +226,7 @@ public class MyAI extends AI {
 				if (j==y && i==x) continue;
 				String k = key(i, j);
 				if (!records.containsKey(k) || records.get(k)==COV_NEIGHBOR) {
-					System.out.println(k + " added to safe");
+					//System.out.println(k + " added to safe");
 					records.put(k, 0);
 					guaranteedSafe.add(new Action(ACTION.UNCOVER, i, j));
 				}
@@ -300,7 +300,7 @@ public class MyAI extends AI {
 
 			// check if not already flagged
 			if(records.containsKey(key(f.x,f.y)) && records.get(key(f.x,f.y))==MINE) continue;
-			System.out.println("flag: " + key(f.x,f.y));
+			//System.out.println("flag: " + key(f.x,f.y));
 			records.put(key(f.x,f.y),MINE); // MINE = -9 value for mines
 			guaranteedMine.add(f);
 
@@ -323,7 +323,7 @@ public class MyAI extends AI {
 							int labelValue = records.get(k);
 							labelValue--;
 							records.put(k, labelValue);
-							System.out.println("update: " + k + " = " + (records.get(k)+1) + " -> " + records.get(k));
+							//System.out.println("update: " + k + " = " + (records.get(k)+1) + " -> " + records.get(k));
 
 							// if new label == 0, uncover any remaining covered neighbors
 							if (labelValue == 0) {
@@ -411,11 +411,11 @@ public class MyAI extends AI {
 	}
 
 	private Action handleCase121(){
-		System.out.println("\nSearching ucf for 121...");
+		//System.out.println("\nSearching ucf for 121...");
 		ArrayList<Action> twos = uncoveredFrontier.stream()
 				.filter(a -> records.get(key(a.x,a.y))==2)
 				.collect(Collectors.toCollection(ArrayList::new));
-		System.out.println("twos: " + twos);
+		//System.out.println("twos: " + twos);
 		ArrayList<Action> flags = new ArrayList<>();
 		for (Action a : twos) {
 			if (a.y == 1 || a.y == ROW_DIMENSIONS) continue;
@@ -423,7 +423,7 @@ public class MyAI extends AI {
 			int i = a.x;
 			int j = a.y;
 
-			System.out.println(key(i,j));
+			//System.out.println(key(i,j));
 			int t = records.get(key(i,j+1));
 			int b = records.get(key(i,j-1));
 			int l = records.get(key(i-1,j));
@@ -476,7 +476,7 @@ public class MyAI extends AI {
 	}
 
 	private Action handleAny(){
-		System.out.println("\nPicking random tile...");
+		//System.out.println("\nPicking random tile...");
 		Random random = new Random();
 		int randomX = random.nextInt(COL_DIMENSIONS)+1;
 		int randomY = random.nextInt(ROW_DIMENSIONS)+1;
@@ -503,7 +503,7 @@ public class MyAI extends AI {
 
 	private Action handleModelChecking2(){
 		if(coveredFrontier.isEmpty()) return null;
-		System.out.printf(">> cf: %s\n", coveredFrontier);
+		//System.out.printf(">> cf: %s\n", coveredFrontier);
 
 		int powerSetSize = (int) Math.pow(2, coveredFrontier.size());
 
@@ -524,7 +524,7 @@ public class MyAI extends AI {
 
 				ArrayList<Action> temp = new ArrayList<>(mineList);
 				if(hypoFlagAndUpdate2(mineList, worldRecords)!=null) {
-					System.out.printf("%d: %s\n",++solutionCount, temp);
+					//System.out.printf("%d: %s\n",++solutionCount, temp);
 					for(Action a : temp){
 						int p = probabilities.get(a);
 						probabilities.put(a, ++p);
@@ -532,8 +532,8 @@ public class MyAI extends AI {
 				}
 			}
 		}
-		System.out.printf(">> %d solutions found\n",solutionCount);
-		System.out.printf(">> probabilities: %s\n", probabilities);
+		//System.out.printf(">> %d solutions found\n",solutionCount);
+		//System.out.printf(">> probabilities: %s\n", probabilities);
 
 //		// out of all solutions n, add tiles with 0\n of being mine to guranteedSafe
 //		ArrayList<Action> safe = probabilities.keySet().stream()
@@ -573,7 +573,7 @@ public class MyAI extends AI {
 		Action a = frontier.remove(0);
 		int x = a.x;
 		int y = a.y;
-//		System.out.println(" <hypoFlag: " + key(x, y));
+//		//System.out.println(" <hypoFlag: " + key(x, y));
 
 		// if already marked safe, then can't be flagged as mine
 		if (hypoRecords.containsKey(key(x, y)) && hypoRecords.get(key(x, y)) == SAFE){
@@ -641,8 +641,8 @@ public class MyAI extends AI {
 					return null;
 				}
 			}
-			System.out.println("\n hypoRecord: " + hypoRecords);
-			System.out.printf(" SOLUTION ");
+			//System.out.println("\n hypoRecord: " + hypoRecords);
+			//System.out.printf(" SOLUTION ");
 			return hypoRecords;
 		}
 		return hypoFlagAndUpdate2(frontier, hypoRecords);
@@ -666,7 +666,7 @@ public class MyAI extends AI {
 			copy = temp;
 			copy.add(copy.remove(0));
 		}
-		System.out.printf(">> %d possible worlds\n",possibleWorlds.size());
+		//System.out.printf(">> %d possible worlds\n",possibleWorlds.size());
 		//System.out.printf(">> cf: %s\n", coveredFrontier);
 		HashMap<Action, Integer> probabilities = new HashMap<>();
 		for (Action a : coveredFrontier) {
@@ -682,7 +682,7 @@ public class MyAI extends AI {
 				}
 			}
 		}
-		System.out.println(probabilities);
+		//System.out.println(probabilities);
 		Action a = probabilities.keySet().stream()
 				.min(Comparator.comparing(probabilities::get))
 				.orElse(null);
@@ -756,7 +756,7 @@ public class MyAI extends AI {
 				}
 			}
 		}
-		System.out.println(" hypoRecord: " + hypoRecords);
+		//System.out.println(" hypoRecord: " + hypoRecords);
 
 //		System.out.print(" ======= checking if valid...");
 		boolean valid = true;
@@ -769,7 +769,7 @@ public class MyAI extends AI {
 			}
 		}
 		if(valid) {
-			System.out.println("Y: possible world found\n");
+			//System.out.println("Y: possible world found\n");
 //			System.out.println(" </hypoFlag>");
 			return hypoRecords;
 		}
