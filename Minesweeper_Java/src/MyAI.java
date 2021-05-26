@@ -563,6 +563,17 @@ public class MyAI extends AI {
 			// get guaranteed action if any
 			finalAction = handleGuaranteed();
 		}
+		else{
+			double allTiles = ROW_DIMENSIONS * COL_DIMENSIONS;
+			double knownTiles = (int) records.keySet().stream()
+					.filter(k -> records.get(k) >= 0 || records.get(k) == MINE || records.get(k) == SAFE)
+					.count();
+			double unknownTiles = allTiles - knownTiles;
+			double ratio = (double) unknownTiles / allTiles;
+
+			if(ratio < 0.5)
+				return handleAny();
+		}
 
 		// if no guaranteed, uncover tile with min probability
 		if (finalAction == null){
