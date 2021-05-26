@@ -569,7 +569,7 @@ public class MyAI extends AI {
 					.filter(k -> records.get(k) >= 0 || records.get(k) == MINE || records.get(k) == SAFE)
 					.count();
 			double unknownTiles = allTiles - knownTiles;
-			double ratio = (double) unknownTiles / allTiles;
+			double ratio = flagsLeft / unknownTiles ;
 
 			if(ratio < 0.5)
 				return handleAny();
