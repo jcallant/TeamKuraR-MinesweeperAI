@@ -614,7 +614,7 @@ public class MyAI extends AI {
 				}
 			}
 			System.out.println(" hypoRecord: " + hypoRecords);
-			System.out.printF(" SOLUTION ");
+			System.out.printf(" SOLUTION ");
 			return hypoRecords;
 		}
 		return hypoFlagAndUpdate2(frontier, hypoRecords);
