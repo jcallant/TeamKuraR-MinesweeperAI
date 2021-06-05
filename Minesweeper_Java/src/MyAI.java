@@ -189,6 +189,7 @@ public class MyAI extends AI {
 				}
 			}
 
+			System.out.println(records);
 			Action a = handleGuaranteed();
 			if (a != null) return a;
 		}
