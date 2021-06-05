@@ -124,6 +124,23 @@ public class MyAI extends AI {
 		// output all details
 		//outputKnowledge();
 
+		// if no mines all flagged
+		if(flagsLeft == 0){
+			System.out.println("No more flags. Uncovering rest");
+			for(int i=1; i<=COL_DIMENSIONS; i++){
+				for(int j=1; j<=ROW_DIMENSIONS; j++){
+					String key = key(i, j);
+					if(!records.containsKey(key) || records.get(key)==COV_NEIGHBOR){
+						records.put(key, 0);
+						guaranteedSafe.add(new Action(ACTION.UNCOVER, i, j));
+					}
+				}
+			}
+
+			System.out.println(records);
+			Action a = handleGuaranteed();
+			if (a != null) return a;
+		}
 
 		// [STEP2]: if any guaranteed mines or safe tiles
 		Action guaranteedAction = handleGuaranteed();
@@ -176,23 +193,6 @@ public class MyAI extends AI {
 
 		// output updated details
 		outputKnowledge();
-
-		if(flagsLeft == 0){
-			System.out.println("No more flags. Uncovering rest");
-			for(int i=1; i<=COL_DIMENSIONS; i++){
-				for(int j=1; j<=ROW_DIMENSIONS; j++){
-					String key = key(i, j);
-					if(!records.containsKey(key) || records.get(key)==COV_NEIGHBOR){
-						records.put(key, 0);
-						guaranteedSafe.add(new Action(ACTION.UNCOVER, i, j));
-					}
-				}
-			}
-
-			System.out.println(records);
-			Action a = handleGuaranteed();
-			if (a != null) return a;
-		}
 
 		//System.out.println("Attempting Model Checking...");
 		Action modelCheckingAction = handleModelChecking(50000,1);
