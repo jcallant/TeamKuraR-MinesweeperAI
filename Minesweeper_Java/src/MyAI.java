@@ -179,8 +179,8 @@ public class MyAI extends AI {
 
 		if(flagsLeft == 0){
 			System.out.println("No more flags. Uncovering rest");
-			for(int i=0; i<COL_DIMENSIONS; i++){
-				for(int j=0; j<ROW_DIMENSIONS; j++){
+			for(int i=1; i<COL_DIMENSIONS; i++){
+				for(int j=1; j<ROW_DIMENSIONS; j++){
 					String key = key(i, j);
 					if(!records.containsKey(key) || records.get(key)==COV_NEIGHBOR){
 						records.put(key, 0);
