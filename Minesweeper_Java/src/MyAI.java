@@ -178,9 +178,16 @@ public class MyAI extends AI {
 		outputKnowledge();
 
 		if(flagsLeft == 0){
-			//System.out.println("No more flags. Uncovering rest");
-			for(Action a : coveredFrontier)
-				guaranteedSafe.add(new Action(ACTION.UNCOVER,a.x, a.y));
+			System.out.println("No more flags. Uncovering rest");
+			for(int i=0; i<COL_DIMENSIONS; i++){
+				for(int j=0; j<ROW_DIMENSIONS; j++){
+					String key = key(i, j);
+					if(!records.containsKey(key) || records.get(key)==COV_NEIGHBOR){
+						records.put(key, 0);
+						guaranteedSafe.add(new Action(ACTION.UNCOVER, i, j));
+					}
+				}
+			}
 
 			Action a = handleGuaranteed();
 			if (a != null) return a;
@@ -508,13 +515,18 @@ public class MyAI extends AI {
 
 		int powerSetSize = (int) Math.pow(2, coveredFrontier.size());
 
+		// initialize to 0
 		int solutionCount = 0;
 		HashMap<Action, Integer> probabilities = new HashMap<>();
 		for (Action a : coveredFrontier) {
 			probabilities.put(a, 0);
 		}
 		boolean timedOut = false;
+
+		// using coveredFrontier, iterate through powerset
 		for(int i=1; i<powerSetSize; i++){
+
+			// if taking too long, stop
 			timeLimit -= timeStep;
 			if(timeLimit < 0) {
 				System.out.println(">>>>>>>>>>> TIME UP!!!");
@@ -522,16 +534,22 @@ public class MyAI extends AI {
 				break;
 			}
 
+			// build possible mine list for this iteration
 			ArrayList<Action> mineList = new ArrayList<>();
 			for(int j=0; j<coveredFrontier.size(); j++){
 				if((i & (1 << j)) > 0) {
 					mineList.add(coveredFrontier.get(j));
 				}
 			}
+
+			// if mine list matches the amount of flagsLeft
 			if(mineList.size() <= flagsLeft) {
 				HashMap<String, Integer> worldRecords = new HashMap<>();
 
+				// hold temp list (hypoFlagAndUpdate function manipulates list)
 				ArrayList<Action> temp = new ArrayList<>(mineList);
+
+				// if mine list is a possible solution
 				if(hypoFlagAndUpdate(mineList, worldRecords)!=null) {
 					++solutionCount;
 					System.out.printf("%d: %s\n",solutionCount, temp);
