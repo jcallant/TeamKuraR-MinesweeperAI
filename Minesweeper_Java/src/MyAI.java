@@ -124,7 +124,7 @@ public class MyAI extends AI {
 		// output all details
 		//outputKnowledge();
 
-		// if no mines all flagged
+		// [STEP2.1]: check if all mines are flagged
 		if(flagsLeft == 0){
 			System.out.println("No more flags. Uncovering rest");
 			for(int i=1; i<=COL_DIMENSIONS; i++){
@@ -136,13 +136,9 @@ public class MyAI extends AI {
 					}
 				}
 			}
-
-			System.out.println(records);
-			Action a = handleGuaranteed();
-			if (a != null) return a;
 		}
 
-		// [STEP2]: if any guaranteed mines or safe tiles
+		// [STEP2.2]: if any guaranteed mines or safe tiles
 		Action guaranteedAction = handleGuaranteed();
 		if(guaranteedAction != null) return guaranteedAction;
 
@@ -195,16 +191,12 @@ public class MyAI extends AI {
 		outputKnowledge();
 
 		//System.out.println("Attempting Model Checking...");
-		Action modelCheckingAction = handleModelChecking(50000,1);
+		Action modelCheckingAction = handleModelChecking(50000);
 		if (modelCheckingAction != null) return modelCheckingAction;
 
 		// [STEP4.2] Pick from ucf with lowest probability
 		Action probabilityAction = handleProbability();
 		if (probabilityAction != null) return probabilityAction;
-
-		// [STEP4.3] Pick any from cf
-		// this function will actually never be called because handleProbability() will exhaust options
-		if (flagsLeft != 0) return handleAny();
 
 		// [STEP 5] Leave
 		return new Action(ACTION.LEAVE);
@@ -510,7 +502,7 @@ public class MyAI extends AI {
 
 	// ################### ModelChecking Functions ##################
 
-	private Action handleModelChecking(double timeLimit, double timeStep){
+	private Action handleModelChecking(double timeLimit){
 		if(coveredFrontier.isEmpty()) return null;
 		//System.out.printf(">> cf: %s\n", coveredFrontier);
 
@@ -528,7 +520,7 @@ public class MyAI extends AI {
 		for(int i=1; i<powerSetSize; i++){
 
 			// if taking too long, stop
-			timeLimit -= timeStep;
+			timeLimit--;
 			if(timeLimit < 0) {
 				System.out.println(">>>>>>>>>>> TIME UP!!!");
 				timedOut = true;
