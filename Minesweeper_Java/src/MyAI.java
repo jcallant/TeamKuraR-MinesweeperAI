@@ -739,6 +739,7 @@ public class MyAI extends AI {
 	private void recursiveChecker(ArrayList<Tile> mineList, int index,
 								  HashMap<String, Integer> hypoRecords, ArrayList<ArrayList<Tile>> solutions){
 		if(index >= coveredFrontier.size()) return;
+
 		System.out.println("REC:");
 		System.out.println(" mineList: " + mineList);
 		System.out.println(" index: " + index);
@@ -844,6 +845,7 @@ public class MyAI extends AI {
 		doPause();
 
 
+		System.out.println(hypoRecords);
 		System.out.println(" ======= checking if valid...");
 		for (Tile action : hypoUncoveredFrontier) {
 			System.out.printf("Validating label %s\n", key(action.x,action.y));
