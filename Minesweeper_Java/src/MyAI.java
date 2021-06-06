@@ -758,7 +758,11 @@ public class MyAI extends AI {
 		else if(result.equals(new Tile(0,0))){
 			System.out.println("SOLUTION FOUND: " + mineList);
 			solutions.add(mineList);
+			ArrayList temp = new ArrayList(mineList);
 			recursiveFinder(mineList, index+1, hypoRecords, solutions);
+			mineList = temp;
+			mineList.remove(coveredFrontier.get(index));
+			recursiveFinder(mineList, index+1, hypoRecordsBackup, solutions);
 		}
 		// if mineList combo is valid but not yet a complete solution
 		else {
