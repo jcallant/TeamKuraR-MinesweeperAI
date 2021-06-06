@@ -818,8 +818,6 @@ public class MyAI extends AI {
 		if(coveredFrontier.isEmpty()) return null;
 		ArrayList<ArrayList<Tile>> chains = getOrderedChain(coveredFrontier);
 		if(chains==null) return null;
-		for(ArrayList<Tile> l : chains)
-			System.out.printf(":%s\n\n",l);
 		//doPause();
 
 		// initialize to 0
@@ -1027,7 +1025,7 @@ public class MyAI extends AI {
 			}
 		}
 		//System.out.println("\n hypoRecord: " + hypoRecords);
-		System.out.println(" SOLUTION ");
+		//System.out.println(" SOLUTION ");
 		return new Tile(0,0);
 	}
 
