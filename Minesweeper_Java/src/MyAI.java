@@ -741,12 +741,12 @@ public class MyAI extends AI {
 		System.out.println("CF: " + coveredFrontier);
 		if(index >= coveredFrontier.size()) return;
 
-		System.out.println("REC:");
-		System.out.println(" mineList: " + mineList);
-		System.out.println(" index: " + index);
 
 		HashMap<String, Integer> hypoRecordsBackup = new HashMap<>(hypoRecords);
 		mineList.add(coveredFrontier.get(index));
+		System.out.println("REC:");
+		System.out.println(" mineList: " + mineList);
+		System.out.println(" index: " + index);
 
 		Tile result = hypoFlagAndUpdate2(mineList, hypoRecords);
 		// if not mineList combo not possible...
