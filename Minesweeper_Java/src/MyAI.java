@@ -782,17 +782,17 @@ public class MyAI extends AI {
 		ArrayList<Tile> ordered = new ArrayList<>();
 		if(list.isEmpty()) return list;
 
-		Tile current = copy.remove(0);
-		ordered.add(current);
+		Tile tail = copy.remove(0);
+		ordered.add(tail);
 
 		while(!copy.isEmpty()){
 			System.out.println(copy);
-			Tile up = new Tile(current.x, current.y+1);
-			Tile down = new Tile(current.x, current.y-1);
-			Tile right = new Tile(current.x+1, current.y);
-			Tile left = new Tile(current.x-1, current.y);
+			Tile up = new Tile(tail.x, tail.y+1);
+			Tile down = new Tile(tail.x, tail.y-1);
+			Tile right = new Tile(tail.x+1, tail.y);
+			Tile left = new Tile(tail.x-1, tail.y);
 
-			ArrayList<Tile> neighbors = getNeighbors(current.x, current.y);
+			ArrayList<Tile> neighbors = getNeighbors(tail.x, tail.y);
 
 			Tile next = null;
 			if(copy.contains(up) && neighbors.contains(up)) next = up;
@@ -804,6 +804,7 @@ public class MyAI extends AI {
 			if(next != null) copy.remove(next);
 			else next = copy.remove(0);
 			ordered.add(next);
+			tail = next;
 			doPause();
 		}
 		System.out.println(ordered);
