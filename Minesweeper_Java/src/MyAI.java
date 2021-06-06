@@ -727,7 +727,7 @@ public class MyAI extends AI {
 		ArrayList<Tile> mineList = new ArrayList<>();
 		HashMap<String, Integer> worldRecords = new HashMap<>();
 		ArrayList<ArrayList<Tile>> solutions = new ArrayList<>();
-		recursiveChecker(mineList,0, worldRecords, solutions);
+		recursiveFinder(mineList,0, worldRecords, solutions);
 
 		System.out.printf(">> %d solutions found\n", solutions.size());
 		System.out.println(solutions);
@@ -736,8 +736,8 @@ public class MyAI extends AI {
 		return null;
 	}
 
-	private void recursiveChecker(ArrayList<Tile> mineList, int index,
-								  HashMap<String, Integer> hypoRecords, ArrayList<ArrayList<Tile>> solutions){
+	private void recursiveFinder(ArrayList<Tile> mineList, int index,
+								 HashMap<String, Integer> hypoRecords, ArrayList<ArrayList<Tile>> solutions){
 		if(index >= coveredFrontier.size()) return;
 
 		System.out.println("REC:");
@@ -748,19 +748,12 @@ public class MyAI extends AI {
 		mineList.add(coveredFrontier.get(index));
 
 		Tile result = hypoFlagAndUpdate2(mineList, hypoRecords);
-		// if not mineList combo not possible...
-		if(result == null){
-			mineList.remove(coveredFrontier.get(index));
-			recursiveChecker(mineList, index+1, hypoRecordsBackup, solutions);
-		}
-		// if mineList combo is possible solution (using ACTION.LEAVE as a return case for solution found)
-		else if(result.equals(new Tile(0,0))){
+		if(result != null && result.equals(new Tile(0,0))){
 			solutions.add(mineList);
 		}
-		// if mineList combo is valid but not yet a complete solution
-		else {
-			recursiveChecker(mineList, index+1, hypoRecords, solutions);
-		}
+		recursiveFinder(mineList, index+1, hypoRecords, solutions);
+		mineList.remove(coveredFrontier.get(index));
+		recursiveFinder(mineList, index+1, hypoRecordsBackup, solutions);
 	}
 
 	private Tile hypoFlagAndUpdate2(ArrayList<Tile> possibleMineFrontier, HashMap<String, Integer> hypoRecords) {
@@ -847,36 +840,13 @@ public class MyAI extends AI {
 
 		System.out.println(hypoRecords);
 		System.out.println(" ======= checking if valid...");
-		for (Tile action : hypoUncoveredFrontier) {
-			System.out.printf("Validating label %s\n", key(action.x,action.y));
+		for (Tile tile : hypoUncoveredFrontier) {
+			System.out.printf("Validating label %s\n", key(tile.x,tile.y));
 
-			String k = key(action.x, action.y);
+			String k = key(tile.x, tile.y);
 			if (!hypoRecords.containsKey(k) || hypoRecords.get(k) > 0) {
-				//System.out.println("N: unsatisfied label " + k);
-				return action;
-			}
-
-			ArrayList<Tile> labelsNeighbors = getNeighbors(action.x, action.y);
-			for(Tile neighbor : labelsNeighbors){
-				if(possibleMineFrontier.contains(neighbor)) {
-					System.out.printf(" Looking at %s neighbors\n", key(neighbor.x, neighbor.y));
-					boolean remove = true;
-					ArrayList<Tile> minesNeighbors = getNeighbors(neighbor.x, neighbor.y);
-					System.out.printf("   Remove %s? ", key(neighbor.x, neighbor.y));
-					for (Tile minesNeighbor : minesNeighbors) {
-						if (minesNeighbor != action && hypoUncoveredFrontier.contains(minesNeighbor)) {
-							remove = false;
-							break;
-						}
-					}
-					if(remove) {
-						System.out.println("YES");
-						possibleMineFrontier.remove(neighbor);
-					}
-					else {
-						System.out.println("NO");
-					}
-				}
+				System.out.println("N: unsatisfied label " + k);
+				return tile;
 			}
 		}
 
