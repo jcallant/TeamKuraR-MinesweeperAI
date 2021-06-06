@@ -818,6 +818,9 @@ public class MyAI extends AI {
 		if(coveredFrontier.isEmpty()) return null;
 		ArrayList<ArrayList<Tile>> chains = getOrderedChain(coveredFrontier);
 		if(chains==null) return null;
+		for(ArrayList l : chains)
+			System.out.printf(":%s\n\n",l);
+		doPause();
 
 		// initialize to 0
 		int solutionCount = 0;
