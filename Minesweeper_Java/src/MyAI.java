@@ -749,6 +749,7 @@ public class MyAI extends AI {
 
 		Tile result = hypoFlagAndUpdate2(mineList, hypoRecords);
 		if(result != null && result.equals(new Tile(0,0))){
+			System.out.println("SOLUTION FOUND: " + mineList);
 			solutions.add(mineList);
 		}
 		recursiveFinder(mineList, index+1, hypoRecords, solutions);
@@ -822,7 +823,7 @@ public class MyAI extends AI {
 		}
 
 
-		System.out.println(" ======= building uncoveredFrontier...");
+//		System.out.println(" ======= building uncoveredFrontier...");
 		ArrayList<Tile> hypoUncoveredFrontier = new ArrayList<>();
 		System.out.println(uncoveredFrontier);
 		System.out.println(possibleMineFrontier);
@@ -830,7 +831,7 @@ public class MyAI extends AI {
 			ArrayList<Tile> minesNeighbors = getNeighbors(mine.x, mine.y);
 			for(Tile minesNeighbor : minesNeighbors){
 				if(uncoveredFrontier.contains(minesNeighbor)){
-					System.out.printf("%s in UCF\n", minesNeighbor);
+//					System.out.printf("%s in UCF\n", minesNeighbor);
 					hypoUncoveredFrontier.add(minesNeighbor);
 				}
 			}
@@ -838,14 +839,16 @@ public class MyAI extends AI {
 //		doPause();
 
 
-		System.out.println(hypoRecords);
-		System.out.println(" ======= checking if valid...");
+		System.out.println("hyporecords: " + hypoRecords);
+		System.out.println("hypoucf: " + hypoUncoveredFrontier);
+
+//		System.out.println(" ======= checking if valid...");
 		for (Tile tile : hypoUncoveredFrontier) {
-			System.out.printf("Validating label %s\n", key(tile.x,tile.y));
+//			System.out.printf("Validating label %s\n", key(tile.x,tile.y));
 
 			String k = key(tile.x, tile.y);
 			if (!hypoRecords.containsKey(k) || hypoRecords.get(k) > 0) {
-				System.out.println("N: unsatisfied label " + k);
+//				System.out.println("N: unsatisfied label " + k);
 				return tile;
 			}
 		}
