@@ -870,7 +870,10 @@ public class MyAI extends AI {
 						for (Tile a : temp) {
 							System.out.println("a = " + a);
 							System.out.println(mineProbabilities);
-							int p = mineProbabilities.get(a);
+							if(mineProbabilities.containsKey(a)) {
+								System.out.println("a contained");
+								int p = mineProbabilities.get(a);
+							}
 //							mineProbabilities.put(a, ++p);
 						}
 					}
