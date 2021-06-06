@@ -830,8 +830,24 @@ public class MyAI extends AI {
 		System.out.println(uncoveredFrontier);
 		System.out.println(possibleMineFrontier);
 		for(Tile mine : possibleMineFrontier){
-			if(possibleMineFrontier.contains(mine))
-				System.out.println("Contained " + mine);
+			if(possibleMineFrontier.contains(mine)) {
+				System.out.printf("Remove %s? ",mine);
+				boolean remove = true;
+				ArrayList<Tile> minesNeighbors = getNeighbors(mine.x, mine.y);
+				for(Tile minesNeighbor : minesNeighbors){
+					if(minesNeighbor.equals(mine)) continue;
+					if(uncoveredFrontier.contains(minesNeighbor)) {
+						remove = false;
+						break;
+					}
+				}
+				if (remove) {
+					System.out.println("YES");
+					possibleMineFrontier.remove(mine);
+				}
+				else
+					System.out.println("NO");
+			}
 		}
 		doPause();
 
