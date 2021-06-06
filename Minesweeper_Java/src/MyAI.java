@@ -828,9 +828,11 @@ public class MyAI extends AI {
 
 		// initialize to 0
 		int solutionCount = 0;
-		HashMap<Tile, Integer> probabilities = new HashMap<>();
+		HashMap<Tile, Integer> mineProbabilities = new HashMap<>();
+		HashMap<String, Integer> safeProbabilities = new HashMap<>();
 		for (Tile t : coveredFrontier) {
-			probabilities.put(t, -1);
+			mineProbabilities.put(t, -1);
+			safeProbabilities.put(key(t.x,t.y), -1);
 		}
 		boolean timedOut = false;
 
@@ -867,12 +869,20 @@ public class MyAI extends AI {
 
 					// if mine list is a possible solution
 					Tile result = hypoFlagAndUpdate2(mineList, worldRecords);
-					if (result != null) {
+					if (result != null && result.equals(new Tile(0,0))) {
 						++solutionCount;
-//					System.out.printf("%d: %s\n",solutionCount, temp);
+//						System.out.printf("%d: %s\n",solutionCount, temp);
 						for (Tile a : temp) {
-							int p = probabilities.get(a);
-							probabilities.put(a, ++p);
+							int p = mineProbabilities.get(a);
+							mineProbabilities.put(a, ++p);
+						}
+					}
+					else if (result != null){
+						for(String k : worldRecords.keySet()){
+							if (worldRecords.get(k) == SAFE) {
+								int p = safeProbabilities.get(k);
+								safeProbabilities.put(k, ++p);
+							}
 						}
 					}
 				}
@@ -889,8 +899,8 @@ public class MyAI extends AI {
 			// out of all solutions n, add tiles with n\n of being mine to guaranteedMine
 			final int finalSolutionCount = solutionCount;
 			ArrayList<Tile> mines = new ArrayList<>();
-			for (Tile k : probabilities.keySet()) {
-				if (probabilities.get(k) == finalSolutionCount) {
+			for (Tile k : mineProbabilities.keySet()) {
+				if (mineProbabilities.get(k) == finalSolutionCount) {
 					mines.add(k);
 				}
 			}
@@ -901,12 +911,19 @@ public class MyAI extends AI {
 
 			// if no guaranteed, uncover tile with min probability
 			if (finalAction == null){
-				finalAction = probabilities.keySet().stream()
-						.min(Comparator.comparing(probabilities::get))
-						.map(uncoverAction -> new Action(ACTION.UNCOVER, uncoverAction.x, uncoverAction.y))
+//				finalAction = mineProbabilities.keySet().stream()
+//						.min(Comparator.comparing(mineProbabilities::get))
+//						.map(uncoverAction -> new Action(ACTION.UNCOVER, uncoverAction.x, uncoverAction.y))
+//						.orElse(null);
+//				System.out.println("probabilities: " + mineProbabilities);
+//				System.out.println("min: " + finalAction);
+
+				finalAction = safeProbabilities.keySet().stream()
+						.max(Comparator.comparing(safeProbabilities::get))
+						.map(s -> new Action(ACTION.UNCOVER, getX(s), getY(s)))
 						.orElse(null);
-				System.out.println("probabilities: " + probabilities);
-				System.out.println("min: " + finalAction);
+//				System.out.println("safeProbabilities: " + mineProbabilities);
+//				System.out.println("max: " + finalAction);
 //				doPause();
 			}
 
@@ -1014,5 +1031,14 @@ public class MyAI extends AI {
 		//System.out.println("\n hypoRecord: " + hypoRecords);
 		//System.out.printf(" SOLUTION ");
 		return new Tile(0,0);
+	}
+
+	private int getX(String key){
+		String first = key.split(",")[0];
+		return Integer.parseInt(first.substring(1));
+	}
+	private int getY(String key){
+		String second = key.split(",")[1];
+		return Integer.parseInt(second.substring(0,second.length()-1));
 	}
 }
