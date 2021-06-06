@@ -748,10 +748,12 @@ public class MyAI extends AI {
 			System.out.println("SOLUTION FOUND: " + mineList);
 			doPause();
 			solutions.add(mineList);
+			recursiveFinder(mineList, index+1, hypoRecords, solutions);
 		}
-		recursiveFinder(mineList, index+1, hypoRecords, solutions);
-		mineList.remove(coveredFrontier.get(index));
-		recursiveFinder(mineList, index+1, hypoRecordsBackup, solutions);
+		else if(result == null) {
+			recursiveFinder(mineList, index + 1, hypoRecords, solutions);
+			mineList.remove(coveredFrontier.get(index));
+		}
 	}
 
 	private Tile hypoFlagAndUpdate2(ArrayList<Tile> possibleMineFrontier, HashMap<String, Integer> hypoRecords) {
