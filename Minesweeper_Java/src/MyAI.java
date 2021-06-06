@@ -926,8 +926,9 @@ public class MyAI extends AI {
 	}
 
 	private int getX(String key){
-		String first = key.split("[,]")[0];
-		return Integer.parseInt(first.substring(1));
+		String[] token = key.split(",");
+		for(String t : token) System.out.println(t);
+		return 0;
 	}
 	private int getY(String key){
 		String second = key.split("[,]")[1];
