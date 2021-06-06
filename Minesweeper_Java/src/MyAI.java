@@ -876,7 +876,7 @@ public class MyAI extends AI {
 					}
 					else if (result != null){
 						for(String k : worldRecords.keySet()){
-							if (worldRecords.get(k) == SAFE) {
+							if (worldRecords.get(k) == SAFE && safeProbabilities.containsKey(k)) {
 								int p = safeProbabilities.get(k);
 								safeProbabilities.put(k, ++p);
 							}
