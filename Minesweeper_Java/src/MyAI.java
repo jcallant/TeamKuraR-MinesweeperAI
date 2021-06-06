@@ -823,7 +823,7 @@ public class MyAI extends AI {
 		System.out.println(possibleMineFrontier);
 		for(Action mine : possibleMineFrontier){
 			String key = key(mine.x, mine.y);
-			System.out.printf("x: %d y: \n", getX(key), getY(key));
+			System.out.printf("x: %d y: %d\n", getX(key), getY(key));
 		}
 		doPause();
 
