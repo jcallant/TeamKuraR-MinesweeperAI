@@ -241,25 +241,14 @@ public class MyAI extends AI {
 	}
 
 	private void addNeighborsToCoveredFrontier(int x, int y){
-		int rowMin = y-1;
-		int rowMax = y+1;
-		if(rowMin<1) rowMin = 1;
-		if(rowMax>ROW_DIMENSIONS) rowMax = ROW_DIMENSIONS;
+		ArrayList<Tile> neighbors = getNeighbors(x, y);
 
-		int colMin = x-1;
-		int colMax = x+1;
-		if(colMin<1) colMin = 1;
-		if(colMax>COL_DIMENSIONS) colMax = COL_DIMENSIONS;
-
-		for(int j=rowMax; j>rowMin-1; j--){
-			for(int i=colMin; i<colMax+1; i++) {
-				if (j==y && i==x) continue;
-				String k = key(i, j);
-				if (!records.containsKey(k)) {
-					//System.out.println(k + " added to covered frontier");
-					records.put(k, COV_NEIGHBOR); // -10 placeholder for neighbors of uncovered tiles
-					coveredFrontier.add(new Tile(i, j));
-				}
+		for(Tile t : neighbors) {
+			String k = key(t.x, t.y);
+			if (!records.containsKey(k)) {
+				//System.out.println(k + " added to covered frontier");
+				records.put(k, COV_NEIGHBOR); // -10 placeholder for neighbors of uncovered tiles
+				coveredFrontier.add(t);
 			}
 		}
 	}
@@ -270,126 +259,81 @@ public class MyAI extends AI {
 	}
 
 	private ArrayList<Tile> countCoveredNeighbors(int x, int y){
-		int rowMin = y-1;
-		int rowMax = y+1;
-		if(rowMin<1) rowMin = 1;
-		if(rowMax>ROW_DIMENSIONS) rowMax = ROW_DIMENSIONS;
-
-		int colMin = x-1;
-		int colMax = x+1;
-		if(colMin<1) colMin = 1;
-		if(colMax>COL_DIMENSIONS) colMax = COL_DIMENSIONS;
-
+		ArrayList<Tile> neighbors = getNeighbors(x, y);
 		ArrayList<Tile> possible = new ArrayList<>();
-		for(int j=rowMax; j>rowMin-1; j--){
-			for(int i=colMin; i<colMax+1; i++) {
-				if (j==y && i==x) continue;
-				String k = key(i, j);
-				if (records.get(k)==COV_NEIGHBOR) {
-					possible.add(new Tile(i, j));
-					if (!probability.containsKey(k))
-						probability.put(k, 1);
-					else{
-						int p = probability.get(k);
-						probability.put(k, ++p);
-					}
+		for(Tile t : neighbors){
+			String k = key(t.x, t.y);
+			if (records.get(k)==COV_NEIGHBOR) {
+				possible.add(t);
+				if (!probability.containsKey(k))
+					probability.put(k, 1);
+				else{
+					int p = probability.get(k);
+					probability.put(k, ++p);
 				}
 			}
 		}
 		return possible;
 	}
 
-	private void flagAndUpdate(ArrayList<Tile> flags){
+	private void flagAndUpdate(ArrayList<Tile> flags) {
 
 		// for each guaranteed mine
 		for (Tile f : flags) {
 
 			// check if not already flagged
-			if(records.containsKey(key(f.x,f.y)) && records.get(key(f.x,f.y))==MINE) continue;
+			if (records.containsKey(key(f.x, f.y)) && records.get(key(f.x, f.y)) == MINE) continue;
 			//System.out.println("flag: " + key(f.x,f.y));
-			records.put(key(f.x,f.y),MINE); // MINE = -9 value for mines
+			records.put(key(f.x, f.y), MINE); // MINE = -9 value for mines
 			guaranteedMine.add(new Tile(f.x, f.y));
 
 			// update labels for neighboring tiles
-			int rowMin = f.y - 1;
-			int rowMax = f.y + 1;
-			if (rowMin < 1) rowMin = 1;
-			if (rowMax > ROW_DIMENSIONS) rowMax = ROW_DIMENSIONS;
+			ArrayList<Tile> neighbors = getNeighbors(f.x, f.y);
+			for (Tile t : neighbors) {
+				String k = key(t.x, t.y);
+				if (records.containsKey(k)) {
+					if (records.get(k) > 0) {
+						int labelValue = records.get(k);
+						labelValue--;
+						records.put(k, labelValue);
+						//System.out.println("update: " + k + " = " + (records.get(k)+1) + " -> " + records.get(k));
 
-			int colMin = f.x - 1;
-			int colMax = f.x + 1;
-			if (colMin < 1) colMin = 1;
-			if (colMax > COL_DIMENSIONS) colMax = COL_DIMENSIONS;
-
-			for (int j = rowMax; j > rowMin - 1; j--) {
-				for (int i = colMin; i < colMax + 1; i++) {
-					String k = key(i, j);
-					if (records.containsKey(k)) {
-						if (records.get(k)>0){
-							int labelValue = records.get(k);
-							labelValue--;
-							records.put(k, labelValue);
-							//System.out.println("update: " + k + " = " + (records.get(k)+1) + " -> " + records.get(k));
-
-							// if new label == 0, uncover any remaining covered neighbors
-							if (labelValue == 0) {
-								addNeighborsToSafeTiles(i, j);
-							}
+						// if new label == 0, uncover any remaining covered neighbors
+						if (labelValue == 0) {
+							addNeighborsToSafeTiles(t.x, t.y);
 						}
 					}
+				}
 //					else {
 //						System.out.println(k + " added to covered frontier");
 //						records.put(k, COV_NEIGHBOR); //
 //						coveredFrontier.add(new Action(ACTION.FLAG, i, j));
 //					}
-				}
 			}
 		}
 	}
 
 	private int refreshLabel(int x, int y){
-		int rowMin = y - 1;
-		int rowMax = y + 1;
-		if (rowMin < 1) rowMin = 1;
-		if (rowMax > ROW_DIMENSIONS) rowMax = ROW_DIMENSIONS;
-
-		int colMin = x - 1;
-		int colMax = x + 1;
-		if (colMin < 1) colMin = 1;
-		if (colMax > COL_DIMENSIONS) colMax = COL_DIMENSIONS;
-
+		ArrayList<Tile> neighbors = getNeighbors(x, y);
 		int label = records.get(key(x,y));
-		for (int j = rowMax; j > rowMin - 1; j--) {
-			for (int i = colMin; i < colMax + 1; i++) {
-				String k = key(i, j);
-				if (records.containsKey(k)) {
-					if (records.get(k) == MINE)
-						label--;
-				}
+		for(Tile t : neighbors) {
+			String k = key(t.x, t.y);
+			if (records.containsKey(k)) {
+				if (records.get(k) == MINE)
+					label--;
 			}
 		}
 		return label;
 	}
 
 	private boolean checkNeighborsForMines(int x, int y){
-		int rowMin = y - 1;
-		int rowMax = y + 1;
-		if (rowMin < 1) rowMin = 1;
-		if (rowMax > ROW_DIMENSIONS) rowMax = ROW_DIMENSIONS;
-
-		int colMin = x - 1;
-		int colMax = x + 1;
-		if (colMin < 1) colMin = 1;
-		if (colMax > COL_DIMENSIONS) colMax = COL_DIMENSIONS;
-
-		for (int j = rowMax; j > rowMin - 1; j--) {
-			for (int i = colMin; i < colMax + 1; i++) {
-				String k = key(i, j);
-				//System.out.printf("Checking %s neighbors for mines...", k);
-				if (records.containsKey(k)) {
-					if (records.get(k) == MINE)
-						return true;
-				}
+		ArrayList<Tile> neighbors = getNeighbors(x, y)
+		for(Tile t : neighbors){
+			String k = key(t.x, t.y);
+			//System.out.printf("Checking %s neighbors for mines...", k);
+			if (records.containsKey(k)) {
+				if (records.get(k) == MINE)
+					return true;
 			}
 		}
 		return false;
@@ -530,7 +474,7 @@ public class MyAI extends AI {
 			// if taking too long, stop
 			timeLimit--;
 			if(timeLimit < 0) {
-				System.out.println(">>>>>>>>>>> TIME UP!!!");
+				//System.out.println(">>>>>>>>>>> TIME UP!!!");
 				timedOut = true;
 				break;
 			}
@@ -542,7 +486,7 @@ public class MyAI extends AI {
 					mineList.add(coveredFrontier.get(j));
 				}
 			}
-//			System.out.printf("%d. mineList: %s\n",i,mineList);
+			//System.out.printf("%d. mineList: %s\n",i,mineList);
 
 			// if mine list matches the amount of flagsLeft
 			if(mineList.size() <= flagsLeft) {
@@ -554,7 +498,7 @@ public class MyAI extends AI {
 				// if mine list is a possible solution
 				if(hypoFlagAndUpdate(mineList, worldRecords)!=null) {
 					++solutionCount;
-//					System.out.printf("%d: %s\n",solutionCount, temp);
+					//System.out.printf("%d: %s\n",solutionCount, temp);
 					for(Tile a : temp){
 						int p = probabilities.get(a);
 						probabilities.put(a, ++p);
@@ -562,8 +506,8 @@ public class MyAI extends AI {
 				}
 			}
 		}
-//		System.out.printf(">> %d solutions found\n",solutionCount);
-//		System.out.printf(">> probabilities: %s\n", probabilities);
+		//System.out.printf(">> %d solutions found\n",solutionCount);
+		//System.out.printf(">> probabilities: %s\n", probabilities);
 
 
 
@@ -604,8 +548,8 @@ public class MyAI extends AI {
 						.min(Comparator.comparing(probabilities::get))
 						.map(uncoverAction -> new Action(ACTION.UNCOVER, uncoverAction.x, uncoverAction.y))
 						.orElse(null);
-//				System.out.println("probabilities: " + probabilities);
-//				System.out.println("min: " + finalAction);
+				//System.out.println("probabilities: " + probabilities);
+				//System.out.println("min: " + finalAction);
 				//doPause();
 			}
 
@@ -776,6 +720,7 @@ public class MyAI extends AI {
 
 	// ############################ SECOND ATTEMPT AT MODEL CHECKING ################################
 
+/*
 	private ArrayList<ArrayList<Tile>> getOrderedChain(ArrayList<Tile> list){
 		ArrayList<Tile> copy = new ArrayList<>(list);
 		if(list.isEmpty()) return null;
@@ -938,6 +883,7 @@ public class MyAI extends AI {
 
 		return null;
 	}
+
 	private Tile hypoFlagAndUpdate2(ArrayList<Tile> frontier, ArrayList<Tile> cfSegment, HashMap<String, Integer> hypoRecords) {
 
 		for(Tile a : frontier) {
@@ -1033,8 +979,12 @@ public class MyAI extends AI {
 		String first = key.split(",")[0];
 		return Integer.parseInt(first.substring(1));
 	}
+
 	private int getY(String key){
 		String second = key.split(",")[1];
 		return Integer.parseInt(second.substring(0,second.length()-1));
 	}
+
+ */
+
 }
