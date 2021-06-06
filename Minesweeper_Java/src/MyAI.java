@@ -191,7 +191,7 @@ public class MyAI extends AI {
 		outputKnowledge();
 
 		//System.out.println("Attempting Model Checking...");
-		Action modelCheckingAction = handleModelChecking(50000);
+		Action modelCheckingAction = handleModelChecking2(50000);
 		if (modelCheckingAction != null) return modelCheckingAction;
 
 		// [STEP4.2] Pick from ucf with lowest probability
@@ -621,7 +621,7 @@ public class MyAI extends AI {
 				return handleAny();
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -704,6 +704,173 @@ public class MyAI extends AI {
 		return hypoRecords;
 	}
 
+	// optimizing frontier for shorter combination calculations
+	private Action handleModelChecking2(double timeLimit){
+		if(coveredFrontier.isEmpty()) return null;
+		//System.out.printf(">> cf: %s\n", coveredFrontier);
+
+		ArrayList<Action> hypoUncoveredFrontier = new ArrayList<>(uncoveredFrontier);
+
+		// initialize to 0
+		int solutionCount = 0;
+		HashMap<Action, Integer> probabilities = new HashMap<>();
+		for (Action a : coveredFrontier) {
+			probabilities.put(a, 0);
+		}
+
+		ArrayList<Action> mineList = new ArrayList<>();
+		HashMap<String, Integer> worldRecords = new HashMap<>();
+		ArrayList<ArrayList<Action>> solutions = new ArrayList<>();
+		recursiveChecker(mineList, hypoUncoveredFrontier, 0, worldRecords, solutions);
+
+		System.out.printf(">> %d solutions found\n", solutions.size());
+		System.out.println(solutions);
+
+
+		return null;
+	}
+
+	private void recursiveChecker(ArrayList<Action> mineList, int index,
+								  HashMap<String, Integer> hypoRecords, ArrayList<ArrayList<Action>> solutions){
+		if(index >= coveredFrontier.size()) return;
+
+		HashMap<String, Integer> hypoRecordsBackup = new HashMap<>(hypoRecords);
+		mineList.add(coveredFrontier.get(index));
+
+		Action result = hypoFlagAndUpdate2(mineList, hypoRecords);
+		// if not mineList combo not possible...
+		if(result == null){
+			mineList.remove(coveredFrontier.get(index));
+			recursiveChecker(mineList, index+1, hypoRecordsBackup, solutions);
+		}
+		// if mineList combo is possible solution (using ACTION.LEAVE as a return case for solution found)
+		else if(result.action == ACTION.LEAVE){
+			solutions.add(mineList);
+		}
+		// if mineList combo is valid but not yet a complete solution
+		else {
+			recursiveChecker(mineList, index+1, hypoRecords, solutions);
+		}
+	}
+
+	private Action hypoFlagAndUpdate2(ArrayList<Action> possibleMineFrontier, HashMap<String, Integer> hypoRecords) {
+
+		for(Action a : possibleMineFrontier) {
+			int x = a.x;
+			int y = a.y;
+//		//System.out.println(" <hypoFlag: " + key(x, y));
+
+			// if already marked safe, then can't be flagged as mine
+			if (hypoRecords.containsKey(key(x, y)) && hypoRecords.get(key(x, y)) == SAFE) {
+				//System.out.println(" </hypoFlag>");
+				return null;
+			}
+
+			// mark tile as mine in hypoRecords
+			hypoRecords.put(key(x, y), MINE);
+
+			// update labels for neighboring tiles in hypoRecords
+			int rowMin = y - 1;
+			int rowMax = y + 1;
+			if (rowMin < 1) rowMin = 1;
+			if (rowMax > ROW_DIMENSIONS) rowMax = ROW_DIMENSIONS;
+
+			int colMin = x - 1;
+			int colMax = x + 1;
+			if (colMin < 1) colMin = 1;
+			if (colMax > COL_DIMENSIONS) colMax = COL_DIMENSIONS;
+
+			for (int j = rowMax; j > rowMin - 1; j--) {
+				for (int i = colMin; i < colMax + 1; i++) {
+					String k = key(i, j);
+					if (hypoRecords.containsKey(k) && hypoRecords.get(k) >= 0) {
+						int labelValue = hypoRecords.get(k);
+						labelValue--;
+//					System.out.println(String.format(" -label update: %s %d -> %d",k,labelValue+1, labelValue));
+						if (labelValue == -1) {
+//						System.out.println(" -label conflict: " + k);
+//						System.out.println(" </hypoFlag>");
+							return null; // if flagging as mine causes label conflict, then not possible
+						}
+						hypoRecords.put(k, labelValue);
+
+						// if new label == 0, uncover any remaining covered neighbors
+						if (labelValue == 0) {
+							hypoAddCoveredNeighborsToSafeTiles(i, j, hypoRecords);
+						}
+					} else if (records.containsKey(k) && records.get(k) >= 0) {
+						int labelValue = records.get(k);
+						labelValue--;
+//					System.out.println(String.format(" -label update: %s %d -> %d",k,labelValue+1, labelValue));
+						if (labelValue == -1) {
+//						System.out.println(" -label conflict: " + k);
+//						System.out.println(" </hypoFlag>");
+							return null; // if flagging as mine causes label conflict, then not possible
+						}
+						hypoRecords.put(k, labelValue);
+
+						// if new label == 0, uncover any remaining covered neighbors
+						if (labelValue == 0) {
+							hypoAddCoveredNeighborsToSafeTiles(i, j, hypoRecords);
+						}
+					}
+				}
+			}
+		}
+
+
+		ArrayList<Action> hypoUncoveredFrontier = new ArrayList<>();
+		for(Action mine : possibleMineFrontier){
+			for(Action neighbor : getNeighbors(mine.x, mine.y)){
+				if(uncoveredFrontier.contains(neighbor))
+					hypoUncoveredFrontier.add(neighbor);
+			}
+		}
+
+
+		System.out.print(" ======= checking if valid...");
+		for (Action action : hypoUncoveredFrontier) {
+			System.out.printf("Validating label %s\n", key(action.x,action.y));
+
+			String k = key(action.x, action.y);
+			if (!hypoRecords.containsKey(k) || hypoRecords.get(k) > 0) {
+				//System.out.println("N: unsatisfied label " + k);
+				return action;
+			}
+
+			ArrayList<Action> labelsNeighbors = getNeighbors(action.x, action.y);
+			for(Action neighbor : labelsNeighbors){
+				System.out.printf(" Looking at %s neighbors\n", key(neighbor.x, neighbor.y));
+				if(possibleMineFrontier.contains(neighbor)) {
+					boolean remove = true;
+					ArrayList<Action> minesNeighbors = getNeighbors(neighbor.x, neighbor.y);
+					System.out.printf("   Remove %s? ", key(neighbor.x, neighbor.y));
+					for (Action minesNeighbor : minesNeighbors) {
+						if (minesNeighbor != action && hypoUncoveredFrontier.contains(minesNeighbor)) {
+							remove = false;
+							break;
+						}
+					}
+					if(remove) {
+						System.out.println("YES");
+						possibleMineFrontier.remove(neighbor);
+					}
+					else {
+						System.out.println("NO");
+					}
+				}
+			}
+		}
+		System.out.println("Hit any button to Continue...");
+		Scanner in = new Scanner(System.in);
+		in.nextLine();
+		
+		// using ACTION.LEAVE is flag for possible combo
+		return new Action(ACTION.LEAVE);
+	}
+
+
+
 
 	private HashMap<String, Integer> hypoAddCoveredNeighborsToSafeTiles(int x, int y, HashMap<String, Integer> hypoRecords){
 		int rowMin = y-1;
@@ -735,4 +902,24 @@ public class MyAI extends AI {
 		return hypoRecords;
 	}
 
+	private ArrayList<Action> getNeighbors(int x, int y){
+		ArrayList<Action> neighbors = new ArrayList<>();
+		int rowMin = y-1;
+		int rowMax = y+1;
+		if(rowMin<1) rowMin = 1;
+		if(rowMax>ROW_DIMENSIONS) rowMax = ROW_DIMENSIONS;
+
+		int colMin = x-1;
+		int colMax = x+1;
+		if(colMin<1) colMin = 1;
+		if(colMax>COL_DIMENSIONS) colMax = COL_DIMENSIONS;
+
+		for(int j=rowMax; j>rowMin-1; j--){
+			for(int i=colMin; i<colMax+1; i++) {
+				if (j==y && i==x) continue;
+				neighbors.add(new Action(ACTION.FLAG, i, j));
+			}
+		}
+		return neighbors;
+	}
 }
