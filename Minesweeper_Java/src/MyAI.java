@@ -514,14 +514,12 @@ public class MyAI extends AI {
 		if(coveredFrontier.isEmpty()) return null;
 		//System.out.printf(">> cf: %s\n", coveredFrontier);
 
-		ArrayList<Tile> chain = getOrderedChain(coveredFrontier);
-
-		int size = (int) Math.pow(2, chain.size());
+		int size = (int) Math.pow(2, coveredFrontier.size());
 
 		// initialize to 0
 		int solutionCount = 0;
 		HashMap<Tile, Integer> probabilities = new HashMap<>();
-		for (Tile t : chain) {
+		for (Tile t : coveredFrontier) {
 			probabilities.put(t, -1);
 		}
 		boolean timedOut = false;
@@ -539,12 +537,12 @@ public class MyAI extends AI {
 
 			// build possible mine list for this iteration
 			ArrayList<Tile> mineList = new ArrayList<>();
-			for(int j=0; j<chain.size(); j++){
+			for(int j=0; j<coveredFrontier.size(); j++){
 				if((i & (1 << j)) > 0) {
-					mineList.add(chain.get(j));
+					mineList.add(coveredFrontier.get(j));
 				}
 			}
-//			System.out.printf("%d. mineList: %s\n",i,mineList);
+			System.out.printf("%d. mineList: %s\n",i,mineList);
 
 			// if mine list matches the amount of flagsLeft
 			if(mineList.size() <= flagsLeft) {
@@ -607,8 +605,8 @@ public class MyAI extends AI {
 						.min(Comparator.comparing(probabilities::get))
 						.map(uncoverAction -> new Action(ACTION.UNCOVER, uncoverAction.x, uncoverAction.y))
 						.orElse(null);
-//				System.out.println("probabilities: " + probabilities);
-//				System.out.println("min: " + finalAction);
+				System.out.println("probabilities: " + probabilities);
+				System.out.println("min: " + finalAction);
 				//doPause();
 			}
 
