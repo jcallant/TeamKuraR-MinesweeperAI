@@ -798,10 +798,12 @@ public class MyAI extends AI {
 			else if(neighbors.contains(down)) next = down;
 			else if(neighbors.contains(right)) next = right;
 			else if(neighbors.contains(left)) next = left;
+			System.out.println(next);
 
 			if(next != null) copy.remove(next);
 			else next = copy.remove(0);
 			ordered.add(next);
+			doPause();
 		}
 		System.out.println(ordered);
 		return ordered;
