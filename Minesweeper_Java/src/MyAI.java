@@ -741,7 +741,7 @@ public class MyAI extends AI {
 		if(index >= coveredFrontier.size()) return;
 
 //		System.out.println("REC:");
-		System.out.println("mineList: " + mineList);
+//		System.out.println("mineList: " + mineList);
 //		System.out.println(" index: " + index);
 
 		HashMap<String, Integer> hypoRecordsBackup = new HashMap<>(hypoRecords);
@@ -750,6 +750,7 @@ public class MyAI extends AI {
 		Tile result = hypoFlagAndUpdate2(mineList, hypoRecords);
 		if(result != null && result.equals(new Tile(0,0))){
 			System.out.println("SOLUTION FOUND: " + mineList);
+			doPause();
 			solutions.add(mineList);
 		}
 		recursiveFinder(mineList, index+1, hypoRecords, solutions);
