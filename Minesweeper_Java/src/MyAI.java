@@ -162,6 +162,12 @@ public class MyAI extends AI {
 		if(guaranteedAction != null) return guaranteedAction;
 
 
+		// [STEP2.3] if handleAny() was called previously,
+		// uncover neighbor from previous uncover if probability allows
+		Action handleAnyNeighborAction = handleAnyNeighbor();
+		if (handleAnyNeighborAction != null) return handleAnyNeighborAction;
+
+
 		// [STEP3]: use uncovered frontier to gain new knowledge
 		//System.out.println("\nPicking from ucf...");
 		// probability map used to record probabilities of covered tiles
@@ -210,9 +216,6 @@ public class MyAI extends AI {
 		// output updated details
 		outputKnowledge();
 
-		// [STEP4.1.2] Uncover neighbor from previous if probability allows
-		Action handleAnyNeighborAction = handleAnyNeighbor();
-		if (handleAnyNeighborAction != null) return handleAnyNeighborAction;
 
 		//System.out.println("Attempting Model Checking...");
 		Action modelCheckingAction = handleModelChecking(100000);
@@ -415,10 +418,8 @@ public class MyAI extends AI {
 	}
 
 	private Action handleAnyNeighbor(){
-		for(Tile t : currNeighbors){
-			if(records.get(key(t.x,t.y)) != COV_NEIGHBOR)
-				currNeighbors.remove(t);
-		}
+		if(currNeighbors.isEmpty()) return null;
+		currNeighbors.removeIf(t -> records.get(key(t.x, t.y)) != COV_NEIGHBOR);
 		double coveredCount = currNeighbors.size();
 		int labelValue = records.get(key(currX, currY));
 		double probabability = labelValue / coveredCount;
