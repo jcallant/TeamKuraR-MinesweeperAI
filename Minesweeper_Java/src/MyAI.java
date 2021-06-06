@@ -840,6 +840,8 @@ public class MyAI extends AI {
 					}
 				}
 			}
+			System.out.println(probabilities);
+			doPause();
 		}
 //		System.out.printf(">> %d solutions found\n",solutionCount);
 //		System.out.printf(">> probabilities: %s\n", probabilities);
