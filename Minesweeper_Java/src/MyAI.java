@@ -870,7 +870,7 @@ public class MyAI extends AI {
 						for (Tile a : temp) {
 							System.out.println("a = " + a);
 							System.out.println(mineProbabilities);
-//							int p = mineProbabilities.get(a);
+							int p = mineProbabilities.get(a);
 //							mineProbabilities.put(a, ++p);
 						}
 					}
@@ -883,7 +883,6 @@ public class MyAI extends AI {
 //						}
 //					}
 				}
-				System.out.println("END OF FOR LOOP");
 			}
 		}
 //		System.out.printf(">> %d solutions found\n",solutionCount);
