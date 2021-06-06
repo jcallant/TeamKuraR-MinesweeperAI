@@ -741,7 +741,7 @@ public class MyAI extends AI {
 		if(index >= coveredFrontier.size()) return;
 
 //		System.out.println("REC:");
-		System.out.println("mineList: " + mineList);
+//		System.out.println("mineList: " + mineList);
 //		System.out.println(" index: " + index);
 
 		HashMap<String, Integer> hypoRecordsBackup = new HashMap<>(hypoRecords);
