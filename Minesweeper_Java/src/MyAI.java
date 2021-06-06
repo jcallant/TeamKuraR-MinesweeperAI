@@ -209,7 +209,7 @@ public class MyAI extends AI {
 		outputKnowledge();
 
 		//System.out.println("Attempting Model Checking...");
-		Action modelCheckingAction = handleModelChecking(1000000);
+		Action modelCheckingAction = handleModelChecking(10000);
 		if (modelCheckingAction != null) return modelCheckingAction;
 
 		// [STEP4.2] Pick from ucf with lowest probability
@@ -542,6 +542,7 @@ public class MyAI extends AI {
 					mineList.add(coveredFrontier.get(j));
 				}
 			}
+			System.out.printf("%d. mineList: %s\n",i,mineList);
 
 			// if mine list matches the amount of flagsLeft
 			if(mineList.size() <= flagsLeft) {
