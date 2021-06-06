@@ -810,6 +810,9 @@ public class MyAI extends AI {
 			tail = next;
 		}
 		chains.add(sublist);
+
+		System.out.println(list);
+		System.out.println(chains);
 		return chains;
 	}
 
@@ -854,7 +857,7 @@ public class MyAI extends AI {
 					}
 				}
 
-//				System.out.printf("%d. mineList: %s\n", i, mineList);
+				System.out.printf("%d. mineList: %s\n", i, mineList);
 
 				// if mine list matches the amount of flagsLeft
 				if (mineList.size() <= flagsLeft) {
