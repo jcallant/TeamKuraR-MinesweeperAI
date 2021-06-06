@@ -63,6 +63,7 @@ public class MyAI extends AI {
 	private int flagsLeft;
 	private int currX;
 	private int currY;
+	private ArrayList<Tile> currNeighbors;
 	private HashMap<String,Integer> records;
 	private ArrayList<Tile> guaranteedSafe;
 	private ArrayList<Tile> guaranteedMine;
@@ -102,6 +103,7 @@ public class MyAI extends AI {
 		this.TOTAL_MINES = this.flagsLeft = totalMines;
 		this.currX = startX;
 		this.currY = startY;
+		this.currNeighbors = new ArrayList<>();
 		this.records = new HashMap<>();
 		this.guaranteedSafe = new ArrayList<>();
 		this.guaranteedMine = new ArrayList<>();
@@ -207,6 +209,10 @@ public class MyAI extends AI {
 
 		// output updated details
 		outputKnowledge();
+
+		// [STEP4.1.2] Uncover neighbor from previous if probability allows
+		Action handleAnyNeighborAction = handleAnyNeighbor();
+		if (handleAnyNeighborAction != null) return handleAnyNeighborAction;
 
 		//System.out.println("Attempting Model Checking...");
 		Action modelCheckingAction = handleModelChecking(100000);
@@ -408,6 +414,23 @@ public class MyAI extends AI {
 		return handleGuaranteed();
 	}
 
+	private Action handleAnyNeighbor(){
+		for(Tile t : currNeighbors){
+			if(records.get(key(t.x,t.y)) != COV_NEIGHBOR)
+				currNeighbors.remove(t);
+		}
+		double coveredCount = currNeighbors.size();
+		int labelValue = records.get(key(currX, currY));
+		double probabability = labelValue / coveredCount;
+		if(probabability < 2/8.0){
+			Random random = new Random();
+			int randomIndex = random.nextInt(currNeighbors.size());
+			Tile neighbor = currNeighbors.get(randomIndex);
+			return new Action(ACTION.UNCOVER, neighbor.x, neighbor.y);
+		}
+		return null;
+	}
+
 	private Action handleProbability(){
 		//System.out.println("\nPicking from cf with lowest probability...");
 		//System.out.println("probability: " + probability);
@@ -441,6 +464,7 @@ public class MyAI extends AI {
 		}
 		currX = randomX;
 		currY = randomY;
+		currNeighbors = getNeighbors(currX,currY);
 		return new Action(ACTION.UNCOVER, randomX, randomY);
 	}
 
@@ -720,271 +744,5 @@ public class MyAI extends AI {
 
 	// ############################ SECOND ATTEMPT AT MODEL CHECKING ################################
 
-/*
-	private ArrayList<ArrayList<Tile>> getOrderedChain(ArrayList<Tile> list){
-		ArrayList<Tile> copy = new ArrayList<>(list);
-		if(list.isEmpty()) return null;
-
-		ArrayList<ArrayList<Tile>> chains = new ArrayList<>();
-
-		Tile tail = copy.remove(0);
-		ArrayList<Tile> sublist = new ArrayList<>();
-		sublist.add(tail);
-
-		while(!copy.isEmpty()){
-			Tile up = new Tile(tail.x, tail.y+1);
-			Tile down = new Tile(tail.x, tail.y-1);
-			Tile right = new Tile(tail.x+1, tail.y);
-			Tile left = new Tile(tail.x-1, tail.y);
-
-			ArrayList<Tile> neighbors = getNeighbors(tail.x, tail.y);
-
-			Tile next = null;
-			if(copy.contains(up) && neighbors.contains(up)) next = up;
-			else if(copy.contains(down) && neighbors.contains(down)) next = down;
-			else if(copy.contains(right) && neighbors.contains(right)) next = right;
-			else if(copy.contains(left) && neighbors.contains(left)) next = left;
-
-			if(next != null) copy.remove(next);
-			else {
-				chains.add(new ArrayList<>(sublist));
-				next = copy.remove(0);
-				sublist = new ArrayList<>();
-			}
-			sublist.add(next);
-			tail = next;
-		}
-		chains.add(sublist);
-		return chains;
-	}
-
-	// optimizing frontier for shorter combination calculations
-	private Action handleModelChecking2(double timeLimit){
-		if(coveredFrontier.isEmpty()) return null;
-		ArrayList<ArrayList<Tile>> chains = getOrderedChain(coveredFrontier);
-		if(chains==null) return null;
-		//doPause();
-
-		// initialize to 0
-		int solutionCount = 0;
-		HashMap<Tile, Integer> mineProbabilities = new HashMap<>();
-		HashMap<String, Integer> safeProbabilities = new HashMap<>();
-		for (Tile t : coveredFrontier) {
-			mineProbabilities.put(t, -1);
-			safeProbabilities.put(key(t.x,t.y), -1);
-		}
-		boolean timedOut = false;
-
-		for(ArrayList<Tile> sublist : chains) {
-			int size = (int) Math.pow(2, sublist.size());
-
-			// using coveredFrontier, iterate through powerset
-			for(int i=1; i<size; i++){
-
-				// if taking too long, stop
-				timeLimit--;
-				if(timeLimit < 0) {
-					System.out.println(">>>>>>>>>>> TIME UP!!!");
-					timedOut = true;
-					break;
-				}
-
-				// build possible mine list for this iteration
-				ArrayList<Tile> mineList = new ArrayList<>();
-				for(int j=0; j<sublist.size(); j++){
-					if((i & (1 << j)) > 0) {
-						mineList.add(sublist.get(j));
-					}
-				}
-
-				// if mine list matches the amount of flagsLeft
-				if (mineList.size() <= flagsLeft) {
-					HashMap<String, Integer> worldRecords = new HashMap<>();
-
-					// hold temp list (hypoFlagAndUpdate function manipulates list)
-					ArrayList<Tile> temp = new ArrayList<>(mineList);
-
-					// if mine list is a possible solution
-					Tile result = hypoFlagAndUpdate2(mineList, sublist, worldRecords);
-					if (result != null && result.equals(new Tile(0,0))) {
-						++solutionCount;
-						for (Tile a : temp) {
-							if(mineProbabilities.containsKey(a)) {
-								int p = mineProbabilities.get(a);
-								mineProbabilities.put(a, ++p);
-								//doPause();
-							}
-						}
-					}
-//					else if (result != null){
-//						for(String k : worldRecords.keySet()){
-//							if (worldRecords.get(k) == SAFE && safeProbabilities.containsKey(k)) {
-//								int p = safeProbabilities.get(k);
-//								safeProbabilities.put(k, ++p);
-//							}
-//						}
-//					}
-				}
-			}
-		}
-//		System.out.printf(">> %d solutions found\n",solutionCount);
-//		System.out.printf(">> probabilities: %s\n", probabilities);
-
-
-		// if not stopped by timer, all solutions found and probabilities are valid
-		if(!timedOut) {
-			// out of all solutions n, add tiles with n\n of being mine to guaranteedMine
-			final int finalSolutionCount = solutionCount;
-			ArrayList<Tile> mines = new ArrayList<>();
-			for (Tile k : mineProbabilities.keySet()) {
-				if (mineProbabilities.get(k) == finalSolutionCount) {
-					mines.add(k);
-				}
-			}
-			flagAndUpdate(mines);
-
-			// get guaranteed action if any
-			Action finalAction = handleGuaranteed();
-
-			// if no guaranteed, uncover tile with min probability
-			if (finalAction == null){
-				finalAction = mineProbabilities.keySet().stream()
-						.min(Comparator.comparing(mineProbabilities::get))
-						.map(uncoverAction -> new Action(ACTION.UNCOVER, uncoverAction.x, uncoverAction.y))
-						.orElse(null);
-				//System.out.println("probabilities: " + mineProbabilities);
-				//System.out.println("min: " + finalAction);
-			}
-
-			// assuming a solution was found, (if not then it's broken)
-			if(finalAction != null) {
-				currX = finalAction.x;
-				currY = finalAction.y;
-			}
-
-			return finalAction;
-		}
-
-		// else if stopped by timer, probabilities not valid
-		else{
-			// calculate odds for random pick
-			double allTiles = ROW_DIMENSIONS * COL_DIMENSIONS;
-			double knownTiles = (int) records.keySet().stream()
-					.filter(k -> records.get(k) >= 0 || records.get(k) == MINE || records.get(k) == SAFE)
-					.count();
-			double unknownTiles = allTiles - knownTiles;
-			double ratio = flagsLeft / unknownTiles ;
-
-			if(ratio < 0.50) {
-				System.out.println("IM TAKING A RISK!!!");
-				return handleAny();
-			}
-		}
-
-		return null;
-	}
-
-	private Tile hypoFlagAndUpdate2(ArrayList<Tile> frontier, ArrayList<Tile> cfSegment, HashMap<String, Integer> hypoRecords) {
-
-		for(Tile a : frontier) {
-			int x = a.x;
-			int y = a.y;
-//		//System.out.println(" <hypoFlag: " + key(x, y));
-
-			// if already marked safe, then can't be flagged as mine
-			if (hypoRecords.containsKey(key(x, y)) && hypoRecords.get(key(x, y)) == SAFE) {
-				//System.out.println(" </hypoFlag>");
-				return null;
-			}
-
-			// mark tile as mine in hypoRecords
-			hypoRecords.put(key(x, y), MINE);
-
-			// update labels for neighboring tiles in hypoRecords
-			int rowMin = y - 1;
-			int rowMax = y + 1;
-			if (rowMin < 1) rowMin = 1;
-			if (rowMax > ROW_DIMENSIONS) rowMax = ROW_DIMENSIONS;
-
-			int colMin = x - 1;
-			int colMax = x + 1;
-			if (colMin < 1) colMin = 1;
-			if (colMax > COL_DIMENSIONS) colMax = COL_DIMENSIONS;
-
-			for (int j = rowMax; j > rowMin - 1; j--) {
-				for (int i = colMin; i < colMax + 1; i++) {
-					String k = key(i, j);
-					if (hypoRecords.containsKey(k) && hypoRecords.get(k) >= 0) {
-						int labelValue = hypoRecords.get(k);
-						labelValue--;
-//					System.out.println(String.format(" -label update: %s %d -> %d",k,labelValue+1, labelValue));
-						if (labelValue == -1) {
-//						System.out.println(" -label conflict: " + k);
-//						System.out.println(" </hypoFlag>");
-							return null; // if flagging as mine causes label conflict, then not possible
-						}
-						hypoRecords.put(k, labelValue);
-
-						// if new label == 0, uncover any remaining covered neighbors
-						if (labelValue == 0) {
-							hypoAddCoveredNeighborsToSafeTiles(i, j, hypoRecords);
-						}
-					} else if (records.containsKey(k) && records.get(k) >= 0) {
-						int labelValue = records.get(k);
-						labelValue--;
-//					System.out.println(String.format(" -label update: %s %d -> %d",k,labelValue+1, labelValue));
-						if (labelValue == -1) {
-//						System.out.println(" -label conflict: " + k);
-//						System.out.println(" </hypoFlag>");
-							return null; // if flagging as mine causes label conflict, then not possible
-						}
-						hypoRecords.put(k, labelValue);
-
-						// if new label == 0, uncover any remaining covered neighbors
-						if (labelValue == 0) {
-							hypoAddCoveredNeighborsToSafeTiles(i, j, hypoRecords);
-						}
-					}
-				}
-			}
-		}
-
-		ArrayList<Tile> ucfSegment = new ArrayList<>();
-		for(Tile tile : cfSegment){
-			ArrayList<Tile> neighbors = getNeighbors(tile.x, tile.y);
-			for(Tile neighbor : neighbors){
-				if(uncoveredFrontier.contains(neighbor) && !ucfSegment.contains(neighbor)){
-					ucfSegment.add(neighbor);
-				}
-			}
-		}
-//		System.out.println("======= ucfSegment built");
-//		System.out.println(ucfSegment);
-
-
-		//System.out.print(" ======= checking if valid...");
-		for (Tile tile : ucfSegment) {
-			String k = key(tile.x, tile.y);
-			if (!hypoRecords.containsKey(k) || hypoRecords.get(k) > 0) {
-				//System.out.println("N: unsatisfied label " + k);
-				return tile;
-			}
-		}
-		//System.out.println("\n hypoRecord: " + hypoRecords);
-		//System.out.println(" SOLUTION ");
-		return new Tile(0,0);
-	}
-
-	private int getX(String key){
-		String first = key.split(",")[0];
-		return Integer.parseInt(first.substring(1));
-	}
-
-	private int getY(String key){
-		String second = key.split(",")[1];
-		return Integer.parseInt(second.substring(0,second.length()-1));
-	}
-
- */
 
 }
