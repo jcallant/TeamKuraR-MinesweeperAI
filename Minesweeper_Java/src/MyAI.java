@@ -816,10 +816,8 @@ public class MyAI extends AI {
 	// optimizing frontier for shorter combination calculations
 	private Action handleModelChecking2(double timeLimit){
 		if(coveredFrontier.isEmpty()) return null;
-		//System.out.printf(">> cf: %s\n", coveredFrontier);
-
 		ArrayList<ArrayList<Tile>> chains = getOrderedChain(coveredFrontier);
-		//doPause();
+		if(chains==null) return null;
 
 		// initialize to 0
 		int solutionCount = 0;
