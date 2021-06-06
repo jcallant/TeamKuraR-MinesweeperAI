@@ -514,12 +514,14 @@ public class MyAI extends AI {
 		if(coveredFrontier.isEmpty()) return null;
 		//System.out.printf(">> cf: %s\n", coveredFrontier);
 
-		int size = (int) Math.pow(2, coveredFrontier.size());
+		ArrayList<Tile> chain = getOrderedChain(coveredFrontier);
+
+		int size = (int) Math.pow(2, chain.size());
 
 		// initialize to 0
 		int solutionCount = 0;
 		HashMap<Tile, Integer> probabilities = new HashMap<>();
-		for (Tile t : coveredFrontier) {
+		for (Tile t : chain) {
 			probabilities.put(t, -1);
 		}
 		boolean timedOut = false;
@@ -537,9 +539,9 @@ public class MyAI extends AI {
 
 			// build possible mine list for this iteration
 			ArrayList<Tile> mineList = new ArrayList<>();
-			for(int j=0; j<coveredFrontier.size(); j++){
+			for(int j=0; j<chain.size(); j++){
 				if((i & (1 << j)) > 0) {
-					mineList.add(coveredFrontier.get(j));
+					mineList.add(chain.get(j));
 				}
 			}
 			System.out.printf("%d. mineList: %s\n",i,mineList);
