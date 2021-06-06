@@ -830,7 +830,8 @@ public class MyAI extends AI {
 		System.out.println(uncoveredFrontier);
 		System.out.println(possibleMineFrontier);
 		for(Tile mine : possibleMineFrontier){
-			System.out.printf("x: %d y: \n", getX(key(mine.x, mine.y)));
+			if(possibleMineFrontier.contains(mine))
+				System.out.println("Contained " + mine);
 		}
 		doPause();
 
