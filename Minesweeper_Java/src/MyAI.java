@@ -793,11 +793,12 @@ public class MyAI extends AI {
 			Tile left = new Tile(current.x-1, current.y);
 
 			ArrayList<Tile> neighbors = getNeighbors(current.x, current.y);
+
 			Tile next = null;
-			if(neighbors.contains(up)) next = up;
-			else if(neighbors.contains(down)) next = down;
-			else if(neighbors.contains(right)) next = right;
-			else if(neighbors.contains(left)) next = left;
+			if(copy.contains(up) && neighbors.contains(up)) next = up;
+			else if(copy.contains(down) && neighbors.contains(down)) next = down;
+			else if(copy.contains(right) && neighbors.contains(right)) next = right;
+			else if(copy.contains(left) && neighbors.contains(left)) next = left;
 			System.out.println(next);
 
 			if(next != null) copy.remove(next);
