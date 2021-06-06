@@ -822,7 +822,8 @@ public class MyAI extends AI {
 		System.out.println(uncoveredFrontier);
 		System.out.println(possibleMineFrontier);
 		for(Action mine : possibleMineFrontier){
-			System.out.printf("x: %d y: \n", getX(key(mine.x, mine.y)));
+			String key = key(mine.x, mine.y);
+			System.out.printf("x: %d y: \n", getX(key), getY(key));
 		}
 		doPause();
 
@@ -925,8 +926,11 @@ public class MyAI extends AI {
 	}
 
 	private int getX(String key){
-		String first = key.split("[(,)]")[0];
-		String second = key.split("[(,)]")[0];
+		String first = key.split("[(,)]")[1];
+		return Integer.parseInt(first);
+	}
+	private int getY(String key){
+		String first = key.split("[(,)]")[2];
 		return Integer.parseInt(first);
 	}
 }
