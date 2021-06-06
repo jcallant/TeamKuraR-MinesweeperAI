@@ -850,6 +850,7 @@ public class MyAI extends AI {
 				ArrayList<Tile> mineList = new ArrayList<>();
 				for(int j=0; j<sublist.size(); j++){
 					if((i & (1 << j)) > 0) {
+						System.out.println(sublist.get(j));
 						mineList.add(sublist.get(j));
 					}
 				}
