@@ -856,8 +856,8 @@ public class MyAI extends AI {
 
 			ArrayList<Tile> labelsNeighbors = getNeighbors(action.x, action.y);
 			for(Tile neighbor : labelsNeighbors){
-				System.out.printf(" Looking at %s neighbors\n", key(neighbor.x, neighbor.y));
 				if(possibleMineFrontier.contains(neighbor)) {
+					System.out.printf(" Looking at %s neighbors\n", key(neighbor.x, neighbor.y));
 					boolean remove = true;
 					ArrayList<Tile> minesNeighbors = getNeighbors(neighbor.x, neighbor.y);
 					System.out.printf("   Remove %s? ", key(neighbor.x, neighbor.y));
