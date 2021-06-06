@@ -755,6 +755,7 @@ public class MyAI extends AI {
 		}
 		// if mineList combo is possible solution (using ACTION.LEAVE as a return case for solution found)
 		else if(result.equals(new Tile(0,0))){
+			System.out.println("SOLUTION FOUND: " + mineList);
 			solutions.add(mineList);
 			recursiveFinder(mineList, index+1, hypoRecords, solutions);
 		}
@@ -843,8 +844,9 @@ public class MyAI extends AI {
 				}
 			}
 		}
-		doPause();
 
+		System.out.println("hypoUCF" + hypoUncoveredFrontier);
+		doPause();
 
 		System.out.println(hypoRecords);
 		System.out.println(" ======= checking if valid...");
