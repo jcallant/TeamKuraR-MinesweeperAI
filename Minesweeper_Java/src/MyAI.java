@@ -818,7 +818,7 @@ public class MyAI extends AI {
 		if(coveredFrontier.isEmpty()) return null;
 		ArrayList<ArrayList<Tile>> chains = getOrderedChain(coveredFrontier);
 		if(chains==null) return null;
-		for(ArrayList l : chains)
+		for(ArrayList<Tile> l : chains)
 			System.out.printf(":%s\n\n",l);
 		doPause();
 
@@ -865,6 +865,7 @@ public class MyAI extends AI {
 
 					// if mine list is a possible solution
 					Tile result = hypoFlagAndUpdate2(mineList, sublist, worldRecords);
+					System.out.println(result);
 					if (result != null && result.equals(new Tile(0,0))) {
 						++solutionCount;
 //						System.out.printf("%d: %s\n",solutionCount, temp);
