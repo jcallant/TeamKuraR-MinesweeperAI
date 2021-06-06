@@ -209,7 +209,7 @@ public class MyAI extends AI {
 		outputKnowledge();
 
 		//System.out.println("Attempting Model Checking...");
-		Action modelCheckingAction = handleModelChecking2(50000);
+		Action modelCheckingAction = handleModelChecking(50000);
 		if (modelCheckingAction != null) return modelCheckingAction;
 
 		// [STEP4.2] Pick from ucf with lowest probability
@@ -952,7 +952,6 @@ public class MyAI extends AI {
 
 		return null;
 	}
-
 	private Tile hypoFlagAndUpdate2(ArrayList<Tile> frontier, HashMap<String, Integer> hypoRecords) {
 
 		for(Tile a : frontier) {
