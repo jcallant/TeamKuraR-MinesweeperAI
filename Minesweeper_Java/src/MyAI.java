@@ -930,7 +930,7 @@ public class MyAI extends AI {
 		return Integer.parseInt(first);
 	}
 	private int getY(String key){
-		String first = key.split("[(,)]")[2];
+		String first = key.split("[(,)]")[3];
 		return Integer.parseInt(first);
 	}
 }
