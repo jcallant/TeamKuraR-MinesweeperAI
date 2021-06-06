@@ -740,10 +740,6 @@ public class MyAI extends AI {
 								 HashMap<String, Integer> hypoRecords, ArrayList<ArrayList<Tile>> solutions){
 		if(index >= coveredFrontier.size()) return;
 
-//		System.out.println("REC:");
-//		System.out.println("mineList: " + mineList);
-//		System.out.println(" index: " + index);
-
 		HashMap<String, Integer> hypoRecordsBackup = new HashMap<>(hypoRecords);
 		mineList.add(coveredFrontier.get(index));
 
@@ -825,16 +821,16 @@ public class MyAI extends AI {
 
 
 //		System.out.println(" ======= building uncoveredFrontier...");
-		ArrayList<Tile> hypoUncoveredFrontier = new ArrayList<>();
-		for(Tile mine : possibleMineFrontier){
-			ArrayList<Tile> minesNeighbors = getNeighbors(mine.x, mine.y);
-			for(Tile minesNeighbor : minesNeighbors){
-				if(uncoveredFrontier.contains(minesNeighbor)){
-//					System.out.printf("%s in UCF\n", minesNeighbor);
-					hypoUncoveredFrontier.add(minesNeighbor);
-				}
-			}
-		}
+		ArrayList<Tile> hypoUncoveredFrontier = new ArrayList<>(uncoveredFrontier);
+//		for(Tile mine : possibleMineFrontier){
+//			ArrayList<Tile> minesNeighbors = getNeighbors(mine.x, mine.y);
+//			for(Tile minesNeighbor : minesNeighbors){
+//				if(uncoveredFrontier.contains(minesNeighbor)){
+////					System.out.printf("%s in UCF\n", minesNeighbor);
+//					hypoUncoveredFrontier.add(minesNeighbor);
+//				}
+//			}
+//		}
 //		doPause();
 
 
