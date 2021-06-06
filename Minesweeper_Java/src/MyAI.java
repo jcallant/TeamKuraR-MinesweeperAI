@@ -209,7 +209,7 @@ public class MyAI extends AI {
 		outputKnowledge();
 
 		//System.out.println("Attempting Model Checking...");
-		Action modelCheckingAction = handleModelChecking2(100000);
+		Action modelCheckingAction = handleModelChecking(100000);
 		if (modelCheckingAction != null) return modelCheckingAction;
 
 		// [STEP4.2] Pick from ucf with lowest probability
@@ -907,8 +907,8 @@ public class MyAI extends AI {
 						.min(Comparator.comparing(mineProbabilities::get))
 						.map(uncoverAction -> new Action(ACTION.UNCOVER, uncoverAction.x, uncoverAction.y))
 						.orElse(null);
-				System.out.println("probabilities: " + mineProbabilities);
-				System.out.println("min: " + finalAction);
+				//System.out.println("probabilities: " + mineProbabilities);
+				//System.out.println("min: " + finalAction);
 			}
 
 			// assuming a solution was found, (if not then it's broken)
