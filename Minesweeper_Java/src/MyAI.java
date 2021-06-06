@@ -209,7 +209,7 @@ public class MyAI extends AI {
 		outputKnowledge();
 
 		//System.out.println("Attempting Model Checking...");
-		Action modelCheckingAction = handleModelChecking(50000);
+		Action modelCheckingAction = handleModelChecking(1000000);
 		if (modelCheckingAction != null) return modelCheckingAction;
 
 		// [STEP4.2] Pick from ucf with lowest probability
@@ -528,12 +528,12 @@ public class MyAI extends AI {
 		for(int i=1; i<size; i++){
 
 			// if taking too long, stop
-//			timeLimit--;
-//			if(timeLimit < 0) {
-//				System.out.println(">>>>>>>>>>> TIME UP!!!");
-//				timedOut = true;
-//				break;
-//			}
+			timeLimit--;
+			if(timeLimit < 0) {
+				System.out.println(">>>>>>>>>>> TIME UP!!!");
+				timedOut = true;
+				break;
+			}
 
 			// build possible mine list for this iteration
 			ArrayList<Tile> mineList = new ArrayList<>();
