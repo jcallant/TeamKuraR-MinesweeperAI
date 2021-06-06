@@ -21,7 +21,6 @@ import src.Action.ACTION;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class MyAI extends AI {
 	// ########################## INSTRUCTIONS ##########################
@@ -65,18 +64,26 @@ public class MyAI extends AI {
 	private int currX;
 	private int currY;
 	private HashMap<String,Integer> records;
-	private ArrayList<Action> guaranteedSafe;
-	private ArrayList<Action> guaranteedMine;
-	private ArrayList<Action> coveredFrontier;
-	private ArrayList<Action> uncoveredFrontier;
+	private ArrayList<Tile> guaranteedSafe;
+	private ArrayList<Tile> guaranteedMine;
+	private ArrayList<Tile> coveredFrontier;
+	private ArrayList<Tile> uncoveredFrontier;
 	private HashMap<String, Integer> probability;
-	private double elapsedTime;
+
 
 	// label value constants
 	private final int MINE = -9;
 	private final int COV_NEIGHBOR = -10;
 	private final int SAFE = -11;
 
+	private class Tile{
+		public int x;
+		public int y;
+		public Tile(int x, int y){
+			this.x = x;
+			this.y = y;
+		}
+	}
 
 	// ################### Implement Constructor (required) ####################	
 	public MyAI(int rowDimension, int colDimension, int totalMines, int startX, int startY) {
@@ -132,7 +139,7 @@ public class MyAI extends AI {
 					String key = key(i, j);
 					if(!records.containsKey(key) || records.get(key)==COV_NEIGHBOR){
 						records.put(key, 0);
-						guaranteedSafe.add(new Action(ACTION.UNCOVER, i, j));
+						guaranteedSafe.add(new Tile(i, j));
 					}
 				}
 			}
@@ -147,10 +154,11 @@ public class MyAI extends AI {
 		//System.out.println("\nPicking from ucf...");
 		// probability map used to record probabilities of covered tiles
 		probability = new HashMap<>();
-		Iterator<Action> it = uncoveredFrontier.iterator();
+		Iterator<Tile> it = uncoveredFrontier.iterator();
 		while(it.hasNext()){
 			//Action a = uncoveredFrontier.remove(0);
-			Action a = it.next();
+			Tile t = it.next();
+			Action a = new Action(ACTION.FLAG, t.x, t.y);
 			int label = records.get(key(a.x,a.y));
 
 			// if label has no new info, pop again
@@ -228,7 +236,7 @@ public class MyAI extends AI {
 				if (!records.containsKey(k) || records.get(k)==COV_NEIGHBOR) {
 					//System.out.println(k + " added to safe");
 					records.put(k, 0);
-					guaranteedSafe.add(new Action(ACTION.UNCOVER, i, j));
+					guaranteedSafe.add(new Tile(i, j));
 				}
 			}
 		}
@@ -252,7 +260,7 @@ public class MyAI extends AI {
 				if (!records.containsKey(k)) {
 					//System.out.println(k + " added to covered frontier");
 					records.put(k, COV_NEIGHBOR); // -10 placeholder for neighbors of uncovered tiles
-					coveredFrontier.add(new Action(ACTION.FLAG, i, j));
+					coveredFrontier.add(new Tile(i, j));
 				}
 			}
 		}
@@ -260,7 +268,7 @@ public class MyAI extends AI {
 
 	private void addSelfToUncoveredFrontier(int x, int y){
 		//System.out.println(key(x,y) + " added to uncovered frontier");
-		uncoveredFrontier.add(new Action(ACTION.FLAG, x, y));
+		uncoveredFrontier.add(new Tile(x, y));
 	}
 
 	private ArrayList<Action> countCoveredNeighbors(int x, int y){
@@ -302,7 +310,7 @@ public class MyAI extends AI {
 			if(records.containsKey(key(f.x,f.y)) && records.get(key(f.x,f.y))==MINE) continue;
 			//System.out.println("flag: " + key(f.x,f.y));
 			records.put(key(f.x,f.y),MINE); // MINE = -9 value for mines
-			guaranteedMine.add(f);
+			guaranteedMine.add(new Tile(f.x, f.y));
 
 			// update labels for neighboring tiles
 			int rowMin = f.y - 1;
@@ -392,7 +400,8 @@ public class MyAI extends AI {
 	private Action handleGuaranteed(){
 		// flag mines if any
 		if (!guaranteedMine.isEmpty()) {
-			Action a = guaranteedMine.remove(0);
+			Tile t = guaranteedMine.remove(0);
+			Action a = new Action(ACTION.FLAG, t.x, t.y);
 			currX = a.x;
 			currY = a.y;
 			flagsLeft--;
@@ -401,7 +410,8 @@ public class MyAI extends AI {
 
 		// uncover safe if any
 		if (!guaranteedSafe.isEmpty()) {
-			Action a = guaranteedSafe.remove(0);
+			Tile t = guaranteedMine.remove(0);
+			Action a = new Action(ACTION.UNCOVER, t.x, t.y);
 			currX = a.x;
 			currY = a.y;
 			return a;
@@ -412,16 +422,16 @@ public class MyAI extends AI {
 
 	private Action handleCase121(){
 		//System.out.println("\nSearching ucf for 121...");
-		ArrayList<Action> twos = uncoveredFrontier.stream()
+		ArrayList<Tile> twos = uncoveredFrontier.stream()
 				.filter(a -> records.get(key(a.x,a.y))==2)
 				.collect(Collectors.toCollection(ArrayList::new));
 		//System.out.println("twos: " + twos);
 		ArrayList<Action> flags = new ArrayList<>();
-		for (Action a : twos) {
-			if (a.y == 1 || a.y == ROW_DIMENSIONS) continue;
-			if (a.x == 1 || a.x == COL_DIMENSIONS) continue;
-			int i = a.x;
-			int j = a.y;
+		for (Tile tile : twos) {
+			if (tile.y == 1 || tile.y == ROW_DIMENSIONS) continue;
+			if (tile.x == 1 || tile.x == COL_DIMENSIONS) continue;
+			int i = tile.x;
+			int j = tile.y;
 
 			//System.out.println(key(i,j));
 			int t = records.get(key(i,j+1));
@@ -501,7 +511,7 @@ public class MyAI extends AI {
 
 
 	// ################### ModelChecking Functions ##################
-
+/*
 	private Action handleModelChecking(double timeLimit){
 		if(coveredFrontier.isEmpty()) return null;
 		//System.out.printf(">> cf: %s\n", coveredFrontier);
@@ -703,7 +713,7 @@ public class MyAI extends AI {
 		//System.out.printf(" SOLUTION ");
 		return hypoRecords;
 	}
-
+*/
 	// optimizing frontier for shorter combination calculations
 	private Action handleModelChecking2(double timeLimit){
 		if(coveredFrontier.isEmpty()) return null;
@@ -711,14 +721,14 @@ public class MyAI extends AI {
 
 		// initialize to 0
 		int solutionCount = 0;
-		HashMap<Action, Integer> probabilities = new HashMap<>();
-		for (Action a : coveredFrontier) {
-			probabilities.put(a, 0);
+		HashMap<Tile, Integer> probabilities = new HashMap<>();
+		for (Tile t : coveredFrontier) {
+			probabilities.put(t, 0);
 		}
 
-		ArrayList<Action> mineList = new ArrayList<>();
+		ArrayList<Tile> mineList = new ArrayList<>();
 		HashMap<String, Integer> worldRecords = new HashMap<>();
-		ArrayList<ArrayList<Action>> solutions = new ArrayList<>();
+		ArrayList<ArrayList<Tile>> solutions = new ArrayList<>();
 		recursiveChecker(mineList,0, worldRecords, solutions);
 
 		System.out.printf(">> %d solutions found\n", solutions.size());
@@ -728,8 +738,8 @@ public class MyAI extends AI {
 		return null;
 	}
 
-	private void recursiveChecker(ArrayList<Action> mineList, int index,
-								  HashMap<String, Integer> hypoRecords, ArrayList<ArrayList<Action>> solutions){
+	private void recursiveChecker(ArrayList<Tile> mineList, int index,
+								  HashMap<String, Integer> hypoRecords, ArrayList<ArrayList<Tile>> solutions){
 		if(index >= coveredFrontier.size()) return;
 
 		HashMap<String, Integer> hypoRecordsBackup = new HashMap<>(hypoRecords);
@@ -751,9 +761,9 @@ public class MyAI extends AI {
 		}
 	}
 
-	private Action hypoFlagAndUpdate2(ArrayList<Action> possibleMineFrontier, HashMap<String, Integer> hypoRecords) {
+	private Action hypoFlagAndUpdate2(ArrayList<Tile> possibleMineFrontier, HashMap<String, Integer> hypoRecords) {
 
-		for(Action a : possibleMineFrontier) {
+		for(Tile a : possibleMineFrontier) {
 			int x = a.x;
 			int y = a.y;
 //		//System.out.println(" <hypoFlag: " + key(x, y));
@@ -821,7 +831,7 @@ public class MyAI extends AI {
 		ArrayList<Action> hypoUncoveredFrontier = new ArrayList<>();
 		System.out.println(uncoveredFrontier);
 		System.out.println(possibleMineFrontier);
-		for(Action mine : possibleMineFrontier){
+		for(Tile mine : possibleMineFrontier){
 			System.out.printf("x: %d y: \n", getX(key(mine.x, mine.y)));
 		}
 		doPause();
@@ -925,8 +935,8 @@ public class MyAI extends AI {
 	}
 
 	private int getX(String key){
-		String first = key.split("[(,)]")[0];
-		String second = key.split("[(,)]")[0];
+		String first = key.split("[(,)]")[1];
+		String second = key.split("[(,)]")[2];
 		return Integer.parseInt(first);
 	}
 }
