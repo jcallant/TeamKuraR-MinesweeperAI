@@ -1014,8 +1014,8 @@ public class MyAI extends AI {
 				}
 			}
 		}
-		System.out.println("======= ucfSegment built\n");
-		System.out.println(ucfSegment);
+//		System.out.println("======= ucfSegment built");
+//		System.out.println(ucfSegment);
 
 
 		//System.out.print(" ======= checking if valid...");
