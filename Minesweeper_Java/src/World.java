@@ -220,7 +220,7 @@ public class World {
 			}
 			// Ask agent for its action
 			actionObj = this.agent.getAction(this.perceptNumber);
-//			System.out.println(actionObj);
+			System.out.println(actionObj);
 			// Check the (x,y) coordinates are valid
 			if (!this.isInBounds(actionObj.x, actionObj.y)) {
 				System.out.println("out of bound coordinates: (" + actionObj.x + "," + actionObj.y + "). Exiting.");
@@ -238,9 +238,9 @@ public class World {
 
 			gameOver = this.doMove(actionObj);
 			if (this.debug) {
-				System.out.println("Hit any button to Continue...");
-				Scanner in = new Scanner(System.in);
-				in.nextLine();
+//				System.out.println("Hit any button to Continue...");
+//				Scanner in = new Scanner(System.in);
+//				in.nextLine();
 			}
 		}
 		if (this.gameState == GAMESTATE.WON) {
