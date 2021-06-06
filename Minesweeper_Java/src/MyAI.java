@@ -756,6 +756,7 @@ public class MyAI extends AI {
 		// if mineList combo is possible solution (using ACTION.LEAVE as a return case for solution found)
 		else if(result.equals(new Tile(0,0))){
 			solutions.add(mineList);
+			recursiveFinder(mineList, index+1, hypoRecords, solutions);
 		}
 		// if mineList combo is valid but not yet a complete solution
 		else {
