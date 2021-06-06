@@ -823,7 +823,7 @@ public class MyAI extends AI {
 		for(Action mine : possibleMineFrontier){
 			for(Action neighbor : getNeighbors(mine.x, mine.y)){
 				System.out.println(neighbor);
-				if(uncoveredFrontier.contains(neighbor)) {
+				if(uncoveredFrontier.contains(new Action(ACTION.FLAG, neighbor.x, neighbor.y))) {
 					System.out.println("--CONTAINED");
 					hypoUncoveredFrontier.add(neighbor);
 				}
