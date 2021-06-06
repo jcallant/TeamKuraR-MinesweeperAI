@@ -820,7 +820,7 @@ public class MyAI extends AI {
 		if(chains==null) return null;
 		for(ArrayList<Tile> l : chains)
 			System.out.printf(":%s\n\n",l);
-		doPause();
+//		doPause();
 
 		// initialize to 0
 		int solutionCount = 0;
@@ -870,10 +870,11 @@ public class MyAI extends AI {
 						for (Tile a : temp) {
 							System.out.println("a = " + a);
 							System.out.println(mineProbabilities);
-							if(mineProbabilities.containsKey(new Tile(a.x, a.y))) {
+							if(mineProbabilities.containsKey(a)) {
 								System.out.println("a contained");
 								int p = mineProbabilities.get(a);
 								mineProbabilities.put(a, ++p);
+								doPause();
 							}
 						}
 					}
