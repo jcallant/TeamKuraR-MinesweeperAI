@@ -520,7 +520,7 @@ public class MyAI extends AI {
 		int solutionCount = 0;
 		HashMap<Tile, Integer> probabilities = new HashMap<>();
 		for (Tile t : coveredFrontier) {
-			probabilities.put(t, -1);
+			probabilities.put(t, 0);
 		}
 		boolean timedOut = false;
 
@@ -528,12 +528,12 @@ public class MyAI extends AI {
 		for(int i=1; i<size; i++){
 
 			// if taking too long, stop
-			timeLimit--;
-			if(timeLimit < 0) {
-				System.out.println(">>>>>>>>>>> TIME UP!!!");
-				timedOut = true;
-				break;
-			}
+//			timeLimit--;
+//			if(timeLimit < 0) {
+//				System.out.println(">>>>>>>>>>> TIME UP!!!");
+//				timedOut = true;
+//				break;
+//			}
 
 			// build possible mine list for this iteration
 			ArrayList<Tile> mineList = new ArrayList<>();
@@ -601,7 +601,6 @@ public class MyAI extends AI {
 			// if no guaranteed, uncover tile with min probability
 			if (finalAction == null){
 				finalAction = probabilities.keySet().stream()
-						.filter(k -> probabilities.get(k) >= 0)
 						.min(Comparator.comparing(probabilities::get))
 						.map(uncoverAction -> new Action(ACTION.UNCOVER, uncoverAction.x, uncoverAction.y))
 						.orElse(null);
