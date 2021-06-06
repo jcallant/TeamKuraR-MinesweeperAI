@@ -782,62 +782,128 @@ public class MyAI extends AI {
 		if(coveredFrontier.isEmpty()) return null;
 		//System.out.printf(">> cf: %s\n", coveredFrontier);
 
+		int loops = coveredFrontier.size()/10;
+		ArrayList<ArrayList<Tile>> subLists = new ArrayList<>();
+		for(int i=0; i<loops; i++) {
+			if(i<loops-1)
+				subLists.add(new ArrayList<>(coveredFrontier.subList(i * 10, (i * 10 + 10) )));
+			else
+				subLists.add(new ArrayList<>(coveredFrontier.subList(i * 10, (i * 10 + coveredFrontier.size()%10) )));
+		}
+
 		// initialize to 0
 		int solutionCount = 0;
 		HashMap<Tile, Integer> probabilities = new HashMap<>();
 		for (Tile t : coveredFrontier) {
-			probabilities.put(t, 0);
+			probabilities.put(t, -1);
+		}
+		boolean timedOut = false;
+
+		for(ArrayList<Tile> sublist : subLists) {
+			int size = (int) Math.pow(2, sublist.size());
+
+			for (int i = 1; i < size; i++) {
+
+				// if taking too long, stop
+				timeLimit--;
+				if (timeLimit < 0) {
+					System.out.println(">>>>>>>>>>> TIME UP!!!");
+					timedOut = true;
+					break;
+				}
+
+				// build possible mine list for this iteration
+				ArrayList<Tile> mineList = new ArrayList<>();
+				for (int j = 0; j < sublist.size(); j++) {
+					if ((i & (1 << j)) > 0) {
+						mineList.add(sublist.get(j));
+					}
+				}
+				System.out.printf("%d. mineList: %s\n", i, mineList);
+
+				// if mine list matches the amount of flagsLeft
+				if (mineList.size() <= flagsLeft) {
+					HashMap<String, Integer> worldRecords = new HashMap<>();
+
+					// hold temp list (hypoFlagAndUpdate function manipulates list)
+					ArrayList<Tile> temp = new ArrayList<>(mineList);
+
+					// if mine list is a possible solution
+					Tile result = hypoFlagAndUpdate2(mineList, worldRecords);
+					if (result != null) {
+						++solutionCount;
+//					System.out.printf("%d: %s\n",solutionCount, temp);
+						for (Tile a : temp) {
+							int p = probabilities.get(a);
+							probabilities.put(a, ++p);
+						}
+					}
+				}
+			}
+		}
+//		System.out.printf(">> %d solutions found\n",solutionCount);
+//		System.out.printf(">> probabilities: %s\n", probabilities);
+
+
+
+
+		// if not stopped by timer, all solutions found and probabilities are valid
+		if(!timedOut) {
+			// out of all solutions n, add tiles with n\n of being mine to guaranteedMine
+			final int finalSolutionCount = solutionCount;
+			ArrayList<Tile> mines = new ArrayList<>();
+			for (Tile k : probabilities.keySet()) {
+				if (probabilities.get(k) == finalSolutionCount) {
+					mines.add(k);
+				}
+			}
+			flagAndUpdate(mines);
+
+			// get guaranteed action if any
+			Action finalAction = handleGuaranteed();
+
+			// if no guaranteed, uncover tile with min probability
+			if (finalAction == null){
+				finalAction = probabilities.keySet().stream()
+						.filter(k -> probabilities.get(k) >= 0)
+						.min(Comparator.comparing(probabilities::get))
+						.map(uncoverAction -> new Action(ACTION.UNCOVER, uncoverAction.x, uncoverAction.y))
+						.orElse(null);
+				System.out.println("probabilities: " + probabilities);
+				System.out.println("min: " + finalAction);
+				//doPause();
+			}
+
+			// assuming a solution was found, (if not then it's broken)
+			if(finalAction != null) {
+				currX = finalAction.x;
+				currY = finalAction.y;
+			}
+
+			return finalAction;
 		}
 
-		ArrayList<Tile> mineList = new ArrayList<>();
-		HashMap<String, Integer> worldRecords = new HashMap<>();
-		ArrayList<ArrayList<Tile>> solutions = new ArrayList<>();
-		recursiveFinder(mineList,0, worldRecords, solutions);
+		// else if stopped by timer, probabilities not valid
+		else{
+			// calculate odds for random pick
+			double allTiles = ROW_DIMENSIONS * COL_DIMENSIONS;
+			double knownTiles = (int) records.keySet().stream()
+					.filter(k -> records.get(k) >= 0 || records.get(k) == MINE || records.get(k) == SAFE)
+					.count();
+			double unknownTiles = allTiles - knownTiles;
+			double ratio = flagsLeft / unknownTiles ;
 
-		System.out.printf(">> %d solutions found\n", solutions.size());
-		System.out.println(solutions);
-
+			if(ratio < 0.50) {
+				System.out.println("IM TAKING A RISK!!!");
+				return handleAny();
+			}
+		}
 
 		return null;
 	}
+	private Tile hypoFlagAndUpdate2(ArrayList<Tile> frontier, HashMap<String, Integer> hypoRecords) {
 
-	private void recursiveFinder(ArrayList<Tile> mineList, int index,
-								 HashMap<String, Integer> hypoRecords, ArrayList<ArrayList<Tile>> solutions){
-		System.out.println("CF: " + coveredFrontier);
-		if(index >= coveredFrontier.size()) return;
-
-
-		HashMap<String, Integer> hypoRecordsBackup = new HashMap<>(hypoRecords);
-		mineList.add(coveredFrontier.get(index));
-		System.out.println("REC:");
-		System.out.println(" mineList: " + mineList);
-		System.out.println(" index: " + index);
-
-		Tile result = hypoFlagAndUpdate2(mineList, hypoRecords);
-		// if not mineList combo not possible...
-		if(result == null){
-			mineList.remove(coveredFrontier.get(index));
-			recursiveFinder(mineList, index+1, hypoRecordsBackup, solutions);
-		}
-		// if mineList combo is possible solution (using ACTION.LEAVE as a return case for solution found)
-		else if(result.equals(new Tile(0,0))){
-			System.out.println("SOLUTION FOUND: " + mineList);
-			solutions.add(mineList);
-			ArrayList<Tile> temp = new ArrayList<>(mineList);
-			recursiveFinder(mineList, index+1, hypoRecords, solutions);
-			mineList = temp;
-			mineList.remove(coveredFrontier.get(index));
-			recursiveFinder(mineList, index+1, hypoRecordsBackup, solutions);
-		}
-		// if mineList combo is valid but not yet a complete solution
-		else {
-			recursiveFinder(mineList, index+1, hypoRecords, solutions);
-		}
-	}
-
-	private Tile hypoFlagAndUpdate2(ArrayList<Tile> possibleMineFrontier, HashMap<String, Integer> hypoRecords) {
-
-		for(Tile a : possibleMineFrontier) {
+		for(Tile a : frontier) {
 			int x = a.x;
 			int y = a.y;
 //		//System.out.println(" <hypoFlag: " + key(x, y));
@@ -901,37 +967,16 @@ public class MyAI extends AI {
 		}
 
 
-		System.out.println(" ======= building uncoveredFrontier...");
-		ArrayList<Tile> hypoUncoveredFrontier = new ArrayList<>();
-		System.out.println(uncoveredFrontier);
-		System.out.println(possibleMineFrontier);
-		for(Tile mine : possibleMineFrontier){
-			ArrayList<Tile> minesNeighbors = getNeighbors(mine.x, mine.y);
-			for(Tile minesNeighbor : minesNeighbors){
-				if(uncoveredFrontier.contains(minesNeighbor)){
-					System.out.printf("%s in UCF\n", minesNeighbor);
-					hypoUncoveredFrontier.add(minesNeighbor);
-				}
-			}
-		}
-
-		System.out.println("hypoUCF: " + hypoUncoveredFrontier);
-		doPause();
-
-		System.out.println(hypoRecords);
-		System.out.println(" ======= checking if valid...");
-		for (Tile tile : hypoUncoveredFrontier) {
-			System.out.printf("Validating label %s\n", key(tile.x,tile.y));
-
+		//System.out.print(" ======= checking if valid...");
+		for (Tile tile : uncoveredFrontier) {
 			String k = key(tile.x, tile.y);
 			if (!hypoRecords.containsKey(k) || hypoRecords.get(k) > 0) {
-				System.out.println("N: unsatisfied label " + k);
+				//System.out.println("N: unsatisfied label " + k);
 				return tile;
 			}
 		}
-
-
-		// using ACTION.LEAVE is flag for possible combo
+		//System.out.println("\n hypoRecord: " + hypoRecords);
+		//System.out.printf(" SOLUTION ");
 		return new Tile(0,0);
 	}
 }
