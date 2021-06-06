@@ -741,7 +741,7 @@ public class MyAI extends AI {
 		if(index >= coveredFrontier.size()) return;
 
 //		System.out.println("REC:");
-//		System.out.println(" mineList: " + mineList);
+		System.out.println("mineList: " + mineList);
 //		System.out.println(" index: " + index);
 
 		HashMap<String, Integer> hypoRecordsBackup = new HashMap<>(hypoRecords);
@@ -825,8 +825,6 @@ public class MyAI extends AI {
 
 //		System.out.println(" ======= building uncoveredFrontier...");
 		ArrayList<Tile> hypoUncoveredFrontier = new ArrayList<>();
-		System.out.println(uncoveredFrontier);
-		System.out.println(possibleMineFrontier);
 		for(Tile mine : possibleMineFrontier){
 			ArrayList<Tile> minesNeighbors = getNeighbors(mine.x, mine.y);
 			for(Tile minesNeighbor : minesNeighbors){
