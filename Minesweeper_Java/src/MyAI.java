@@ -777,18 +777,48 @@ public class MyAI extends AI {
 
 	// ############################ SECOND ATTEMPT AT MODEL CHECKING ################################
 
+	private ArrayList<Tile> getOrderedChain(ArrayList<Tile> list){
+		ArrayList<Tile> copy = new ArrayList<>(list);
+		ArrayList<Tile> ordered = new ArrayList<>();
+		if(list.isEmpty()) return list;
+
+		Tile current = copy.remove(0);
+		while(!copy.isEmpty()){
+			ordered.add(current);
+
+			Tile up = new Tile(current.x, current.y+1);
+			Tile down = new Tile(current.x, current.y-1);
+			Tile right = new Tile(current.x+1, current.y);
+			Tile left = new Tile(current.x-1, current.y);
+
+			ArrayList<Tile> neighbors = getNeighbors(current.x, current.y);
+			Tile next = null;
+			if(neighbors.contains(up)) next = up;
+			else if(neighbors.contains(down)) next = down;
+			else if(neighbors.contains(right)) next = right;
+			else if(neighbors.contains(left)) next = left;
+
+			if(next != null) copy.remove(next);
+			else next = copy.remove(0);
+			current = next;
+		}
+		System.out.println(ordered);
+		return ordered;
+	}
 	// optimizing frontier for shorter combination calculations
 	private Action handleModelChecking2(double timeLimit){
 		if(coveredFrontier.isEmpty()) return null;
 		//System.out.printf(">> cf: %s\n", coveredFrontier);
 
-		int loops = coveredFrontier.size()/10;
+		ArrayList<Tile> chain = getOrderedChain(coveredFrontier);
+
+		int loops = chain.size()/10;
 		ArrayList<ArrayList<Tile>> subLists = new ArrayList<>();
 		for(int i=0; i<loops; i++) {
 			if(i<loops-1)
-				subLists.add(new ArrayList<>(coveredFrontier.subList(i * 10, (i * 10 + 10) )));
+				subLists.add(new ArrayList<>(chain.subList(i * 10, (i * 10 + 10) )));
 			else
-				subLists.add(new ArrayList<>(coveredFrontier.subList(i * 10, (i * 10 + coveredFrontier.size()%10) )));
+				subLists.add(new ArrayList<>(chain.subList(i * 10, (i * 10 + chain.size()%10) )));
 		}
 
 		// initialize to 0
