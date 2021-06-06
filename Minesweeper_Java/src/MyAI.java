@@ -783,9 +783,10 @@ public class MyAI extends AI {
 		if(list.isEmpty()) return list;
 
 		Tile current = copy.remove(0);
-		while(!copy.isEmpty()){
-			ordered.add(current);
+		ordered.add(current);
 
+		while(!copy.isEmpty()){
+			System.out.println(copy);
 			Tile up = new Tile(current.x, current.y+1);
 			Tile down = new Tile(current.x, current.y-1);
 			Tile right = new Tile(current.x+1, current.y);
@@ -800,7 +801,7 @@ public class MyAI extends AI {
 
 			if(next != null) copy.remove(next);
 			else next = copy.remove(0);
-			current = next;
+			ordered.add(next);
 		}
 		System.out.println(ordered);
 		return ordered;
