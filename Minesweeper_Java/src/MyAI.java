@@ -805,11 +805,11 @@ public class MyAI extends AI {
 			else next = copy.remove(0);
 			ordered.add(next);
 			tail = next;
-			doPause();
 		}
 		System.out.println(ordered);
 		return ordered;
 	}
+
 	// optimizing frontier for shorter combination calculations
 	private Action handleModelChecking2(double timeLimit){
 		if(coveredFrontier.isEmpty()) return null;
@@ -838,11 +838,12 @@ public class MyAI extends AI {
 		for(ArrayList<Tile> sublist : subLists) {
 			int size = (int) Math.pow(2, sublist.size());
 
-			for (int i = 1; i < size; i++) {
+			// using coveredFrontier, iterate through powerset
+			for(int i=1; i<size; i++){
 
 				// if taking too long, stop
 				timeLimit--;
-				if (timeLimit < 0) {
+				if(timeLimit < 0) {
 					System.out.println(">>>>>>>>>>> TIME UP!!!");
 					timedOut = true;
 					break;
@@ -850,11 +851,12 @@ public class MyAI extends AI {
 
 				// build possible mine list for this iteration
 				ArrayList<Tile> mineList = new ArrayList<>();
-				for (int j = 0; j < sublist.size(); j++) {
-					if ((i & (1 << j)) > 0) {
-						mineList.add(sublist.get(j));
+				for(int j=0; j<coveredFrontier.size(); j++){
+					if((i & (1 << j)) > 0) {
+						mineList.add(coveredFrontier.get(j));
 					}
 				}
+				
 				System.out.printf("%d. mineList: %s\n", i, mineList);
 
 				// if mine list matches the amount of flagsLeft
