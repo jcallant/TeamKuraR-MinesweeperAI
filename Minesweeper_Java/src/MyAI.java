@@ -573,7 +573,7 @@ public class MyAI extends AI {
 			double ratio = flagsLeft / unknownTiles ;
 
 			if(ratio < 0.50) {
-				System.out.println("IM TAKING A RISK!!!");
+				//System.out.println("IM TAKING A RISK!!!");
 				return handleAny();
 			}
 		}
