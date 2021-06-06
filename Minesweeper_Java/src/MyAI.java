@@ -524,7 +524,7 @@ public class MyAI extends AI {
 		int solutionCount = 0;
 		HashMap<Tile, Integer> probabilities = new HashMap<>();
 		for (Tile t : coveredFrontier) {
-			probabilities.put(t, 0);
+			probabilities.put(t, -1);
 		}
 		boolean timedOut = false;
 
@@ -605,9 +605,13 @@ public class MyAI extends AI {
 			// if no guaranteed, uncover tile with min probability
 			if (finalAction == null){
 				finalAction = probabilities.keySet().stream()
+						.filter(k -> probabilities.get(k) >= 0)
 						.min(Comparator.comparing(probabilities::get))
 						.map(uncoverAction -> new Action(ACTION.UNCOVER, uncoverAction.x, uncoverAction.y))
 						.orElse(null);
+				System.out.println("probabilities: " + probabilities);
+				System.out.println("min: " + finalAction);
+				doPause();
 			}
 
 			// assuming a solution was found, (if not then it's broken)
