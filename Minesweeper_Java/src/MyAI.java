@@ -928,10 +928,11 @@ public class MyAI extends AI {
 	private int getX(String key){
 		String[] token = key.split(",");
 		for(String t : token) System.out.println(t);
-		return 0;
+		return Integer.parseInt(token[0].substring(1));
 	}
 	private int getY(String key){
-		String second = key.split("[,]")[1];
-		return Integer.parseInt(second.substring(0, second.length()-2));
+		String[] token = key.split(",");
+		for(String t : token) System.out.println(t);
+		return Integer.parseInt(token[1].substring(1,token[1].length()-2));
 	}
 }
