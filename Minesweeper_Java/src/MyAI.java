@@ -811,6 +811,7 @@ public class MyAI extends AI {
 		//System.out.printf(">> cf: %s\n", coveredFrontier);
 
 		ArrayList<Tile> chain = getOrderedChain(coveredFrontier);
+		doPause();
 
 		int loops = chain.size()/10;
 		ArrayList<ArrayList<Tile>> subLists = new ArrayList<>();
