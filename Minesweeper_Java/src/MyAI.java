@@ -169,7 +169,7 @@ public class MyAI extends AI {
 			}
 
 			// get number of covered neighbors
-			ArrayList<Action> possible = countCoveredNeighbors(a.x,a.y);
+			ArrayList<Tile> possible = countCoveredNeighbors(a.x,a.y);
 			//System.out.printf("%s->%d  cn: %d%n", key(a.x,a.y), label, possible.size());
 
 			// if number of covered neighbors == label value (remaining numbers are mines)
@@ -199,7 +199,7 @@ public class MyAI extends AI {
 		outputKnowledge();
 
 		//System.out.println("Attempting Model Checking...");
-		Action modelCheckingAction = handleModelChecking2(50000);
+		Action modelCheckingAction = handleModelChecking(50000);
 		if (modelCheckingAction != null) return modelCheckingAction;
 
 		// [STEP4.2] Pick from ucf with lowest probability
@@ -271,7 +271,7 @@ public class MyAI extends AI {
 		uncoveredFrontier.add(new Tile(x, y));
 	}
 
-	private ArrayList<Action> countCoveredNeighbors(int x, int y){
+	private ArrayList<Tile> countCoveredNeighbors(int x, int y){
 		int rowMin = y-1;
 		int rowMax = y+1;
 		if(rowMin<1) rowMin = 1;
@@ -282,13 +282,13 @@ public class MyAI extends AI {
 		if(colMin<1) colMin = 1;
 		if(colMax>COL_DIMENSIONS) colMax = COL_DIMENSIONS;
 
-		ArrayList<Action> possible = new ArrayList<>();
+		ArrayList<Tile> possible = new ArrayList<>();
 		for(int j=rowMax; j>rowMin-1; j--){
 			for(int i=colMin; i<colMax+1; i++) {
 				if (j==y && i==x) continue;
 				String k = key(i, j);
 				if (records.get(k)==COV_NEIGHBOR) {
-					possible.add(new Action(ACTION.FLAG, i, j));
+					possible.add(new Tile(i, j));
 					if (!probability.containsKey(k))
 						probability.put(k, 1);
 					else{
@@ -301,10 +301,10 @@ public class MyAI extends AI {
 		return possible;
 	}
 
-	private void flagAndUpdate(ArrayList<Action> flags){
+	private void flagAndUpdate(ArrayList<Tile> flags){
 
 		// for each guaranteed mine
-		for (Action f : flags) {
+		for (Tile f : flags) {
 
 			// check if not already flagged
 			if(records.containsKey(key(f.x,f.y)) && records.get(key(f.x,f.y))==MINE) continue;
@@ -426,7 +426,7 @@ public class MyAI extends AI {
 				.filter(a -> records.get(key(a.x,a.y))==2)
 				.collect(Collectors.toCollection(ArrayList::new));
 		//System.out.println("twos: " + twos);
-		ArrayList<Action> flags = new ArrayList<>();
+		ArrayList<Tile> flags = new ArrayList<>();
 		for (Tile tile : twos) {
 			if (tile.y == 1 || tile.y == ROW_DIMENSIONS) continue;
 			if (tile.x == 1 || tile.x == COL_DIMENSIONS) continue;
@@ -442,23 +442,23 @@ public class MyAI extends AI {
 			if(t == 1 && b == 1) {
 				if (checkNeighborsForMines(i, j+1) || checkNeighborsForMines(i, j-1)) continue;
 				if(l == COV_NEIGHBOR) {
-					flags.add(new Action(ACTION.FLAG,i-1,j+1));
-					flags.add(new Action(ACTION.FLAG,i-1,j-1));
+					flags.add(new Tile(i-1,j+1));
+					flags.add(new Tile(i-1,j-1));
 				}
 				else if(r == COV_NEIGHBOR) {
-					flags.add(new Action(ACTION.FLAG,i+1,j+1));
-					flags.add(new Action(ACTION.FLAG,i+1,j-1));
+					flags.add(new Tile(i+1,j+1));
+					flags.add(new Tile(i+1,j-1));
 				}
 			}
 			else if(l == 1 && r == 1) {
 				if (checkNeighborsForMines(i-1, j) || checkNeighborsForMines(i+1, j)) continue;
 				if(t == COV_NEIGHBOR) {
-					flags.add(new Action(ACTION.FLAG, i-1, j + 1));
-					flags.add(new Action(ACTION.FLAG, i+1, j + 1));
+					flags.add(new Tile(i-1, j + 1));
+					flags.add(new Tile(i+1, j + 1));
 				}
 				else if(b == COV_NEIGHBOR) {
-					flags.add(new Action(ACTION.FLAG, i-1, j - 1));
-					flags.add(new Action(ACTION.FLAG, i+1, j - 1));
+					flags.add(new Tile(i-1, j - 1));
+					flags.add(new Tile(i+1, j - 1));
 				}
 			}
 		}
@@ -511,7 +511,7 @@ public class MyAI extends AI {
 
 
 	// ################### ModelChecking Functions ##################
-/*
+
 	private Action handleModelChecking(double timeLimit){
 		if(coveredFrontier.isEmpty()) return null;
 		//System.out.printf(">> cf: %s\n", coveredFrontier);
@@ -520,9 +520,9 @@ public class MyAI extends AI {
 
 		// initialize to 0
 		int solutionCount = 0;
-		HashMap<Action, Integer> probabilities = new HashMap<>();
-		for (Action a : coveredFrontier) {
-			probabilities.put(a, 0);
+		HashMap<Tile, Integer> probabilities = new HashMap<>();
+		for (Tile t : coveredFrontier) {
+			probabilities.put(t, 0);
 		}
 		boolean timedOut = false;
 
@@ -538,7 +538,7 @@ public class MyAI extends AI {
 			}
 
 			// build possible mine list for this iteration
-			ArrayList<Action> mineList = new ArrayList<>();
+			ArrayList<Tile> mineList = new ArrayList<>();
 			for(int j=0; j<coveredFrontier.size(); j++){
 				if((i & (1 << j)) > 0) {
 					mineList.add(coveredFrontier.get(j));
@@ -550,13 +550,13 @@ public class MyAI extends AI {
 				HashMap<String, Integer> worldRecords = new HashMap<>();
 
 				// hold temp list (hypoFlagAndUpdate function manipulates list)
-				ArrayList<Action> temp = new ArrayList<>(mineList);
+				ArrayList<Tile> temp = new ArrayList<>(mineList);
 
 				// if mine list is a possible solution
 				if(hypoFlagAndUpdate(mineList, worldRecords)!=null) {
 					++solutionCount;
 					System.out.printf("%d: %s\n",solutionCount, temp);
-					for(Action a : temp){
+					for(Tile a : temp){
 						int p = probabilities.get(a);
 						probabilities.put(a, ++p);
 					}
@@ -588,8 +588,8 @@ public class MyAI extends AI {
 
 			// out of all solutions n, add tiles with n\n of being mine to guaranteedMine
 			final int finalSolutionCount = solutionCount;
-			ArrayList<Action> mines = new ArrayList<>();
-			for (Action k : probabilities.keySet()) {
+			ArrayList<Tile> mines = new ArrayList<>();
+			for (Tile k : probabilities.keySet()) {
 				if (probabilities.get(k) == finalSolutionCount) {
 					mines.add(k);
 				}
@@ -635,9 +635,9 @@ public class MyAI extends AI {
 		return null;
 	}
 
-	private HashMap<String, Integer> hypoFlagAndUpdate(ArrayList<Action> frontier, HashMap<String, Integer> hypoRecords) {
+	private HashMap<String, Integer> hypoFlagAndUpdate(ArrayList<Tile> frontier, HashMap<String, Integer> hypoRecords) {
 
-		for(Action a : frontier) {
+		for(Tile a : frontier) {
 			int x = a.x;
 			int y = a.y;
 //		//System.out.println(" <hypoFlag: " + key(x, y));
@@ -702,7 +702,7 @@ public class MyAI extends AI {
 
 
 		//System.out.print(" ======= checking if valid...");
-		for (Action action : uncoveredFrontier) {
+		for (Tile action : uncoveredFrontier) {
 			String k = key(action.x, action.y);
 			if (!hypoRecords.containsKey(k) || hypoRecords.get(k) > 0) {
 				//System.out.println("N: unsatisfied label " + k);
@@ -713,7 +713,7 @@ public class MyAI extends AI {
 		//System.out.printf(" SOLUTION ");
 		return hypoRecords;
 	}
-*/
+
 	// optimizing frontier for shorter combination calculations
 	private Action handleModelChecking2(double timeLimit){
 		if(coveredFrontier.isEmpty()) return null;
