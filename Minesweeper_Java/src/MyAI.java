@@ -854,7 +854,7 @@ public class MyAI extends AI {
 					}
 				}
 
-				System.out.printf("%d. mineList: %s\n", i, mineList);
+//				System.out.printf("%d. mineList: %s\n", i, mineList);
 
 				// if mine list matches the amount of flagsLeft
 				if (mineList.size() <= flagsLeft) {
@@ -865,10 +865,9 @@ public class MyAI extends AI {
 
 					// if mine list is a possible solution
 					Tile result = hypoFlagAndUpdate2(mineList, sublist, worldRecords);
-					System.out.println(result);
 					if (result != null && result.equals(new Tile(0,0))) {
 						++solutionCount;
-//						System.out.printf("%d: %s\n",solutionCount, temp);
+						System.out.printf("%d: %s\n",solutionCount, temp);
 						for (Tile a : temp) {
 							int p = mineProbabilities.get(a);
 							mineProbabilities.put(a, ++p);
