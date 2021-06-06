@@ -514,11 +514,7 @@ public class MyAI extends AI {
 		if(coveredFrontier.isEmpty()) return null;
 		//System.out.printf(">> cf: %s\n", coveredFrontier);
 
-//		int size = (int) Math.pow(2, coveredFrontier.size());
-
-		int limit = Math.min(10, coveredFrontier.size());
-		ArrayList<Tile> smallList = new ArrayList<>(coveredFrontier.subList(0, limit));
-		int size = (int) Math.pow(2, smallList.size());
+		int size = (int) Math.pow(2, coveredFrontier.size());
 
 		// initialize to 0
 		int solutionCount = 0;
@@ -611,7 +607,7 @@ public class MyAI extends AI {
 						.orElse(null);
 				System.out.println("probabilities: " + probabilities);
 				System.out.println("min: " + finalAction);
-				doPause();
+				//doPause();
 			}
 
 			// assuming a solution was found, (if not then it's broken)
