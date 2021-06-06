@@ -871,7 +871,7 @@ public class MyAI extends AI {
 						.orElse(null);
 				System.out.println("probabilities: " + probabilities);
 				System.out.println("min: " + finalAction);
-				doPause();
+//				doPause();
 			}
 
 			// assuming a solution was found, (if not then it's broken)
