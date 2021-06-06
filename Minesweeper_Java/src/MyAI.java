@@ -327,7 +327,7 @@ public class MyAI extends AI {
 	}
 
 	private boolean checkNeighborsForMines(int x, int y){
-		ArrayList<Tile> neighbors = getNeighbors(x, y)
+		ArrayList<Tile> neighbors = getNeighbors(x, y);
 		for(Tile t : neighbors){
 			String k = key(t.x, t.y);
 			//System.out.printf("Checking %s neighbors for mines...", k);
