@@ -738,6 +738,7 @@ public class MyAI extends AI {
 
 	private void recursiveFinder(ArrayList<Tile> mineList, int index,
 								 HashMap<String, Integer> hypoRecords, ArrayList<ArrayList<Tile>> solutions){
+		System.out.println("CF: " + coveredFrontier);
 		if(index >= coveredFrontier.size()) return;
 
 		System.out.println("REC:");
@@ -845,7 +846,7 @@ public class MyAI extends AI {
 			}
 		}
 
-		System.out.println("hypoUCF" + hypoUncoveredFrontier);
+		System.out.println("hypoUCF: " + hypoUncoveredFrontier);
 		doPause();
 
 		System.out.println(hypoRecords);
