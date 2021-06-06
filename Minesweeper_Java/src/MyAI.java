@@ -708,9 +708,7 @@ public class MyAI extends AI {
 	private Action handleModelChecking2(double timeLimit){
 		if(coveredFrontier.isEmpty()) return null;
 		//System.out.printf(">> cf: %s\n", coveredFrontier);
-
-		ArrayList<Action> hypoUncoveredFrontier = new ArrayList<>(uncoveredFrontier);
-
+		
 		// initialize to 0
 		int solutionCount = 0;
 		HashMap<Action, Integer> probabilities = new HashMap<>();
@@ -721,7 +719,7 @@ public class MyAI extends AI {
 		ArrayList<Action> mineList = new ArrayList<>();
 		HashMap<String, Integer> worldRecords = new HashMap<>();
 		ArrayList<ArrayList<Action>> solutions = new ArrayList<>();
-		recursiveChecker(mineList, hypoUncoveredFrontier, 0, worldRecords, solutions);
+		recursiveChecker(mineList,0, worldRecords, solutions);
 
 		System.out.printf(">> %d solutions found\n", solutions.size());
 		System.out.println(solutions);
@@ -864,7 +862,7 @@ public class MyAI extends AI {
 		System.out.println("Hit any button to Continue...");
 		Scanner in = new Scanner(System.in);
 		in.nextLine();
-		
+
 		// using ACTION.LEAVE is flag for possible combo
 		return new Action(ACTION.LEAVE);
 	}
