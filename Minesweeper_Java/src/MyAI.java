@@ -516,7 +516,8 @@ public class MyAI extends AI {
 
 //		int size = (int) Math.pow(2, coveredFrontier.size());
 
-		ArrayList<Tile> smallList = new ArrayList<>(coveredFrontier.subList(0, coveredFrontier.size()/2));
+		int limit = Math.min(10, coveredFrontier.size());
+		ArrayList<Tile> smallList = new ArrayList<>(coveredFrontier.subList(0, limit));
 		int size = (int) Math.pow(2, smallList.size());
 
 		// initialize to 0
