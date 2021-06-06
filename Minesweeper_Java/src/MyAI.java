@@ -833,7 +833,6 @@ public class MyAI extends AI {
 		boolean timedOut = false;
 
 		for(ArrayList<Tile> sublist : chains) {
-			System.out.println("CURRENT LIST: " + sublist);
 			int size = (int) Math.pow(2, sublist.size());
 
 			// using coveredFrontier, iterate through powerset
@@ -866,12 +865,8 @@ public class MyAI extends AI {
 					Tile result = hypoFlagAndUpdate2(mineList, sublist, worldRecords);
 					if (result != null && result.equals(new Tile(0,0))) {
 						++solutionCount;
-						System.out.println(temp);
 						for (Tile a : temp) {
-							System.out.println("a = " + a);
-							System.out.println(mineProbabilities);
 							if(mineProbabilities.containsKey(a)) {
-								System.out.println("a contained");
 								int p = mineProbabilities.get(a);
 								mineProbabilities.put(a, ++p);
 								//doPause();
@@ -1015,13 +1010,12 @@ public class MyAI extends AI {
 			ArrayList<Tile> neighbors = getNeighbors(tile.x, tile.y);
 			for(Tile neighbor : neighbors){
 				if(uncoveredFrontier.contains(neighbor) && !ucfSegment.contains(neighbor)){
-					System.out.print("CONTAINED IN UCF: " + neighbor);
 					ucfSegment.add(neighbor);
-					System.out.println("--added");
 				}
 			}
 		}
 		System.out.println("======= ucfSegment built\n");
+		System.out.println(ucfSegment);
 
 
 		//System.out.print(" ======= checking if valid...");
