@@ -922,8 +922,8 @@ public class MyAI extends AI {
 						.max(Comparator.comparing(safeProbabilities::get))
 						.map(s -> new Action(ACTION.UNCOVER, getX(s), getY(s)))
 						.orElse(null);
-//				System.out.println("safeProbabilities: " + mineProbabilities);
-//				System.out.println("max: " + finalAction);
+				System.out.println("safeProbabilities: " + mineProbabilities);
+				System.out.println("max: " + finalAction);
 //				doPause();
 			}
 
