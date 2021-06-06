@@ -820,16 +820,12 @@ public class MyAI extends AI {
 		System.out.println(" ======= building uncoveredFrontier...");
 		ArrayList<Action> hypoUncoveredFrontier = new ArrayList<>();
 		System.out.println(uncoveredFrontier);
+		System.out.println(possibleMineFrontier);
 		for(Action mine : possibleMineFrontier){
-			for(Action neighbor : getNeighbors(mine.x, mine.y)){
-				System.out.println(neighbor);
-				if(uncoveredFrontier.contains(new Action(ACTION.FLAG, neighbor.x, neighbor.y))) {
-					System.out.println("--CONTAINED");
-					hypoUncoveredFrontier.add(neighbor);
-				}
-			}
+			System.out.printf("x: %d y: \n", getX(key(mine.x, mine.y)));
 		}
 		doPause();
+
 
 		System.out.println(" ======= checking if valid...");
 		for (Action action : hypoUncoveredFrontier) {
@@ -869,8 +865,6 @@ public class MyAI extends AI {
 		// using ACTION.LEAVE is flag for possible combo
 		return new Action(ACTION.LEAVE);
 	}
-
-
 
 
 	private HashMap<String, Integer> hypoAddCoveredNeighborsToSafeTiles(int x, int y, HashMap<String, Integer> hypoRecords){
@@ -928,5 +922,11 @@ public class MyAI extends AI {
 		System.out.println("Hit any button to Continue...");
 		Scanner in = new Scanner(System.in);
 		in.nextLine();
+	}
+
+	private int getX(String key){
+		String first = key.split("[(,)]")[0];
+		String second = key.split("[(,)]")[0];
+		return Integer.parseInt(first);
 	}
 }
