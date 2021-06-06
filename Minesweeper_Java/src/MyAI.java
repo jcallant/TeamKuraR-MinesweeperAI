@@ -866,6 +866,7 @@ public class MyAI extends AI {
 					Tile result = hypoFlagAndUpdate2(mineList, sublist, worldRecords);
 					if (result != null && result.equals(new Tile(0,0))) {
 						++solutionCount;
+						System.out.println(temp);
 						for (Tile a : temp) {
 							System.out.println("a = " + a);
 							System.out.println(mineProbabilities);
