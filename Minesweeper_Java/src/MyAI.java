@@ -926,11 +926,11 @@ public class MyAI extends AI {
 	}
 
 	private int getX(String key){
-		String first = key.split(",")[0];
+		String first = key.split("[,]")[0];
 		return Integer.parseInt(first.substring(1));
 	}
 	private int getY(String key){
-		String second = key.split(",")[1];
+		String second = key.split("[,]")[1];
 		return Integer.parseInt(second.substring(0, second.length()-2));
 	}
 }
