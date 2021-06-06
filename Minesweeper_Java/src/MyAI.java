@@ -892,8 +892,6 @@ public class MyAI extends AI {
 //		System.out.printf(">> probabilities: %s\n", probabilities);
 
 
-
-
 		// if not stopped by timer, all solutions found and probabilities are valid
 		if(!timedOut) {
 			// out of all solutions n, add tiles with n\n of being mine to guaranteedMine
@@ -911,19 +909,19 @@ public class MyAI extends AI {
 
 			// if no guaranteed, uncover tile with min probability
 			if (finalAction == null){
-//				finalAction = mineProbabilities.keySet().stream()
-//						.min(Comparator.comparing(mineProbabilities::get))
-//						.map(uncoverAction -> new Action(ACTION.UNCOVER, uncoverAction.x, uncoverAction.y))
-//						.orElse(null);
-//				System.out.println("probabilities: " + mineProbabilities);
-//				System.out.println("min: " + finalAction);
-
-				finalAction = safeProbabilities.keySet().stream()
-						.max(Comparator.comparing(safeProbabilities::get))
-						.map(s -> new Action(ACTION.UNCOVER, getX(s), getY(s)))
+				finalAction = mineProbabilities.keySet().stream()
+						.min(Comparator.comparing(mineProbabilities::get))
+						.map(uncoverAction -> new Action(ACTION.UNCOVER, uncoverAction.x, uncoverAction.y))
 						.orElse(null);
-				System.out.println("safeProbabilities: " + mineProbabilities);
-				System.out.println("max: " + finalAction);
+				System.out.println("probabilities: " + mineProbabilities);
+				System.out.println("min: " + finalAction);
+
+//				finalAction = safeProbabilities.keySet().stream()
+//						.max(Comparator.comparing(safeProbabilities::get))
+//						.map(s -> new Action(ACTION.UNCOVER, getX(s), getY(s)))
+//						.orElse(null);
+//				System.out.println("safeProbabilities: " + mineProbabilities);
+//				System.out.println("max: " + finalAction);
 //				doPause();
 			}
 
@@ -954,6 +952,7 @@ public class MyAI extends AI {
 
 		return null;
 	}
+	
 	private Tile hypoFlagAndUpdate2(ArrayList<Tile> frontier, HashMap<String, Integer> hypoRecords) {
 
 		for(Tile a : frontier) {
