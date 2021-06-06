@@ -725,9 +725,10 @@ public class MyAI extends AI {
 		}
 
 		ArrayList<Tile> mineList = new ArrayList<>();
+		ArrayList<Tile> hypoUncoveredFrontier = new ArrayList<>();
 		HashMap<String, Integer> worldRecords = new HashMap<>();
 		ArrayList<ArrayList<Tile>> solutions = new ArrayList<>();
-		recursiveFinder(mineList,0, worldRecords, solutions);
+		recursiveFinder(mineList, uncoveredFrontier, 0, worldRecords, solutions);
 
 		System.out.printf(">> %d solutions found\n", solutions.size());
 		System.out.println(solutions);
@@ -736,27 +737,28 @@ public class MyAI extends AI {
 		return null;
 	}
 
-	private void recursiveFinder(ArrayList<Tile> mineList, int index,
+	private void recursiveFinder(ArrayList<Tile> mineList, ArrayList<Tile> hypoUncoveredFrontier, int index,
 								 HashMap<String, Integer> hypoRecords, ArrayList<ArrayList<Tile>> solutions){
 		if(index >= coveredFrontier.size()) return;
 
-		HashMap<String, Integer> hypoRecordsBackup = new HashMap<>(hypoRecords);
 		mineList.add(coveredFrontier.get(index));
 
-		Tile result = hypoFlagAndUpdate2(mineList, hypoRecords);
+		Tile result = hypoFlagAndUpdate2(mineList, hypoUncoveredFrontier, hypoRecords);
 		if(result != null && result.equals(new Tile(0,0))){
 			System.out.println("SOLUTION FOUND: " + mineList);
 			doPause();
-			solutions.add(mineList);
-			recursiveFinder(mineList, index+1, hypoRecords, solutions);
+			solutions.add(new ArrayList<>(mineList));
 		}
-		else if(result == null) {
-			recursiveFinder(mineList, index + 1, hypoRecords, solutions);
-			mineList.remove(coveredFrontier.get(index));
-		}
+
+		HashMap<String, Integer> hypoRecordsBackup = new HashMap<>(hypoRecords);
+		ArrayList<Tile> hypoUncoveredFrontierBackup = new ArrayList<>(hypoUncoveredFrontier);
+
+		recursiveFinder(mineList, hypoUncoveredFrontier, index+1, hypoRecords, solutions);
+		mineList.remove(coveredFrontier.get(index));
+		recursiveFinder(mineList, hypoUncoveredFrontierBackup,index+1, hypoRecordsBackup, solutions);
 	}
 
-	private Tile hypoFlagAndUpdate2(ArrayList<Tile> possibleMineFrontier, HashMap<String, Integer> hypoRecords) {
+	private Tile hypoFlagAndUpdate2(ArrayList<Tile> possibleMineFrontier, ArrayList<Tile> hypoUncoveredFrontier, HashMap<String, Integer> hypoRecords) {
 
 		for(Tile a : possibleMineFrontier) {
 			int x = a.x;
@@ -823,7 +825,6 @@ public class MyAI extends AI {
 
 
 //		System.out.println(" ======= building uncoveredFrontier...");
-		ArrayList<Tile> hypoUncoveredFrontier = new ArrayList<>(uncoveredFrontier);
 //		for(Tile mine : possibleMineFrontier){
 //			ArrayList<Tile> minesNeighbors = getNeighbors(mine.x, mine.y);
 //			for(Tile minesNeighbor : minesNeighbors){
@@ -833,11 +834,11 @@ public class MyAI extends AI {
 //				}
 //			}
 //		}
-//		doPause();
 
 
 		System.out.println("hyporecords: " + hypoRecords);
 		System.out.println("hypoucf: " + hypoUncoveredFrontier);
+		doPause();
 
 //		System.out.println(" ======= checking if valid...");
 		for (Tile tile : hypoUncoveredFrontier) {
