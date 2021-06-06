@@ -542,7 +542,7 @@ public class MyAI extends AI {
 					mineList.add(coveredFrontier.get(j));
 				}
 			}
-			System.out.printf("%d. mineList: %s\n",i,mineList);
+//			System.out.printf("%d. mineList: %s\n",i,mineList);
 
 			// if mine list matches the amount of flagsLeft
 			if(mineList.size() <= flagsLeft) {
@@ -605,8 +605,8 @@ public class MyAI extends AI {
 						.min(Comparator.comparing(probabilities::get))
 						.map(uncoverAction -> new Action(ACTION.UNCOVER, uncoverAction.x, uncoverAction.y))
 						.orElse(null);
-				System.out.println("probabilities: " + probabilities);
-				System.out.println("min: " + finalAction);
+//				System.out.println("probabilities: " + probabilities);
+//				System.out.println("min: " + finalAction);
 				//doPause();
 			}
 
