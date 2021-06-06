@@ -840,8 +840,6 @@ public class MyAI extends AI {
 					}
 				}
 			}
-			System.out.println(probabilities);
-			doPause();
 		}
 //		System.out.printf(">> %d solutions found\n",solutionCount);
 //		System.out.printf(">> probabilities: %s\n", probabilities);
@@ -873,7 +871,7 @@ public class MyAI extends AI {
 						.orElse(null);
 				System.out.println("probabilities: " + probabilities);
 				System.out.println("min: " + finalAction);
-				//doPause();
+				doPause();
 			}
 
 			// assuming a solution was found, (if not then it's broken)
