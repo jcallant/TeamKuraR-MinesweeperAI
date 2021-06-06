@@ -1010,8 +1010,9 @@ public class MyAI extends AI {
 			ArrayList<Tile> neighbors = getNeighbors(tile.x, tile.y);
 			for(Tile neighbor : neighbors){
 				if(uncoveredFrontier.contains(neighbor)){
-					System.out.println("CONTAINED IN UCF: " + neighbor);
+					System.out.print("CONTAINED IN UCF: " + neighbor);
 					ucfSegment.add(neighbor);
+					System.out.println("--added");
 				}
 			}
 		}
