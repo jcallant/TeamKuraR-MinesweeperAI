@@ -83,6 +83,9 @@ public class MyAI extends AI {
 			this.x = x;
 			this.y = y;
 		}
+		public String toString(){
+			return "Tile" + key(this.x, this.y);
+		}
 	}
 
 	// ################### Implement Constructor (required) ####################	
