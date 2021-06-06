@@ -209,7 +209,7 @@ public class MyAI extends AI {
 		outputKnowledge();
 
 		//System.out.println("Attempting Model Checking...");
-		Action modelCheckingAction = handleModelChecking(1000000);
+		Action modelCheckingAction = handleModelChecking(100000);
 		if (modelCheckingAction != null) return modelCheckingAction;
 
 		// [STEP4.2] Pick from ucf with lowest probability
@@ -776,13 +776,15 @@ public class MyAI extends AI {
 
 	// ############################ SECOND ATTEMPT AT MODEL CHECKING ################################
 
-	private ArrayList<Tile> getOrderedChain(ArrayList<Tile> list){
+	private ArrayList<ArrayList<Tile>> getOrderedChain(ArrayList<Tile> list){
 		ArrayList<Tile> copy = new ArrayList<>(list);
-		ArrayList<Tile> ordered = new ArrayList<>();
-		if(list.isEmpty()) return list;
+		if(list.isEmpty()) return null;
+
+		ArrayList<ArrayList<Tile>> chains = new ArrayList<>();
 
 		Tile tail = copy.remove(0);
-		ordered.add(tail);
+		ArrayList<Tile> sublist = new ArrayList<>();
+		sublist.add(tail);
 
 		while(!copy.isEmpty()){
 			Tile up = new Tile(tail.x, tail.y+1);
@@ -799,12 +801,16 @@ public class MyAI extends AI {
 			else if(copy.contains(left) && neighbors.contains(left)) next = left;
 
 			if(next != null) copy.remove(next);
-			else next = copy.remove(0);
-			ordered.add(next);
+			else {
+				chains.add(new ArrayList<>(sublist));
+				next = copy.remove(0);
+				sublist = new ArrayList<>();
+			}
+			sublist.add(next);
 			tail = next;
 		}
-		//System.out.println(ordered);
-		return ordered;
+		chains.add(sublist);
+		return chains;
 	}
 
 	// optimizing frontier for shorter combination calculations
@@ -812,18 +818,8 @@ public class MyAI extends AI {
 		if(coveredFrontier.isEmpty()) return null;
 		//System.out.printf(">> cf: %s\n", coveredFrontier);
 
-		ArrayList<Tile> chain = getOrderedChain(coveredFrontier);
+		ArrayList<ArrayList<Tile>> chains = getOrderedChain(coveredFrontier);
 		//doPause();
-
-		int limit = chain.size()/2;
-		int loops = chain.size()/limit;
-		ArrayList<ArrayList<Tile>> subLists = new ArrayList<>();
-		for(int i=0; i<loops; i++) {
-			if(i<loops-1)
-				subLists.add(new ArrayList<>(chain.subList(i * limit, (i * limit + limit) )));
-			else
-				subLists.add(new ArrayList<>(chain.subList(i * limit, (i * limit + chain.size()%limit) )));
-		}
 
 		// initialize to 0
 		int solutionCount = 0;
@@ -835,7 +831,7 @@ public class MyAI extends AI {
 		}
 		boolean timedOut = false;
 
-		for(ArrayList<Tile> sublist : subLists) {
+		for(ArrayList<Tile> sublist : chains) {
 			int size = (int) Math.pow(2, sublist.size());
 
 			// using coveredFrontier, iterate through powerset
@@ -851,9 +847,9 @@ public class MyAI extends AI {
 
 				// build possible mine list for this iteration
 				ArrayList<Tile> mineList = new ArrayList<>();
-				for(int j=0; j<coveredFrontier.size(); j++){
+				for(int j=0; j<sublist.size(); j++){
 					if((i & (1 << j)) > 0) {
-						mineList.add(coveredFrontier.get(j));
+						mineList.add(sublist.get(j));
 					}
 				}
 
@@ -867,7 +863,7 @@ public class MyAI extends AI {
 					ArrayList<Tile> temp = new ArrayList<>(mineList);
 
 					// if mine list is a possible solution
-					Tile result = hypoFlagAndUpdate2(mineList, worldRecords);
+					Tile result = hypoFlagAndUpdate2(mineList, sublist, worldRecords);
 					if (result != null && result.equals(new Tile(0,0))) {
 						++solutionCount;
 //						System.out.printf("%d: %s\n",solutionCount, temp);
@@ -914,14 +910,6 @@ public class MyAI extends AI {
 						.orElse(null);
 				System.out.println("probabilities: " + mineProbabilities);
 				System.out.println("min: " + finalAction);
-
-//				finalAction = safeProbabilities.keySet().stream()
-//						.max(Comparator.comparing(safeProbabilities::get))
-//						.map(s -> new Action(ACTION.UNCOVER, getX(s), getY(s)))
-//						.orElse(null);
-//				System.out.println("safeProbabilities: " + mineProbabilities);
-//				System.out.println("max: " + finalAction);
-//				doPause();
 			}
 
 			// assuming a solution was found, (if not then it's broken)
@@ -951,7 +939,7 @@ public class MyAI extends AI {
 
 		return null;
 	}
-	private Tile hypoFlagAndUpdate2(ArrayList<Tile> frontier, HashMap<String, Integer> hypoRecords) {
+	private Tile hypoFlagAndUpdate2(ArrayList<Tile> frontier, ArrayList<Tile> cfSegment, HashMap<String, Integer> hypoRecords) {
 
 		for(Tile a : frontier) {
 			int x = a.x;
@@ -1016,9 +1004,20 @@ public class MyAI extends AI {
 			}
 		}
 
+		ArrayList<Tile> ucfSegment = new ArrayList<>();
+		for(Tile tile : cfSegment){
+			ArrayList<Tile> neighbors = getNeighbors(tile.x, tile.y);
+			for(Tile neighbor : neighbors){
+				if(uncoveredFrontier.contains(neighbor)){
+					System.out.println("CONTAINED IN UCF: " + neighbor);
+					ucfSegment.add(neighbor);
+				}
+			}
+		}
+
 
 		//System.out.print(" ======= checking if valid...");
-		for (Tile tile : uncoveredFrontier) {
+		for (Tile tile : ucfSegment) {
 			String k = key(tile.x, tile.y);
 			if (!hypoRecords.containsKey(k) || hypoRecords.get(k) > 0) {
 				//System.out.println("N: unsatisfied label " + k);
