@@ -810,9 +810,6 @@ public class MyAI extends AI {
 			tail = next;
 		}
 		chains.add(sublist);
-
-		System.out.println(list);
-		System.out.println(chains);
 		return chains;
 	}
 
@@ -872,6 +869,7 @@ public class MyAI extends AI {
 						++solutionCount;
 						System.out.printf("%d: %s\n",solutionCount, temp);
 						for (Tile a : temp) {
+							System.out.println(mineProbabilities);
 							int p = mineProbabilities.get(a);
 							mineProbabilities.put(a, ++p);
 						}
