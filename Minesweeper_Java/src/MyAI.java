@@ -933,6 +933,6 @@ public class MyAI extends AI {
 	private int getY(String key){
 		String[] token = key.split(",");
 		for(String t : token) System.out.println(t);
-		return Integer.parseInt(token[1].substring(1,token[1].length()-2));
+		return Integer.parseInt(token[1].substring(1,token[1].length()-1));
 	}
 }
