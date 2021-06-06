@@ -833,6 +833,7 @@ public class MyAI extends AI {
 		boolean timedOut = false;
 
 		for(ArrayList<Tile> sublist : chains) {
+			System.out.println("CURRENT LIST: " + sublist);
 			int size = (int) Math.pow(2, sublist.size());
 
 			// using coveredFrontier, iterate through powerset
@@ -1026,7 +1027,7 @@ public class MyAI extends AI {
 			}
 		}
 		//System.out.println("\n hypoRecord: " + hypoRecords);
-		System.out.printf(" SOLUTION ");
+		System.out.println(" SOLUTION ");
 		return new Tile(0,0);
 	}
 
