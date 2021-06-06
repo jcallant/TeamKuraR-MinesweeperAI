@@ -708,7 +708,7 @@ public class MyAI extends AI {
 	private Action handleModelChecking2(double timeLimit){
 		if(coveredFrontier.isEmpty()) return null;
 		//System.out.printf(">> cf: %s\n", coveredFrontier);
-		
+
 		// initialize to 0
 		int solutionCount = 0;
 		HashMap<Action, Integer> probabilities = new HashMap<>();
@@ -817,16 +817,19 @@ public class MyAI extends AI {
 		}
 
 
+		System.out.println(" ======= building uncoveredFrontier...");
 		ArrayList<Action> hypoUncoveredFrontier = new ArrayList<>();
+		System.out.println(uncoveredFrontier);
 		for(Action mine : possibleMineFrontier){
 			for(Action neighbor : getNeighbors(mine.x, mine.y)){
+				System.out.println(neighbor);
 				if(uncoveredFrontier.contains(neighbor))
 					hypoUncoveredFrontier.add(neighbor);
 			}
 		}
+		doPause();
 
-
-		System.out.print(" ======= checking if valid...");
+		System.out.println(" ======= checking if valid...");
 		for (Action action : hypoUncoveredFrontier) {
 			System.out.printf("Validating label %s\n", key(action.x,action.y));
 
@@ -859,9 +862,7 @@ public class MyAI extends AI {
 				}
 			}
 		}
-		System.out.println("Hit any button to Continue...");
-		Scanner in = new Scanner(System.in);
-		in.nextLine();
+
 
 		// using ACTION.LEAVE is flag for possible combo
 		return new Action(ACTION.LEAVE);
@@ -919,5 +920,11 @@ public class MyAI extends AI {
 			}
 		}
 		return neighbors;
+	}
+
+	private void doPause(){
+		System.out.println("Hit any button to Continue...");
+		Scanner in = new Scanner(System.in);
+		in.nextLine();
 	}
 }
