@@ -786,7 +786,6 @@ public class MyAI extends AI {
 		ordered.add(tail);
 
 		while(!copy.isEmpty()){
-			System.out.println(copy);
 			Tile up = new Tile(tail.x, tail.y+1);
 			Tile down = new Tile(tail.x, tail.y-1);
 			Tile right = new Tile(tail.x+1, tail.y);
@@ -799,14 +798,13 @@ public class MyAI extends AI {
 			else if(copy.contains(down) && neighbors.contains(down)) next = down;
 			else if(copy.contains(right) && neighbors.contains(right)) next = right;
 			else if(copy.contains(left) && neighbors.contains(left)) next = left;
-			System.out.println(next);
 
 			if(next != null) copy.remove(next);
 			else next = copy.remove(0);
 			ordered.add(next);
 			tail = next;
 		}
-		System.out.println(ordered);
+		//System.out.println(ordered);
 		return ordered;
 	}
 
@@ -816,7 +814,7 @@ public class MyAI extends AI {
 		//System.out.printf(">> cf: %s\n", coveredFrontier);
 
 		ArrayList<Tile> chain = getOrderedChain(coveredFrontier);
-		doPause();
+		//doPause();
 
 		int loops = chain.size()/10;
 		ArrayList<ArrayList<Tile>> subLists = new ArrayList<>();
@@ -856,7 +854,7 @@ public class MyAI extends AI {
 						mineList.add(coveredFrontier.get(j));
 					}
 				}
-				
+
 				System.out.printf("%d. mineList: %s\n", i, mineList);
 
 				// if mine list matches the amount of flagsLeft
