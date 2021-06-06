@@ -854,7 +854,7 @@ public class MyAI extends AI {
 					}
 				}
 
-//				System.out.printf("%d. mineList: %s\n", i, mineList);
+				System.out.printf("%d. mineList: %s\n", i, mineList);
 
 				// if mine list matches the amount of flagsLeft
 				if (mineList.size() <= flagsLeft) {
@@ -1009,7 +1009,7 @@ public class MyAI extends AI {
 		for(Tile tile : cfSegment){
 			ArrayList<Tile> neighbors = getNeighbors(tile.x, tile.y);
 			for(Tile neighbor : neighbors){
-				if(uncoveredFrontier.contains(neighbor)){
+				if(uncoveredFrontier.contains(neighbor) && !ucfSegment.contains(neighbor)){
 					System.out.print("CONTAINED IN UCF: " + neighbor);
 					ucfSegment.add(neighbor);
 					System.out.println("--added");
