@@ -868,6 +868,7 @@ public class MyAI extends AI {
 						++solutionCount;
 						System.out.println(temp);
 						for (Tile a : temp) {
+							if(a == null) continue;
 							System.out.println("a = " + a);
 							System.out.println(mineProbabilities);
 							int p = mineProbabilities.get(a);
