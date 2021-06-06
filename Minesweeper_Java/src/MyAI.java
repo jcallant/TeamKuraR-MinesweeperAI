@@ -881,6 +881,7 @@ public class MyAI extends AI {
 						}
 					}
 				}
+				System.out.println("END OF FOR LOOP");
 			}
 		}
 //		System.out.printf(">> %d solutions found\n",solutionCount);
