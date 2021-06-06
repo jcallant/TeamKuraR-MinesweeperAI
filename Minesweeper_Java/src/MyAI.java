@@ -864,16 +864,16 @@ public class MyAI extends AI {
 
 					// if mine list is a possible solution
 					Tile result = hypoFlagAndUpdate2(mineList, sublist, worldRecords);
-//					if (result != null && result.equals(new Tile(0,0))) {
-//						++solutionCount;
-//						System.out.println(temp);
-//						for (Tile a : temp) {
-//							System.out.println("a = " + a);
-//							System.out.println(mineProbabilities);
-//							int p = mineProbabilities.get(a);
-//							mineProbabilities.put(a, ++p);
-//						}
-//					}
+					if (result != null && result.equals(new Tile(0,0))) {
+						++solutionCount;
+						System.out.println(temp);
+						for (Tile a : temp) {
+							System.out.println("a = " + a);
+							System.out.println(mineProbabilities);
+							int p = mineProbabilities.get(a);
+							mineProbabilities.put(a, ++p);
+						}
+					}
 //					else if (result != null){
 //						for(String k : worldRecords.keySet()){
 //							if (worldRecords.get(k) == SAFE && safeProbabilities.containsKey(k)) {
