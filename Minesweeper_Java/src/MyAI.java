@@ -514,7 +514,10 @@ public class MyAI extends AI {
 		if(coveredFrontier.isEmpty()) return null;
 		//System.out.printf(">> cf: %s\n", coveredFrontier);
 
-		int powerSetSize = (int) Math.pow(2, coveredFrontier.size());
+//		int size = (int) Math.pow(2, coveredFrontier.size());
+
+		ArrayList<Tile> smallList = new ArrayList<>(coveredFrontier.subList(0, coveredFrontier.size()/2));
+		int size = (int) Math.pow(2, smallList.size());
 
 		// initialize to 0
 		int solutionCount = 0;
@@ -525,7 +528,7 @@ public class MyAI extends AI {
 		boolean timedOut = false;
 
 		// using coveredFrontier, iterate through powerset
-		for(int i=1; i<powerSetSize; i++){
+		for(int i=1; i<size; i++){
 
 			// if taking too long, stop
 			timeLimit--;
