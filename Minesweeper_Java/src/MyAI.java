@@ -850,12 +850,9 @@ public class MyAI extends AI {
 				ArrayList<Tile> mineList = new ArrayList<>();
 				for(int j=0; j<sublist.size(); j++){
 					if((i & (1 << j)) > 0) {
-						System.out.println(sublist.get(j));
 						mineList.add(sublist.get(j));
 					}
 				}
-
-				System.out.printf("%d. mineList: %s\n", i, mineList);
 
 				// if mine list matches the amount of flagsLeft
 				if (mineList.size() <= flagsLeft) {
@@ -868,7 +865,6 @@ public class MyAI extends AI {
 					Tile result = hypoFlagAndUpdate2(mineList, sublist, worldRecords);
 					if (result != null && result.equals(new Tile(0,0))) {
 						++solutionCount;
-						System.out.printf("%d: %s\n",solutionCount, temp);
 						for (Tile a : temp) {
 							System.out.println(mineProbabilities);
 							int p = mineProbabilities.get(a);
@@ -1018,7 +1014,7 @@ public class MyAI extends AI {
 				}
 			}
 		}
-		System.out.println("======= ucfSegment built");
+		System.out.println("======= ucfSegment built\n");
 
 
 		//System.out.print(" ======= checking if valid...");
@@ -1030,7 +1026,7 @@ public class MyAI extends AI {
 			}
 		}
 		//System.out.println("\n hypoRecord: " + hypoRecords);
-		//System.out.printf(" SOLUTION ");
+		System.out.printf(" SOLUTION ");
 		return new Tile(0,0);
 	}
 
