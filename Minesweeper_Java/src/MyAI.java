@@ -209,7 +209,7 @@ public class MyAI extends AI {
 		outputKnowledge();
 
 		//System.out.println("Attempting Model Checking...");
-		Action modelCheckingAction = handleModelChecking(50000);
+		Action modelCheckingAction = handleModelChecking(100000);
 		if (modelCheckingAction != null) return modelCheckingAction;
 
 		// [STEP4.2] Pick from ucf with lowest probability
@@ -763,7 +763,7 @@ public class MyAI extends AI {
 		return neighbors;
 	}
 
-	private void doPause(){
+	public static void doPause(){
 		System.out.println("Hit any button to Continue...");
 		Scanner in = new Scanner(System.in);
 		in.nextLine();
