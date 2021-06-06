@@ -816,13 +816,14 @@ public class MyAI extends AI {
 		ArrayList<Tile> chain = getOrderedChain(coveredFrontier);
 		//doPause();
 
-		int loops = chain.size()/15;
+		int limit = chain.size()/2;
+		int loops = chain.size()/limit;
 		ArrayList<ArrayList<Tile>> subLists = new ArrayList<>();
 		for(int i=0; i<loops; i++) {
 			if(i<loops-1)
-				subLists.add(new ArrayList<>(chain.subList(i * 15, (i * 15 + 15) )));
+				subLists.add(new ArrayList<>(chain.subList(i * limit, (i * limit + limit) )));
 			else
-				subLists.add(new ArrayList<>(chain.subList(i * 15, (i * 15 + chain.size()%15) )));
+				subLists.add(new ArrayList<>(chain.subList(i * limit, (i * limit + chain.size()%limit) )));
 		}
 
 		// initialize to 0
