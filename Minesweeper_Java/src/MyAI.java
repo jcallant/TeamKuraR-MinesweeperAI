@@ -755,7 +755,7 @@ public class MyAI extends AI {
 		}
 		recursiveFinder(mineList, index+1, hypoRecords, solutions);
 		mineList.remove(coveredFrontier.get(index));
-		recursiveFinder(mineList, index+1, hypoRecords, solutions);
+		recursiveFinder(mineList, index+1, hypoRecordsBackup, solutions);
 	}
 
 	private Tile hypoFlagAndUpdate2(ArrayList<Tile> possibleMineFrontier, HashMap<String, Integer> hypoRecords) {
