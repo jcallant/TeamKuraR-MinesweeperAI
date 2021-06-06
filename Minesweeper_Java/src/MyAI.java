@@ -410,7 +410,7 @@ public class MyAI extends AI {
 
 		// uncover safe if any
 		if (!guaranteedSafe.isEmpty()) {
-			Tile t = guaranteedMine.remove(0);
+			Tile t = guaranteedSafe.remove(0);
 			Action a = new Action(ACTION.UNCOVER, t.x, t.y);
 			currX = a.x;
 			currY = a.y;
