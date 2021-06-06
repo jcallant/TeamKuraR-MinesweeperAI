@@ -952,7 +952,7 @@ public class MyAI extends AI {
 
 		return null;
 	}
-	
+
 	private Tile hypoFlagAndUpdate2(ArrayList<Tile> frontier, HashMap<String, Integer> hypoRecords) {
 
 		for(Tile a : frontier) {
