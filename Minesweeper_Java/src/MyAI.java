@@ -739,6 +739,9 @@ public class MyAI extends AI {
 	private void recursiveChecker(ArrayList<Tile> mineList, int index,
 								  HashMap<String, Integer> hypoRecords, ArrayList<ArrayList<Tile>> solutions){
 		if(index >= coveredFrontier.size()) return;
+		System.out.println("REC:");
+		System.out.println(" mineList: " + mineList);
+		System.out.println(" index: " + index);
 
 		HashMap<String, Integer> hypoRecordsBackup = new HashMap<>(hypoRecords);
 		mineList.add(coveredFrontier.get(index));
