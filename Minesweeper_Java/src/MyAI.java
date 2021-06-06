@@ -553,7 +553,7 @@ public class MyAI extends AI {
 				// if mine list is a possible solution
 				if(hypoFlagAndUpdate(mineList, worldRecords)!=null) {
 					++solutionCount;
-					System.out.printf("%d: %s\n",solutionCount, temp);
+//					System.out.printf("%d: %s\n",solutionCount, temp);
 					for(Tile a : temp){
 						int p = probabilities.get(a);
 						probabilities.put(a, ++p);
@@ -561,8 +561,8 @@ public class MyAI extends AI {
 				}
 			}
 		}
-		System.out.printf(">> %d solutions found\n",solutionCount);
-		System.out.printf(">> probabilities: %s\n", probabilities);
+//		System.out.printf(">> %d solutions found\n",solutionCount);
+//		System.out.printf(">> probabilities: %s\n", probabilities);
 
 
 
@@ -711,6 +711,66 @@ public class MyAI extends AI {
 		//System.out.printf(" SOLUTION ");
 		return hypoRecords;
 	}
+
+	private HashMap<String, Integer> hypoAddCoveredNeighborsToSafeTiles(int x, int y, HashMap<String, Integer> hypoRecords){
+		int rowMin = y-1;
+		int rowMax = y+1;
+		if(rowMin<1) rowMin = 1;
+		if(rowMax>ROW_DIMENSIONS) rowMax = ROW_DIMENSIONS;
+
+		int colMin = x-1;
+		int colMax = x+1;
+		if(colMin<1) colMin = 1;
+		if(colMax>COL_DIMENSIONS) colMax = COL_DIMENSIONS;
+
+		for(int j=rowMax; j>rowMin-1; j--){
+			for(int i=colMin; i<colMax+1; i++) {
+				if (j==y && i==x) continue;
+				String k = key(i, j);
+				if (hypoRecords.containsKey(k)){
+					if(hypoRecords.get(k)==COV_NEIGHBOR) {
+						//System.out.printf(" -safe %s\n", k);
+						hypoRecords.put(k, SAFE);
+					}
+				}
+				else if (!records.containsKey(k) || records.get(k)==COV_NEIGHBOR) {
+					//System.out.printf(" -safe %s\n", k);
+					hypoRecords.put(k, SAFE);
+				}
+			}
+		}
+		return hypoRecords;
+	}
+
+	private ArrayList<Tile> getNeighbors(int x, int y){
+		ArrayList<Tile> neighbors = new ArrayList<>();
+		int rowMin = y-1;
+		int rowMax = y+1;
+		if(rowMin<1) rowMin = 1;
+		if(rowMax>ROW_DIMENSIONS) rowMax = ROW_DIMENSIONS;
+
+		int colMin = x-1;
+		int colMax = x+1;
+		if(colMin<1) colMin = 1;
+		if(colMax>COL_DIMENSIONS) colMax = COL_DIMENSIONS;
+
+		for(int j=rowMax; j>rowMin-1; j--){
+			for(int i=colMin; i<colMax+1; i++) {
+				if (j==y && i==x) continue;
+				neighbors.add(new Tile(i, j));
+			}
+		}
+		return neighbors;
+	}
+
+	private void doPause(){
+		System.out.println("Hit any button to Continue...");
+		Scanner in = new Scanner(System.in);
+		in.nextLine();
+	}
+
+
+	// ############################ SECOND ATTEMPT AT MODEL CHECKING ################################
 
 	// optimizing frontier for shorter combination calculations
 	private Action handleModelChecking2(double timeLimit){
@@ -868,69 +928,5 @@ public class MyAI extends AI {
 
 		// using ACTION.LEAVE is flag for possible combo
 		return new Tile(0,0);
-	}
-
-
-	private HashMap<String, Integer> hypoAddCoveredNeighborsToSafeTiles(int x, int y, HashMap<String, Integer> hypoRecords){
-		int rowMin = y-1;
-		int rowMax = y+1;
-		if(rowMin<1) rowMin = 1;
-		if(rowMax>ROW_DIMENSIONS) rowMax = ROW_DIMENSIONS;
-
-		int colMin = x-1;
-		int colMax = x+1;
-		if(colMin<1) colMin = 1;
-		if(colMax>COL_DIMENSIONS) colMax = COL_DIMENSIONS;
-
-		for(int j=rowMax; j>rowMin-1; j--){
-			for(int i=colMin; i<colMax+1; i++) {
-				if (j==y && i==x) continue;
-				String k = key(i, j);
-				if (hypoRecords.containsKey(k)){
-					if(hypoRecords.get(k)==COV_NEIGHBOR) {
-						//System.out.printf(" -safe %s\n", k);
-						hypoRecords.put(k, SAFE);
-					}
-				}
-				else if (!records.containsKey(k) || records.get(k)==COV_NEIGHBOR) {
-					//System.out.printf(" -safe %s\n", k);
-					hypoRecords.put(k, SAFE);
-				}
-			}
-		}
-		return hypoRecords;
-	}
-
-	private ArrayList<Tile> getNeighbors(int x, int y){
-		ArrayList<Tile> neighbors = new ArrayList<>();
-		int rowMin = y-1;
-		int rowMax = y+1;
-		if(rowMin<1) rowMin = 1;
-		if(rowMax>ROW_DIMENSIONS) rowMax = ROW_DIMENSIONS;
-
-		int colMin = x-1;
-		int colMax = x+1;
-		if(colMin<1) colMin = 1;
-		if(colMax>COL_DIMENSIONS) colMax = COL_DIMENSIONS;
-
-		for(int j=rowMax; j>rowMin-1; j--){
-			for(int i=colMin; i<colMax+1; i++) {
-				if (j==y && i==x) continue;
-				neighbors.add(new Tile(i, j));
-			}
-		}
-		return neighbors;
-	}
-
-	private void doPause(){
-		System.out.println("Hit any button to Continue...");
-		Scanner in = new Scanner(System.in);
-		in.nextLine();
-	}
-
-	private int getX(String key){
-		String first = key.split("[(,)]")[1];
-		String second = key.split("[(,)]")[2];
-		return Integer.parseInt(first);
 	}
 }
