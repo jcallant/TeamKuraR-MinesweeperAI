@@ -86,6 +86,13 @@ public class MyAI extends AI {
 		public String toString(){
 			return "Tile" + key(this.x, this.y);
 		}
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null) return false;
+			if (getClass() != o.getClass()) return false;
+			Tile t = (Tile) o;
+			return Objects.equals(this.x, t.x) && Objects.equals(this.y, t.y);
+		}
 	}
 
 	// ################### Implement Constructor (required) ####################	
@@ -222,25 +229,13 @@ public class MyAI extends AI {
 	}
 
 	private void addNeighborsToSafeTiles(int x, int y){
-		int rowMin = y-1;
-		int rowMax = y+1;
-		if(rowMin<1) rowMin = 1;
-		if(rowMax>ROW_DIMENSIONS) rowMax = ROW_DIMENSIONS;
-
-		int colMin = x-1;
-		int colMax = x+1;
-		if(colMin<1) colMin = 1;
-		if(colMax>COL_DIMENSIONS) colMax = COL_DIMENSIONS;
-
-		for(int j=rowMax; j>rowMin-1; j--){
-			for(int i=colMin; i<colMax+1; i++) {
-				if (j==y && i==x) continue;
-				String k = key(i, j);
-				if (!records.containsKey(k) || records.get(k)==COV_NEIGHBOR) {
-					//System.out.println(k + " added to safe");
-					records.put(k, 0);
-					guaranteedSafe.add(new Tile(i, j));
-				}
+		ArrayList<Tile> neighbors = getNeighbors(x, y);
+		for(Tile t : neighbors){
+			String k = key(t.x, t.y);
+			if (!records.containsKey(k) || records.get(k)==COV_NEIGHBOR) {
+				//System.out.println(k + " added to safe");
+				records.put(k, 0);
+				guaranteedSafe.add(t);
 			}
 		}
 	}
@@ -748,14 +743,14 @@ public class MyAI extends AI {
 		HashMap<String, Integer> hypoRecordsBackup = new HashMap<>(hypoRecords);
 		mineList.add(coveredFrontier.get(index));
 
-		Action result = hypoFlagAndUpdate2(mineList, hypoRecords);
+		Tile result = hypoFlagAndUpdate2(mineList, hypoRecords);
 		// if not mineList combo not possible...
 		if(result == null){
 			mineList.remove(coveredFrontier.get(index));
 			recursiveChecker(mineList, index+1, hypoRecordsBackup, solutions);
 		}
 		// if mineList combo is possible solution (using ACTION.LEAVE as a return case for solution found)
-		else if(result.action == ACTION.LEAVE){
+		else if(result.equals(new Tile(0,0))){
 			solutions.add(mineList);
 		}
 		// if mineList combo is valid but not yet a complete solution
@@ -764,7 +759,7 @@ public class MyAI extends AI {
 		}
 	}
 
-	private Action hypoFlagAndUpdate2(ArrayList<Tile> possibleMineFrontier, HashMap<String, Integer> hypoRecords) {
+	private Tile hypoFlagAndUpdate2(ArrayList<Tile> possibleMineFrontier, HashMap<String, Integer> hypoRecords) {
 
 		for(Tile a : possibleMineFrontier) {
 			int x = a.x;
@@ -831,7 +826,7 @@ public class MyAI extends AI {
 
 
 		System.out.println(" ======= building uncoveredFrontier...");
-		ArrayList<Action> hypoUncoveredFrontier = new ArrayList<>();
+		ArrayList<Tile> hypoUncoveredFrontier = new ArrayList<>();
 		System.out.println(uncoveredFrontier);
 		System.out.println(possibleMineFrontier);
 		for(Tile mine : possibleMineFrontier){
@@ -841,7 +836,7 @@ public class MyAI extends AI {
 
 
 		System.out.println(" ======= checking if valid...");
-		for (Action action : hypoUncoveredFrontier) {
+		for (Tile action : hypoUncoveredFrontier) {
 			System.out.printf("Validating label %s\n", key(action.x,action.y));
 
 			String k = key(action.x, action.y);
@@ -850,14 +845,14 @@ public class MyAI extends AI {
 				return action;
 			}
 
-			ArrayList<Action> labelsNeighbors = getNeighbors(action.x, action.y);
-			for(Action neighbor : labelsNeighbors){
+			ArrayList<Tile> labelsNeighbors = getNeighbors(action.x, action.y);
+			for(Tile neighbor : labelsNeighbors){
 				System.out.printf(" Looking at %s neighbors\n", key(neighbor.x, neighbor.y));
 				if(possibleMineFrontier.contains(neighbor)) {
 					boolean remove = true;
-					ArrayList<Action> minesNeighbors = getNeighbors(neighbor.x, neighbor.y);
+					ArrayList<Tile> minesNeighbors = getNeighbors(neighbor.x, neighbor.y);
 					System.out.printf("   Remove %s? ", key(neighbor.x, neighbor.y));
-					for (Action minesNeighbor : minesNeighbors) {
+					for (Tile minesNeighbor : minesNeighbors) {
 						if (minesNeighbor != action && hypoUncoveredFrontier.contains(minesNeighbor)) {
 							remove = false;
 							break;
@@ -876,7 +871,7 @@ public class MyAI extends AI {
 
 
 		// using ACTION.LEAVE is flag for possible combo
-		return new Action(ACTION.LEAVE);
+		return new Tile(0,0);
 	}
 
 
@@ -910,8 +905,8 @@ public class MyAI extends AI {
 		return hypoRecords;
 	}
 
-	private ArrayList<Action> getNeighbors(int x, int y){
-		ArrayList<Action> neighbors = new ArrayList<>();
+	private ArrayList<Tile> getNeighbors(int x, int y){
+		ArrayList<Tile> neighbors = new ArrayList<>();
 		int rowMin = y-1;
 		int rowMax = y+1;
 		if(rowMin<1) rowMin = 1;
@@ -925,7 +920,7 @@ public class MyAI extends AI {
 		for(int j=rowMax; j>rowMin-1; j--){
 			for(int i=colMin; i<colMax+1; i++) {
 				if (j==y && i==x) continue;
-				neighbors.add(new Action(ACTION.FLAG, i, j));
+				neighbors.add(new Tile(i, j));
 			}
 		}
 		return neighbors;
