@@ -426,7 +426,7 @@ public class MyAI extends AI {
 		if(probability <= 2/8.0){
 			Random random = new Random();
 			int randomIndex = random.nextInt(currNeighbors.size());
-			Tile neighbor = currNeighbors.get(randomIndex);
+			Tile neighbor = currNeighbors.remove(randomIndex);
 			return new Action(ACTION.UNCOVER, neighbor.x, neighbor.y);
 		}
 		return null;
