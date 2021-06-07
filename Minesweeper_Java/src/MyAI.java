@@ -418,14 +418,14 @@ public class MyAI extends AI {
 	}
 
 	private Action handleAnyNeighbor(){
-		if(currNeighbors.isEmpty()) return null;
 		currNeighbors.removeIf(t -> records.get(key(t.x, t.y)) != COV_NEIGHBOR);
+		if(currNeighbors.isEmpty()) return null;
 		double coveredCount = currNeighbors.size();
 		int labelValue = records.get(key(currX, currY));
-		double probabability = labelValue / coveredCount;
-		if(probabability < 2/8.0){
+		double probability = labelValue / coveredCount;
+		if(probability <= 2/8.0){
 			Random random = new Random();
-			int randomIndex = random.nextInt(currNeighbors.size()+1);
+			int randomIndex = random.nextInt(currNeighbors.size());
 			Tile neighbor = currNeighbors.get(randomIndex);
 			return new Action(ACTION.UNCOVER, neighbor.x, neighbor.y);
 		}
