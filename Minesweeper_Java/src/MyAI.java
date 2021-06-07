@@ -425,7 +425,7 @@ public class MyAI extends AI {
 		double probabability = labelValue / coveredCount;
 		if(probabability < 2/8.0){
 			Random random = new Random();
-			int randomIndex = random.nextInt(currNeighbors.size());
+			int randomIndex = random.nextInt(currNeighbors.size()+1);
 			Tile neighbor = currNeighbors.get(randomIndex);
 			return new Action(ACTION.UNCOVER, neighbor.x, neighbor.y);
 		}
