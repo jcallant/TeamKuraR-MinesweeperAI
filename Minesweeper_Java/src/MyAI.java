@@ -158,8 +158,8 @@ public class MyAI extends AI {
 		}
 
 		// [STEP2.2]: if any guaranteed mines or safe tiles
-//		Action guaranteedAction = handleGuaranteed();
-//		if(guaranteedAction != null) return guaranteedAction;
+		Action guaranteedAction = handleGuaranteed();
+		if(guaranteedAction != null) return guaranteedAction;
 
 
 		// [STEP2.3] if handleAny() was called previously, currNeighbors is updated
