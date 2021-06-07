@@ -145,7 +145,7 @@ public class MyAI extends AI {
 
 		// [STEP2.1]: check if all mines are flagged
 		if(flagsLeft == 0){
-			System.out.println("No more flags. Uncovering rest");
+			//System.out.println("No more flags. Uncovering rest");
 			for(int i=1; i<=COL_DIMENSIONS; i++){
 				for(int j=1; j<=ROW_DIMENSIONS; j++){
 					String key = key(i, j);
@@ -158,11 +158,11 @@ public class MyAI extends AI {
 		}
 
 		// [STEP2.2]: if any guaranteed mines or safe tiles
-		Action guaranteedAction = handleGuaranteed();
-		if(guaranteedAction != null) return guaranteedAction;
+//		Action guaranteedAction = handleGuaranteed();
+//		if(guaranteedAction != null) return guaranteedAction;
 
 
-		// [STEP2.3] if handleAny() was called previously,
+		// [STEP2.3] if handleAny() was called previously, currNeighbors is updated
 		// uncover neighbor from previous uncover if probability allows
 		Action handleAnyNeighborAction = handleAnyNeighbor();
 		if (handleAnyNeighborAction != null) return handleAnyNeighborAction;

@@ -254,10 +254,10 @@ public class World {
 		}
 
 		this.uncoverAll();
-		 System.out.println("Final Action: " + actionObj);
+		 //System.out.println("Final Action: " + actionObj);
 		 System.out.println("Score: " + this.score);
 		 System.out.println("difficulty: " + this.difficulty);
-		 System.out.println("Moves Taken: " + this.moves);
+		 //System.out.println("Moves Taken: " + this.moves);
 //		 MyAI.doPause();
 		return new Results(this.score, this.difficulty.ordinal(), this.moves);
 	}

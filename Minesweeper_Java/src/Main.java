@@ -107,8 +107,8 @@ public class Main {
                     double score = results.score;
 
                     /* added for debugging*/
-                    if (score > 0) {for(int i=0; i<100; i++) System.out.printf("WORLD %d -- WIN\n", totalWorlds);} // added for debugging
-                    else {for(int i=0; i<100; i++) System.out.printf("WORLD %d -- LOSE\n", totalWorlds);} // added for debugging
+                    //if (score > 0) {for(int i=0; i<100; i++) System.out.printf("WORLD %d -- WIN\n", totalWorlds);} // added for debugging
+                    //else {for(int i=0; i<100; i++) System.out.printf("WORLD %d -- LOSE\n", totalWorlds);} // added for debugging
                     //MyAI.doPause();
                     /* ################ */
 
