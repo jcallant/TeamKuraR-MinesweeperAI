@@ -423,7 +423,7 @@ public class MyAI extends AI {
 		double coveredCount = currNeighbors.size();
 		int labelValue = records.get(key(currX, currY));
 		double probability = labelValue / coveredCount;
-		if(probability <= 2/8.0){
+		if(probability < 2/8.0){
 			Random random = new Random();
 			int randomIndex = random.nextInt(currNeighbors.size());
 			Tile neighbor = currNeighbors.remove(randomIndex);

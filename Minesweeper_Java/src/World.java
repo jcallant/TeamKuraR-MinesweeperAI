@@ -207,8 +207,6 @@ public class World {
 			// If # moves exceeds 2 * the board size, terminate with 0 score
 			if (this.moves >= 2 * this.colDimension * this.rowDimension) {
 				System.out.println("Maximum moves exceeded!");
-				printBoardInfo();
-				MyAI.doPause();
 				new Results(0, this.difficulty.ordinal(), this.moves);
 			}
 
@@ -256,7 +254,7 @@ public class World {
 		}
 
 		this.uncoverAll();
-		 System.out.println("Final Action: " + actionObj);
+		 //System.out.println("Final Action: " + actionObj);
 		 System.out.println("Score: " + this.score);
 		 System.out.println("difficulty: " + this.difficulty);
 		 //System.out.println("Moves Taken: " + this.moves);
