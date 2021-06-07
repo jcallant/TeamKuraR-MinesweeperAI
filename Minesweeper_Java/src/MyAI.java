@@ -164,8 +164,8 @@ public class MyAI extends AI {
 
 		// [STEP2.3] if handleAny() was called previously, currNeighbors is updated
 		// uncover neighbor from previous uncover if probability allows
-		Action handleAnyNeighborAction = handleAnyNeighbor();
-		if (handleAnyNeighborAction != null) return handleAnyNeighborAction;
+//		Action handleAnyNeighborAction = handleAnyNeighbor();
+//		if (handleAnyNeighborAction != null) return handleAnyNeighborAction;
 
 
 		// [STEP3]: use uncovered frontier to gain new knowledge
